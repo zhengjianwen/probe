@@ -3,8 +3,8 @@ package grpc
 import (
 	"net"
 
-	"github.com/ten-cloud/prober/server/master/model"
-	pb "github.com/ten-cloud/prober/server/proto"
+	"github.com/rongyungo/probe/server/master/model"
+	pb "github.com/rongyungo/probe/server/proto"
 	"google.golang.org/grpc"
 	"log"
 )

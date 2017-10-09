@@ -1,8 +1,8 @@
 package model
 
 import (
-	"github.com/ten-cloud/prober/server/master/types"
-	pb "github.com/ten-cloud/prober/server/proto"
+	"github.com/rongyungo/probe/server/master/types"
+	pb "github.com/rongyungo/probe/server/proto"
 	"gopkg.in/mgo.v2/bson"
 	"log"
 	"time"

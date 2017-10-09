@@ -9,8 +9,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/ten-cloud/prober/server/master/model"
-	"github.com/ten-cloud/prober/server/master/types"
+	"github.com/rongyungo/probe/server/master/model"
+	"github.com/rongyungo/probe/server/master/types"
 )
 
 func ReporterHandler(w http.ResponseWriter, r *http.Request) {

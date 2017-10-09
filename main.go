@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/ten-cloud/prober/cmd"
+	"github.com/rongyungo/probe/cmd"
 	"os"
 )
 

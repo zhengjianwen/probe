@@ -1,8 +1,8 @@
 package types
 
 import (
-	"github.com/ten-cloud/prober/server/master/util"
-	pb "github.com/ten-cloud/prober/server/proto"
+	"github.com/rongyungo/probe/server/master/util"
+	pb "github.com/rongyungo/probe/server/proto"
 )
 
 const (

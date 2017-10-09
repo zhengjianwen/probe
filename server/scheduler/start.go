@@ -1,8 +1,8 @@
 package scheduler
 
 import (
-	"github.com/ten-cloud/prober/server/master/grpc"
-	"github.com/ten-cloud/prober/server/master/model"
+	"github.com/rongyungo/probe/server/master/grpc"
+	"github.com/rongyungo/probe/server/master/model"
 	"log"
 	"time"
 )

@@ -2,8 +2,8 @@ package worker
 
 import (
 	"context"
-	pb "github.com/ten-cloud/prober/server/proto"
-	"github.com/ten-cloud/prober/server/worker/exec"
+	pb "github.com/rongyungo/probe/server/proto"
+	"github.com/rongyungo/probe/server/worker/exec"
 	"log"
 	"time"
 )

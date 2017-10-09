@@ -3,8 +3,8 @@ package scheduler
 import (
 	"container/list"
 	"errors"
-	"github.com/ten-cloud/prober/server/master/model"
-	"github.com/ten-cloud/prober/server/master/types"
+	"github.com/rongyungo/probe/server/master/model"
+	"github.com/rongyungo/probe/server/master/types"
 	"log"
 	"os"
 	"sync"

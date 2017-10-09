@@ -3,7 +3,7 @@ package handler
 import (
 	"github.com/1851616111/util/message"
 	"github.com/gorilla/mux"
-	"github.com/ten-cloud/prober/server/master/model"
+	"github.com/rongyungo/probe/server/master/model"
 	"log"
 	"net/http"
 )

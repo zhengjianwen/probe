@@ -2,7 +2,7 @@ package grpc
 
 import (
 	"errors"
-	"github.com/ten-cloud/prober/server/master/types"
+	"github.com/rongyungo/probe/server/master/types"
 )
 
 var ErrConnNotFound = errors.New("worker grpc stream not found")

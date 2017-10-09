@@ -1,7 +1,7 @@
 package exec
 
 import (
-	pb "github.com/ten-cloud/prober/server/proto"
+	pb "github.com/rongyungo/probe/server/proto"
 	"io/ioutil"
 
 	"net"

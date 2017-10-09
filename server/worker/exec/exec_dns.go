@@ -3,7 +3,7 @@ package exec
 import (
 	"fmt"
 	"github.com/miekg/dns"
-	pb "github.com/ten-cloud/prober/server/proto"
+	pb "github.com/rongyungo/probe/server/proto"
 	"golang.org/x/net/idna"
 	"net"
 	"strings"

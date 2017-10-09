@@ -1,4 +1,4 @@
-# prober
+# probe
 distributed probe framework
 The system is consist of master, scheduler, worker components
 
@@ -22,6 +22,6 @@ The system is consist of master, scheduler, worker components
     
 ### Use 
 
-    1. prober worker start --master 127.0.0.1:9100    
+    1. probe worker start --master 127.0.0.1:9100    
     
     

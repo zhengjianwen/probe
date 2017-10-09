@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/rongyungo/www/log"
 	"github.com/spf13/cobra"
-	"github.com/ten-cloud/prober/server/master/start"
-	"github.com/ten-cloud/prober/server/master/types"
-	"github.com/ten-cloud/prober/server/scheduler"
+	"github.com/rongyungo/probe/server/master/start"
+	"github.com/rongyungo/probe/server/master/types"
+	"github.com/rongyungo/probe/server/scheduler"
 	"os"
 )
 

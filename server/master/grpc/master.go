@@ -1,11 +1,11 @@
 package grpc
 
 import (
-	"github.com/ten-cloud/prober/server/master/types"
+	"github.com/rongyungo/probe/server/master/types"
 	"sync"
 	"time"
 
-	pb "github.com/ten-cloud/prober/server/proto"
+	pb "github.com/rongyungo/probe/server/proto"
 	"log"
 )
 

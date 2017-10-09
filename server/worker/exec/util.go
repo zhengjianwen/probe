@@ -2,7 +2,7 @@ package exec
 
 import (
 	"github.com/miekg/dns"
-	pb "github.com/ten-cloud/prober/server/proto"
+	pb "github.com/rongyungo/probe/server/proto"
 	"net"
 	"strings"
 	"time"

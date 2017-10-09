@@ -1,7 +1,7 @@
 package scheduler
 
 import (
-	"github.com/ten-cloud/prober/server/master/types"
+	"github.com/rongyungo/probe/server/master/types"
 	"log"
 )
 

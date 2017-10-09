@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/1851616111/util/http"
-	"github.com/ten-cloud/prober/server/master/types"
+	"github.com/rongyungo/probe/server/master/types"
 	"io/ioutil"
 	"time"
 )

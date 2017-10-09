@@ -2,8 +2,8 @@ package model
 
 import (
 	"fmt"
-	"github.com/ten-cloud/prober/server/master/types"
-	pb "github.com/ten-cloud/prober/server/proto"
+	"github.com/rongyungo/probe/server/master/types"
+	pb "github.com/rongyungo/probe/server/proto"
 	"testing"
 )
 

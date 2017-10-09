@@ -9,9 +9,9 @@ import (
 	"encoding/json"
 	"github.com/1851616111/util/message"
 	"github.com/gorilla/mux"
-	"github.com/ten-cloud/prober/server/master/model"
-	"github.com/ten-cloud/prober/server/master/types"
-	sc "github.com/ten-cloud/prober/server/scheduler"
+	"github.com/rongyungo/probe/server/master/model"
+	"github.com/rongyungo/probe/server/master/types"
+	sc "github.com/rongyungo/probe/server/scheduler"
 	"gopkg.in/mgo.v2/bson"
 )
 

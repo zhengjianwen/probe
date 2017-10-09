@@ -3,7 +3,7 @@ package types
 import (
 	"errors"
 	"fmt"
-	pb "github.com/ten-cloud/prober/server/proto"
+	pb "github.com/rongyungo/probe/server/proto"
 	"gopkg.in/mgo.v2/bson"
 	"time"
 )

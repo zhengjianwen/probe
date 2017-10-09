@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/ten-cloud/prober/server/worker"
+	"github.com/rongyungo/probe/server/worker"
 )
 
 var startWorkerOptions startWorkerOption = startWorkerOption{

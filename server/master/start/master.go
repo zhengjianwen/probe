@@ -6,11 +6,11 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/ten-cloud/prober/server/master/grpc"
-	"github.com/ten-cloud/prober/server/master/http/router"
-	"github.com/ten-cloud/prober/server/master/model"
-	"github.com/ten-cloud/prober/server/master/types"
-	"github.com/ten-cloud/prober/server/scheduler"
+	"github.com/rongyungo/probe/server/master/grpc"
+	"github.com/rongyungo/probe/server/master/http/router"
+	"github.com/rongyungo/probe/server/master/model"
+	"github.com/rongyungo/probe/server/master/types"
+	"github.com/rongyungo/probe/server/scheduler"
 )
 
 func StartAll(mCfg *types.StartMasterConfig, sCfg *scheduler.RunConfig) error {

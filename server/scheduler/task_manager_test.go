@@ -1,7 +1,7 @@
 package scheduler
 
 import (
-	"github.com/ten-cloud/prober/server/master/model"
+	"github.com/rongyungo/probe/server/master/model"
 	"testing"
 )
 

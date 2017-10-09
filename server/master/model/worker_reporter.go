@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/ten-cloud/prober/server/master/types"
+	"github.com/rongyungo/probe/server/master/types"
 )
 
 func ReporterWorker(worker *types.Worker) error {

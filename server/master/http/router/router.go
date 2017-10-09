@@ -2,7 +2,7 @@ package router
 
 import (
 	"github.com/gorilla/mux"
-	"github.com/ten-cloud/prober/server/master/http/handler"
+	"github.com/rongyungo/probe/server/master/http/handler"
 )
 
 func InitWorkerRouter(r *mux.Router) {

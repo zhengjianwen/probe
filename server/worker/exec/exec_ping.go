@@ -3,7 +3,7 @@ package exec
 import (
 	"bytes"
 	"errors"
-	pb "github.com/ten-cloud/prober/server/proto"
+	pb "github.com/rongyungo/probe/server/proto"
 	"net"
 	"os"
 	"time"

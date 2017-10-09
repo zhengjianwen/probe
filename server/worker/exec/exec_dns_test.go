@@ -2,7 +2,7 @@ package exec
 
 import (
 	"fmt"
-	pb "github.com/ten-cloud/prober/server/proto"
+	pb "github.com/rongyungo/probe/server/proto"
 	"net"
 	"testing"
 )

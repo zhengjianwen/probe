@@ -1,7 +1,7 @@
 package worker
 
 import (
-	pb "github.com/ten-cloud/prober/server/proto"
+	pb "github.com/rongyungo/probe/server/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"log"
