@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-package proto;
-
 service MasterWorker {
     rpc Subscribe (stream Topic) returns (stream TaskInfo) {}
 }
@@ -46,6 +44,9 @@ message TaskInfo {
     Task_Dns        Dns_Spec = 10;
     Task_Ping       Ping_Spec = 11;
     Task_Traceroute Traceroute_Spec = 12;
+    Task_Tcp        TcpSpec = 13;
+    Task_Udp        UdpSpec = 14;
+    Task_Ftp        FtpSpec = 15;
 }
 
 message taskResult {
@@ -60,25 +61,31 @@ message taskResult {
         ERR_HTTP_BODY_UNMATCH = 7;
         ERR_HTTP_TIMEOUT = 8;
         ERR_HTTP_OTHER = 9;
+        ERR_NET_DIAL = 10;
+        ERR_UDP_REQUEST = 11;
+        ERR_UDP_RESPONSE = 12;
+        ERR_UDP_RESPONSE_UNMATCH = 13;
+        ERR_FTP_UNAUTHORIZED = 14;
     }
     string TaskId = 1;
     bool   Success = 2;
     code   ErrorCode = 3;
     string Error = 4;
-    int64  DelayMs = 5;
-    int64  StartMs = 6;
+    int64  ScheduleTime = 5; //master 派发任务的时间，这个时间充当执行任务ID
+    int64  StartMs = 6; //worker 接受到task后执行的时间
+    int64  DelayMs = 7; //worker 执行task所花费的时间
 
     message ping {
         uint32 lost  = 1;
     }
-    ping Ping = 7;
+    ping Ping = 8;
 
     message traceroute {
         int32 Hops = 1;
         int32 ErrHops = 2;
     }
 
-    traceroute Traceroute = 8;
+    traceroute Traceroute = 9;
 }
 
 message Task_Http {
@@ -166,5 +173,19 @@ message Task_Udp {
         TEXT = 2;
     }
 
-    format Request = 3;
+    format ReqFormat = 3;
+    string ReqContent = 4;
+    format ResFormat = 5;
+    string ResMatchContent = 6;
+}
+
+message Task_Ftp {
+    string Host = 1;
+    int32  Port = 2;
+    bool   IfAuth = 3;
+    message auth {
+        string User = 1;
+        string Passwd = 2;
+    }
+    auth Auth = 4;
 }

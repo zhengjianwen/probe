@@ -39,12 +39,15 @@ func StartController(c *StartConfig, m *taskManager) error {
 
 		case t := <-taskCh:
 			log.Printf("prepare exec task(%s) \n", t.String())
-			m.AddTask(t)
-			res := exec.Execute(t)
-			if res != nil {
-				log.Printf("exec task(%s) result %s\n", t.TaskId, res.String())
-				resultCh <- res
-			}
+			//m.AddTask(t)
+
+			go func(task *pb.TaskInfo) {
+				if res := exec.Execute(task); res != nil {
+					log.Printf("exec task(%s-%s) result %s\n", t.Type.String(), t.TaskId, res.String())
+					resultCh <- res
+				}
+			}(t)
+
 		}
 	}
 	return nil

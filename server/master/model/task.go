@@ -2,7 +2,6 @@ package model
 
 import (
 	"github.com/rongyungo/probe/server/master/types"
-	pb "github.com/rongyungo/probe/server/proto"
 	"gopkg.in/mgo.v2/bson"
 	"log"
 	"time"
@@ -12,25 +11,7 @@ func CreateTask(tk *types.Task) (string, error) {
 	c, close := getTaskC()
 	defer close()
 
-	tk.Id = bson.NewObjectId()
-	now := time.Now().Unix()
-
-	tk.CreateTime, tk.UpdateTime, tk.ScheduleTime = now, now, now+int64(tk.PeriodSec)
-	if tk.HttpSpec != nil {
-		tk.Type = pb.TaskInfo_HTTP
-	}
-	if tk.DnsSpec != nil {
-		tk.Type = pb.TaskInfo_DNS
-	}
-	if tk.PingSpec != nil {
-		tk.Type = pb.TaskInfo_PING
-		if tk.PingSpec.Timeout == 0 {
-			tk.PingSpec.Timeout = 6
-		}
-	}
-	if tk.TraceRouteSpec != nil {
-		tk.Type = pb.TaskInfo_TRACE_ROUTE
-	}
+	tk.CreateComplete()
 
 	return tk.Id.Hex(), c.Insert(tk)
 }

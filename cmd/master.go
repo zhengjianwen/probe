@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/rongyungo/www/log"
-	"github.com/spf13/cobra"
 	"github.com/rongyungo/probe/server/master/start"
 	"github.com/rongyungo/probe/server/master/types"
 	"github.com/rongyungo/probe/server/scheduler"
+	"log"
+	"github.com/spf13/cobra"
 	"os"
 )
 
@@ -48,7 +48,7 @@ var masterStartCmd = &cobra.Command{
 		}
 		log.Printf("start all with config %#v\n", mCfg)
 		if err := start.StartAll(&mCfg, &rCfg); err != nil {
-			log.Errorf("start all fail %v\n", err)
+			log.Printf("start all fail %v\n", err)
 			os.Exit(1)
 		}
 	},

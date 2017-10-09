@@ -87,6 +87,71 @@ func Test_CreateTask_TraceRoute(t *testing.T) {
 	}
 }
 
+func Test_CreateTask_Tcp(t *testing.T) {
+	if err := InitDb("127.0.0.1:27017"); err != nil {
+		t.Fatal(err)
+	}
+
+	task := types.Task{
+		TcpSpec: &pb.Task_Tcp{
+			Host: "127.0.0.1",
+			Port: 80,
+		},
+		PeriodSec: 30,
+	}
+
+	if id, err := CreateTask(&task); err != nil {
+		t.Fatal(err)
+	} else {
+		fmt.Println(id)
+	}
+}
+
+func Test_CreateTask_Udp(t *testing.T) {
+	if err := InitDb("127.0.0.1:27017"); err != nil {
+		t.Fatal(err)
+	}
+
+	task := types.Task{
+		UdpSpec: &pb.Task_Udp{
+			Host: "127.0.0.1",
+			Port: 80,
+		},
+		PeriodSec: 30,
+	}
+
+	if id, err := CreateTask(&task); err != nil {
+		t.Fatal(err)
+	} else {
+		fmt.Println(id)
+	}
+}
+
+func Test_CreateTask_Ftp(t *testing.T) {
+	if err := InitDb("127.0.0.1:27017"); err != nil {
+		t.Fatal(err)
+	}
+
+	task := types.Task{
+		FtpSpec: &pb.Task_Ftp{
+			Host:   "127.0.0.1",
+			Port:   80,
+			IfAuth: true,
+			Auth: &pb.Task_FtpAuth{
+				User:   "a",
+				Passwd: "b",
+			},
+		},
+		PeriodSec: 30,
+	}
+
+	if id, err := CreateTask(&task); err != nil {
+		t.Fatal(err)
+	} else {
+		fmt.Println(id)
+	}
+}
+
 func Test_GetAllTask(t *testing.T) {
 	if err := InitDb("127.0.0.1:27017"); err != nil {
 		t.Fatal(err)
