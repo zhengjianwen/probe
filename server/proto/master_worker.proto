@@ -1,0 +1,170 @@
+syntax = "proto3";
+
+package proto;
+
+service MasterWorker {
+    rpc Subscribe (stream Topic) returns (stream TaskInfo) {}
+}
+
+message Topic {
+    enum type {
+        _ = 0;
+        CONNECT = 1;
+        RESULT = 2;
+        HEALTH_REPORT = 3;
+    }
+
+    type Type =  1;
+    string WorkerId = 2;
+    int64  WorkerTime = 3; // a worker health check local time
+
+    taskResult result = 4;
+}
+
+message TaskInfo {
+    enum type {
+        _ = 0;
+        UNHEALTH_CHECK = 1;
+        HTTP = 2;
+        DNS = 3;
+        PING = 4;
+        TRACE_ROUTE = 5;
+        TCP = 6;
+        UDP = 7;
+        FTP = 8;
+    }
+
+    string          TaskId = 1;
+    type            Type = 2;
+    string          Version = 3;
+    int64           CreateTime = 4;
+    int64           UpdateTime = 5;
+    int64           ExecuteTime = 6;
+    int64           ScheduleTime = 7;
+    uint32          PeriodSec = 8;
+    Task_Http       Http_Spec = 9;
+    Task_Dns        Dns_Spec = 10;
+    Task_Ping       Ping_Spec = 11;
+    Task_Traceroute Traceroute_Spec = 12;
+}
+
+message taskResult {
+    enum code {
+        _ = 0;
+        OK = 1;
+        ERR_HTTP_NEW_REQUEST = 2;
+        ERR_HTTP_DO_REQUEST = 3;
+        ERR_HTTP_READ_BODY = 4;
+        ERR_HTTP_STATUS_CODE_UNMATCH = 5;
+        ERR_HTTP_HEAD_UNMATCH = 6;
+        ERR_HTTP_BODY_UNMATCH = 7;
+        ERR_HTTP_TIMEOUT = 8;
+        ERR_HTTP_OTHER = 9;
+    }
+    string TaskId = 1;
+    bool   Success = 2;
+    code   ErrorCode = 3;
+    string Error = 4;
+    int64  DelayMs = 5;
+    int64  StartMs = 6;
+
+    message ping {
+        uint32 lost  = 1;
+    }
+    ping Ping = 7;
+
+    message traceroute {
+        int32 Hops = 1;
+        int32 ErrHops = 2;
+    }
+
+    traceroute Traceroute = 8;
+}
+
+message Task_Http {
+    enum method {
+        __ = 0;
+        GET = 1;
+        POST = 2;
+        HEAD = 3;
+    }
+    message matcher {
+        enum target {
+            ___ = 0;
+            BODY = 1;
+            HEAD = 2;
+        }
+        enum method {
+            _____ = 0;
+            INCLUDE = 1;
+            EXCLUDE = 2;
+        }
+        target Target = 1;
+        method Method = 2;
+        string Content = 3;
+        int32 StatusCode = 4;
+    }
+    message basicAuth {
+        string User = 1;
+        string Passwd = 2;
+    }
+
+    string Url = 1;
+    method Method = 2;
+    map<string, string> header = 3;
+    string Cookies = 4;
+    basicAuth BasicAuth = 5;
+    string ServerIp = 6;
+    matcher Matcher = 7;
+}
+
+message Task_Dns {
+    enum type {
+        _____ = 0;
+        A = 1;
+        MX = 2;
+        NS = 3;
+        CNAME = 4;
+        TXT = 5;
+        ANY = 6;
+    }
+
+    string Domain = 1;
+    type Type = 2;
+
+    bool   IfMatchIp = 3; // Type=A
+    repeated string MatchIps = 4;
+
+    bool IfMatchDomain = 5; // Type=NS
+    repeated string MatchDomains = 6;
+
+    bool ServerDesigned = 7; //common option
+    string DNSServer = 8;
+}
+
+message Task_Ping {
+    string Destination = 1;
+    int32  Count = 2;
+    int32  Timeout = 3; //second
+}
+
+message Task_Traceroute {
+    string Destination = 1;
+}
+
+message Task_Tcp {
+    string Host = 1;
+    int32  Port = 2;
+}
+
+message Task_Udp {
+    string Host = 1;
+    int32  Port = 2;
+    enum format {
+        _ = 0;
+        BINARY = 1;
+        TEXT = 2;
+    }
+
+    format Request = 3;
+}
