@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 service MasterWorker {
-    rpc Subscribe (stream Topic) returns (stream TaskInfo) {}
+    rpc Subscribe (stream Topic) returns (stream Task) {}
 }
 
 message Topic {
@@ -19,34 +19,39 @@ message Topic {
     taskResult result = 4;
 }
 
-message TaskInfo {
-    enum type {
-        _ = 0;
-        UNHEALTH_CHECK = 1;
-        HTTP = 2;
-        DNS = 3;
-        PING = 4;
-        TRACE_ROUTE = 5;
-        TCP = 6;
-        UDP = 7;
-        FTP = 8;
-    }
+message Task {
+    BasicInfo       BasicInfo = 1;
+    HttpSpec        HttpSpec = 2;
+    DnsSpec         DnsSpec = 3;
+    PingSpec        PingSpec = 4;
+    TraceRouteSpec  TracerouteSpec = 5;
+    TcpSpec         TcpSpec = 6;
+    UdpSpec         UdpSpec = 7;
+    FtpSpec         FtpSpec = 8;
+}
 
-    string          TaskId = 1;
-    type            Type = 2;
+enum TaskType {
+    _ = 0;
+    UNHEALTH_CHECK = 1;
+    HTTP = 2;
+    DNS = 3;
+    PING = 4;
+    TRACE_ROUTE = 5;
+    TCP = 6;
+    UDP = 7;
+    FTP = 8;
+}
+
+message BasicInfo {
+
+    int64           Id = 1;
+    TaskType        Type = 2;
     string          Version = 3;
     int64           CreateTime = 4;
     int64           UpdateTime = 5;
     int64           ExecuteTime = 6;
     int64           ScheduleTime = 7;
-    uint32          PeriodSec = 8;
-    Task_Http       Http_Spec = 9;
-    Task_Dns        Dns_Spec = 10;
-    Task_Ping       Ping_Spec = 11;
-    Task_Traceroute Traceroute_Spec = 12;
-    Task_Tcp        TcpSpec = 13;
-    Task_Udp        UdpSpec = 14;
-    Task_Ftp        FtpSpec = 15;
+    int64           PeriodSec = 8;
 }
 
 message taskResult {
@@ -88,7 +93,7 @@ message taskResult {
     traceroute Traceroute = 9;
 }
 
-message Task_Http {
+message HttpSpec {
     enum method {
         __ = 0;
         GET = 1;
@@ -125,7 +130,7 @@ message Task_Http {
     matcher Matcher = 7;
 }
 
-message Task_Dns {
+message DnsSpec {
     enum type {
         _____ = 0;
         A = 1;
@@ -149,22 +154,22 @@ message Task_Dns {
     string DNSServer = 8;
 }
 
-message Task_Ping {
+message PingSpec {
     string Destination = 1;
     int32  Count = 2;
     int32  Timeout = 3; //second
 }
 
-message Task_Traceroute {
+message TraceRouteSpec {
     string Destination = 1;
 }
 
-message Task_Tcp {
+message TcpSpec {
     string Host = 1;
     int32  Port = 2;
 }
 
-message Task_Udp {
+message UdpSpec {
     string Host = 1;
     int32  Port = 2;
     enum format {
@@ -179,7 +184,7 @@ message Task_Udp {
     string ResMatchContent = 6;
 }
 
-message Task_Ftp {
+message FtpSpec {
     string Host = 1;
     int32  Port = 2;
     bool   IfAuth = 3;
