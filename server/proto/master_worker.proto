@@ -72,25 +72,25 @@ message taskResult {
         ERR_UDP_RESPONSE_UNMATCH = 13;
         ERR_FTP_UNAUTHORIZED = 14;
     }
-    string TaskId = 1;
-    bool   Success = 2;
-    code   ErrorCode = 3;
-    string Error = 4;
-    int64  ScheduleTime = 5; //master 派发任务的时间，这个时间充当执行任务ID
-    int64  StartMs = 6; //worker 接受到task后执行的时间
-    int64  DelayMs = 7; //worker 执行task所花费的时间
+    int64       TaskId = 1;
+    TaskType    Type = 2;
+    bool        Success = 3;
+    code        ErrorCode = 4;
+    string      Error = 5;
+    int64       ScheduleTime = 6; //master 派发任务的时间，这个时间充当执行任务ID
+    int64       StartMs = 7; //worker 接受到task后执行的时间
+    int64       DelayMs = 8; //worker 执行task所花费的时间
+    ping        Ping = 9;
+    traceroute Traceroute = 10;
 
     message ping {
         uint32 lost  = 1;
     }
-    ping Ping = 8;
 
     message traceroute {
         int32 Hops = 1;
         int32 ErrHops = 2;
     }
-
-    traceroute Traceroute = 9;
 }
 
 message HttpSpec {
