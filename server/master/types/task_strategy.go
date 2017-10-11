@@ -3,13 +3,13 @@ package types
 import "errors"
 
 type Strategy struct {
-	TaskId         string      `json:"-",bson:"taskid"`
-	NoteMax        uint64      `json:"max",bson:"max"`                 //Max notification num
-	NodeTimeBucket *TimeBucket `json:"bucket",bson:"bucket"`           //notification time bucket
-	All            bool        `json:"all",bson:"all"`                 //note condition: all workers down
-	AnyN           uint16      `json:"anyN",bson:"anyN"`               //note condition: large than N down
-	AnySpec        []string    `json:"anySpecList",bson:"anySpecList"` //note condition: any spec worker down
-	AllSpec        []string    `json:"allSpecList",bson:"allSpecList"` //note condition: all spec worker down
+	TaskId         int64       `json:"-" xorm:"pk"`
+	NoteMax        uint64      `json:"max"`                   //Max notification num
+	NodeTimeBucket *TimeBucket `json:"bucket" xorm:"extends"` //notification time bucket
+	All            bool        `json:"all"`                   //note condition: all workers down
+	AnyN           uint16      `json:"anyN"`                  //note condition: large than N down
+	AnySpec        []string    `json:"anySpecList"`           //note condition: any spec worker down
+	AllSpec        []string    `json:"allSpecList"`           //note condition: all spec worker down
 }
 
 func (s *Strategy) Validate() error {

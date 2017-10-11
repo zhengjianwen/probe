@@ -4,46 +4,46 @@ import (
 	pb "github.com/rongyungo/probe/server/proto"
 )
 
-func Execute(t *pb.TaskInfo) *pb.TaskResult {
+func Execute(t *pb.Task) *pb.TaskResult {
 	var res *pb.TaskResult
-	switch t.Type {
-	case pb.TaskInfo_HTTP:
-		if t.Http_Spec == nil {
+	switch t.BasicInfo.GetType() {
+	case pb.TaskType_HTTP:
+		if t.HttpSpec == nil {
 			return nil
 		}
 		res = ProbeHttp(t)
-	case pb.TaskInfo_DNS:
-		if t.Dns_Spec == nil {
+	case pb.TaskType_DNS:
+		if t.DnsSpec == nil {
 			return nil
 		}
 		res = ProbeDns(t)
-	case pb.TaskInfo_PING:
-		if t.Ping_Spec == nil {
+	case pb.TaskType_PING:
+		if t.PingSpec == nil {
 			return nil
 		}
 		res = ProbePing(t)
-	case pb.TaskInfo_TRACE_ROUTE:
-		if t.Traceroute_Spec == nil {
+	case pb.TaskType_TRACE_ROUTE:
+		if t.TracerouteSpec == nil {
 			return nil
 		}
 		res = ProbeTraceRoute(t)
-	case pb.TaskInfo_TCP:
+	case pb.TaskType_TCP:
 		if t.TcpSpec == nil {
 			return nil
 		}
 		res = ProbeTcp(t)
-	case pb.TaskInfo_UDP:
+	case pb.TaskType_UDP:
 		if t.UdpSpec == nil {
 			return nil
 		}
 		res = ProbeUdp(t)
-	case pb.TaskInfo_FTP:
+	case pb.TaskType_FTP:
 		if t.FtpSpec == nil {
 			return nil
 		}
 		res = ProbeFtp(t)
 	}
 
-	res.ScheduleTime = t.ScheduleTime
+	res.ScheduleTime = t.BasicInfo.GetScheduleTime()
 	return res
 }

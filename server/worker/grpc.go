@@ -19,7 +19,7 @@ func NewClient(serverAddr string) (pb.MasterWorkerClient, error) {
 	return pb.NewMasterWorkerClient(conn), nil
 }
 
-func Subscribe(ctx context.Context, addr string, workerId string, in chan *pb.TaskResult, out chan *pb.TaskInfo, errCh chan error) {
+func Subscribe(ctx context.Context, addr string, workerId int64, in chan *pb.TaskResult, out chan *pb.Task, errCh chan error) {
 	now := time.Now().Unix()
 	topic := pb.Topic{
 		Type:       pb.Topic_CONNECT,
@@ -82,7 +82,7 @@ func Subscribe(ctx context.Context, addr string, workerId string, in chan *pb.Ta
 				errCh <- err
 				return
 			}
-			log.Printf("recv master message %v\n", task.TaskId)
+			log.Printf("recv master message %v\n", task.BasicInfo.GetId())
 			out <- task
 		}
 	}

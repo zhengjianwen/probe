@@ -4,18 +4,28 @@ import (
 	"fmt"
 	"github.com/rongyungo/probe/server/master/start"
 	"github.com/rongyungo/probe/server/master/types"
-	"github.com/rongyungo/probe/server/scheduler"
-	"log"
+	sqlutil "github.com/rongyungo/probe/util/sql"
 	"github.com/spf13/cobra"
+	"log"
 	"os"
 )
 
-var startMasterOptions startMasterOption
+var (
+	startMasterOptions startMasterOption
+	DbCfg              sqlutil.DatabaseConfig
+)
 
 func init() {
 	masterStartCmd.PersistentFlags().StringVarP(&startMasterOptions.gRpcListeningAddress, "grpc_listening", "", "127.0.0.1:9000", "master service grpc listening address")
 	masterStartCmd.PersistentFlags().StringVarP(&startMasterOptions.httpListeningAddress, "http_listening", "", "127.0.0.1:9100", "master service http listening address")
-	masterStartCmd.PersistentFlags().StringVarP(&startMasterOptions.databaseAddress, "database", "", "127.0.0.1:27017", "master service database address")
+	masterStartCmd.PersistentFlags().StringVarP(&DbCfg.Host, "host", "", "127.0.0.1", "master service database host")
+	masterStartCmd.PersistentFlags().IntVarP(&DbCfg.Port, "port", "", 3306, "master service database port")
+	masterStartCmd.PersistentFlags().StringVarP(&DbCfg.User, "user", "", "root", "master service database user name")
+	masterStartCmd.PersistentFlags().StringVarP(&DbCfg.Password, "password", "", "123456", "master service database password")
+	masterStartCmd.PersistentFlags().StringVarP(&DbCfg.DB, "instance", "", "probe", "master service database instance")
+	masterStartCmd.PersistentFlags().IntVarP(&DbCfg.ConnMax, "max", "", 3306, "master service database conn config")
+	masterStartCmd.PersistentFlags().IntVarP(&DbCfg.ConnIdle, "idle", "", 3306, "master service database conn config")
+
 }
 
 var masterCmd = &cobra.Command{
@@ -41,13 +51,11 @@ var masterStartCmd = &cobra.Command{
 		mCfg := types.StartMasterConfig{
 			GRpcListeningAddress: startMasterOptions.gRpcListeningAddress,
 			HttpListeningAddress: startMasterOptions.httpListeningAddress,
-			DataBaseAddress:      startMasterOptions.databaseAddress,
+			DbCfg:                &DbCfg,
 		}
-		rCfg := scheduler.RunConfig{
-			DataBaseAddr: startMasterOptions.databaseAddress,
-		}
+
 		log.Printf("start all with config %#v\n", mCfg)
-		if err := start.StartAll(&mCfg, &rCfg); err != nil {
+		if err := start.StartAll(&mCfg, &DbCfg); err != nil {
 			log.Printf("start all fail %v\n", err)
 			os.Exit(1)
 		}

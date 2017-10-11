@@ -8,9 +8,12 @@ import (
 	"time"
 )
 
-func ProbeUdp(t *pb.TaskInfo) *pb.TaskResult {
+func ProbeUdp(t *pb.Task) *pb.TaskResult {
 	var start int64 = time.Now().UnixNano()
-	var res pb.TaskResult = pb.TaskResult{TaskId: t.TaskId, StartMs: start / 1e6}
+	res := pb.TaskResult{
+		TaskId:  t.BasicInfo.GetId(),
+		Type:    t.BasicInfo.GetType(),
+		StartMs: start / 1e6}
 
 	con, err := net.Dial("udp", fmt.Sprintf("%s:%d", t.UdpSpec.Host, t.UdpSpec.Port))
 	res.DelayMs = (time.Now().UnixNano() - start) / 1e6

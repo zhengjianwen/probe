@@ -19,7 +19,7 @@ func init() {
 	workerStartCmd.PersistentFlags().Uint16VarP(&startWorkerOptions.pullSec, "period", "p", 60, "worker service report period second")
 	workerStartCmd.PersistentFlags().StringSliceVarP(&startWorkerOptions.masterHttpAddresses, "master_http", "", []string{"127.0.0.1:9100"}, "worker's master http addresses")
 	workerStartCmd.PersistentFlags().StringSliceVarP(&startWorkerOptions.masterGRpcAddresses, "master_grpc", "", []string{"127.0.0.1:9000"}, "worker's master grpc ddresses")
-	workerStartCmd.PersistentFlags().StringVarP(&startWorkerOptions.workerId, "id", "i", fmt.Sprintf("worker-%s", rand.String(6)), "worker name that user assigned")
+	workerStartCmd.PersistentFlags().Int64VarP(&startWorkerOptions.workerId, "id", "i", int64(rand.Intn(100000)), "worker name that user assigned")
 }
 
 var workerCmd = &cobra.Command{

@@ -10,18 +10,19 @@ var ErrConnExpired = errors.New("worker grpc stream expired")
 var ErrConnClosed = errors.New("worker grpc stream closed")
 
 // send a task to a worker channel
-func (m *master) SendTask(wid string, tk *types.Task) error {
+func (m *master) SendTask(wid int64, tk []types.TaskInterface) error {
 	c, err := m.getWorkerCon(wid)
 	if err != nil {
 		return err
 	}
-	if err := c.recordMessage(tk); err != nil {
-		return err
-	}
+
+	// record channel may be full error
+	go c.recordMessage(tk...)
+
 	return nil
 }
 
-func (m *master) getWorkerCon(wid string) (*conn, error) {
+func (m *master) getWorkerCon(wid int64) (*conn, error) {
 	con, ok := m.workerConnMap[wid]
 	if !ok {
 		return nil, ErrConnNotFound

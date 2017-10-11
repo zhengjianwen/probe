@@ -8,39 +8,25 @@ import (
 	"time"
 )
 
-func Return(tid string, err error, start int64) *pb.TaskResult {
-	var res pb.TaskResult
+func Return(tid int64, tp pb.TaskType, err error, start int64) *pb.TaskResult {
+	return ReturnWithCode(tid, tp, err, start, 0)
+}
+
+func ReturnWithCode(tid int64, tp pb.TaskType, err error, start int64, code pb.TaskResultCode) *pb.TaskResult {
+	res := pb.TaskResult{
+		TaskId:    tid,
+		Type:      tp,
+		DelayMs:   (time.Now().UnixNano() - start) / 1e6,
+		StartMs:   start / 1e6,
+		ErrorCode: code,
+	}
 	if err != nil {
 		res.Error = err.Error()
 	} else {
 		res.Success = true
 	}
 
-	res.DelayMs = (time.Now().UnixNano() - start) / 1e6
-	res.TaskId = tid
-	res.StartMs = start / 1e6
-
 	return &res
-}
-
-func ReturnWithCode(tid string, err error, code pb.TaskResultCode, start int64) *pb.TaskResult {
-	var res pb.TaskResult
-	if err != nil {
-		res.Error = err.Error()
-	} else {
-		res.Success = true
-	}
-
-	res.DelayMs = (time.Now().UnixNano() - start) / 1e6
-	res.TaskId = tid
-	res.ErrorCode = code
-	res.StartMs = start / 1e6
-
-	return &res
-}
-
-func countDelayMs(start int64) int64 {
-	return (time.Now().UnixNano() - start) / 1e6
 }
 
 func isAnswerMatchStr(answer []dns.RR, str string) bool {

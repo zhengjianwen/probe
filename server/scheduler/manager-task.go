@@ -3,7 +3,6 @@ package scheduler
 import (
 	"container/list"
 	"errors"
-	"github.com/rongyungo/probe/server/master/model"
 	"github.com/rongyungo/probe/server/master/types"
 	"log"
 	"os"
@@ -11,67 +10,58 @@ import (
 	"time"
 )
 
-var m *taskManager
-
 type taskManager struct {
 	*sync.RWMutex
 
 	//map is used for fast delete
 	//worker has no idea of when should execute a task
 	//they are only the executor.
-	taskMap  map[string]*list.Element
+	taskMap  map[int64]*list.Element
 	taskList *list.List
 
-	updateTaskCh chan *types.Task
+	updateTaskCh chan *types.TaskInterface
 
-	scheduleMap map[string]*taskHistory
+	scheduleMap map[int64]*taskRecord
 }
 
-func InitTaskManager() error {
-	m = &taskManager{
+func NewTaskManager() *taskManager {
+	return &taskManager{
 		RWMutex:      &sync.RWMutex{},
-		taskMap:      make(map[string]*list.Element),
+		taskMap:      make(map[int64]*list.Element),
 		taskList:     list.New(),
-		updateTaskCh: make(chan *types.Task, 200),
-		scheduleMap:  make(map[string]*taskHistory),
+		updateTaskCh: make(chan *types.TaskInterface, 200),
+		scheduleMap:  make(map[int64]*taskRecord),
 	}
-
-	return SyncTask()
 }
 
-func SyncTask() error {
-	l, err := model.GetAllTasks()
-	if err != nil {
-		return err
-	}
-
+func (m *taskManager) SyncTask(l []types.TaskInterface) error {
 	m.Lock()
 	defer m.Unlock()
 
-	for _, task := range l {
-		ele := m.taskList.PushBack(task)
-		m.taskMap[task.Id.Hex()] = ele
+	for _, taskI := range l {
+		ele := m.taskList.PushBack(taskI)
+		m.taskMap[taskI.GetId()] = ele
 	}
 
 	return nil
 }
 
 //bad lock to add task
-func AddTask(tk *types.Task) error {
+func (m *taskManager) AddTask(tk types.TaskInterface) error {
 	m.Lock()
 	defer m.Unlock()
 
-	if _, exist := m.taskMap[tk.Id.Hex()]; exist {
+	if _, exist := m.taskMap[tk.GetId()]; exist {
 		return errors.New("task already exists")
 	}
 
 	ele := m.taskList.PushBack(tk)
-	m.taskMap[tk.Id.Hex()] = ele
+	m.taskMap[tk.GetId()] = ele
 
 	return nil
 }
 
-func DelTask(tid string) {
+func (m *taskManager) DelTask(tid int64) {
 	m.Lock()
 	defer m.Unlock()
 
@@ -82,28 +72,28 @@ func DelTask(tid string) {
 	}
 }
 
-type taskHistory struct {
-	task *types.Task
+type taskRecord struct {
+	task types.TaskInterface
 	end  int64
 }
 
-func (t taskHistory) expired() bool {
+func (t taskRecord) expired() bool {
 	return t.end <= time.Now().Unix()
 }
 
-func ReduceReplicatedTask(l []*types.Task) []*types.Task {
+func (m *taskManager) ReduceReplicatedTask(l []types.TaskInterface) []types.TaskInterface {
 	now := time.Now().Unix()
-	var ret []*types.Task
+	var ret []types.TaskInterface
 	for _, tk := range l {
-		if history, ok := m.scheduleMap[tk.Id.Hex()]; !ok {
-			m.scheduleMap[tk.Id.Hex()] = &taskHistory{
+		if history, ok := m.scheduleMap[tk.GetId()]; !ok {
+			m.scheduleMap[tk.GetId()] = &taskRecord{
 				task: tk,
-				end:  now + int64(tk.PeriodSec),
+				end:  now + tk.GetPeriodSec(),
 			}
 			ret = append(ret, tk)
 		} else {
 			if history.expired() {
-				history.end = now + int64(tk.PeriodSec)
+				history.end = now + tk.GetPeriodSec()
 				ret = append(ret, tk)
 			}
 		}
@@ -113,11 +103,11 @@ func ReduceReplicatedTask(l []*types.Task) []*types.Task {
 }
 
 //更新任务涉及到较多组件， 目前先不支持
-func UpdateTask(tk *types.Task) {
+func (m *taskManager) UpdateTask(tk *types.TaskInterface) {
 	m.updateTaskCh <- tk
 }
 
-func GetTask(tid string) *types.Task {
+func (m *taskManager) GetTask(tid int64) *types.Task {
 	m.RLock()
 	defer m.RUnlock()
 
@@ -129,11 +119,11 @@ func GetTask(tid string) *types.Task {
 	return nil
 }
 
-func GetTaskIds() []string {
+func (m *taskManager) GetTaskIds() []int64 {
 	m.RLock()
 	defer m.RUnlock()
 
-	var ids []string
+	var ids []int64
 	for id := range m.taskMap {
 		ids = append(ids, id)
 	}
@@ -146,12 +136,12 @@ func init() {
 	logger = log.New(os.Stdout, "", 0)
 }
 
-func StatTasks() {
+func (m *taskManager) StatTasks() {
 	logger.Printf("stat task manager: total %d\n", m.taskList.Len())
 	t := new(types.Task)
 	logger.Println(t.Title())
 
 	for e := m.taskList.Front(); e != nil; e = e.Next() {
-		logger.Println(e.Value.(*types.Task).String())
+		logger.Println(e.Value.(types.TaskInterface).String())
 	}
 }

@@ -12,11 +12,10 @@ message Topic {
         HEALTH_REPORT = 3;
     }
 
-    type Type =  1;
-    string WorkerId = 2;
-    int64  WorkerTime = 3; // a worker health check local time
-
-    taskResult result = 4;
+    type        Type =  1;
+    int64       WorkerId = 2;
+    int64       WorkerTime = 3; // a worker health check local time
+    taskResult  result = 4;
 }
 
 message Task {
@@ -81,7 +80,7 @@ message taskResult {
     int64       StartMs = 7; //worker 接受到task后执行的时间
     int64       DelayMs = 8; //worker 执行task所花费的时间
     ping        Ping = 9;
-    traceroute Traceroute = 10;
+    traceroute  Traceroute = 10;
 
     message ping {
         uint32 lost  = 1;
@@ -111,23 +110,23 @@ message HttpSpec {
             INCLUDE = 1;
             EXCLUDE = 2;
         }
-        target Target = 1;
-        method Method = 2;
-        string Content = 3;
-        int32 StatusCode = 4;
+        target  Target = 1;
+        method  Method = 2;
+        string  Content = 3;
+        int32   StatusCode = 4;
     }
     message basicAuth {
         string User = 1;
         string Passwd = 2;
     }
 
-    string Url = 1;
-    method Method = 2;
+    string              Url = 1;
+    method              Method = 2;
     map<string, string> header = 3;
-    string Cookies = 4;
-    basicAuth BasicAuth = 5;
-    string ServerIp = 6;
-    matcher Matcher = 7;
+    string              Cookies = 4;
+    basicAuth           BasicAuth = 5;
+    string              ServerIp = 6;
+    matcher             Matcher = 7;
 }
 
 message DnsSpec {
@@ -141,17 +140,14 @@ message DnsSpec {
         ANY = 6;
     }
 
-    string Domain = 1;
-    type Type = 2;
-
-    bool   IfMatchIp = 3; // Type=A
+    string          Domain = 1;
+    type            Type = 2;
+    bool            IfMatchIp = 3; // Type=A
     repeated string MatchIps = 4;
-
-    bool IfMatchDomain = 5; // Type=NS
+    bool            IfMatchDomain = 5; // Type=NS
     repeated string MatchDomains = 6;
-
-    bool ServerDesigned = 7; //common option
-    string DNSServer = 8;
+    bool            ServerDesigned = 7; //common option
+    string          DNSServer = 8;
 }
 
 message PingSpec {
@@ -185,12 +181,12 @@ message UdpSpec {
 }
 
 message FtpSpec {
-    string Host = 1;
-    int32  Port = 2;
-    bool   IfAuth = 3;
+    string      Host = 1;
+    int32       Port = 2;
+    bool        IfAuth = 3;
+    auth        Auth = 4;
     message auth {
         string User = 1;
         string Passwd = 2;
     }
-    auth Auth = 4;
 }

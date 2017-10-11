@@ -2,50 +2,40 @@ package model
 
 import (
 	"github.com/rongyungo/probe/server/master/types"
-	"gopkg.in/mgo.v2/bson"
+	"log"
 )
 
-func CreateStrategy(s *types.Strategy) error {
-	c, close := getStrategyC()
-	defer close()
+var s types.Strategy
 
-	return c.Insert(s)
+func CreateStrategy(s *types.Strategy) error {
+	_, err := Orm.Insert(s)
+	return err
 }
 
-func DeleteStrategy(tid string) error {
-	c, close := getStrategyC()
-	defer close()
-
-	return c.Remove(bson.M{"taskId": tid})
+func DeleteStrategy(tid int64) error {
+	_, err := Orm.Id(tid).Delete(s)
+	return err
 }
 
 func UpdateStrategy(s *types.Strategy) error {
-	c, close := getStrategyC()
-	defer close()
-
-	return c.Update(bson.M{"taskId": s.TaskId}, s)
-}
-
-func GetStrategy(tid string) (*types.Strategy, error) {
-	c, close := getStrategyC()
-	defer close()
-
-	var s types.Strategy
-	if err := c.Find(bson.M{"taskId": tid}).One(&s); err != nil {
-		return nil, err
+	n, err := Orm.Id(s.TaskId).Count(s)
+	if err != nil {
+		return err
+	}
+	if n == 0 || n > 1 {
+		log.Printf("invalid stragety tasi Idk conflict")
 	}
 
+	_, err = Orm.Id(s.TaskId).Update(s)
+
+	return err
+}
+
+func GetStrategy(tid int64) (*types.Strategy, error) {
+	s := types.Strategy{}
+	err := Orm.Id(tid).Find(&s)
+	if err != nil {
+		return nil, err
+	}
 	return &s, nil
-}
-
-func GetStrategyByTids(tids []string) ([]*types.Strategy, error) {
-	c, close := getStrategyC()
-	defer close()
-
-	var l []*types.Strategy
-	if err := c.Find(bson.M{"taskid": bson.M{"$in": tids}}).All(&l); err != nil {
-		return nil, err
-	}
-
-	return l, nil
 }

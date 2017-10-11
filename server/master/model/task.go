@@ -2,107 +2,59 @@ package model
 
 import (
 	"github.com/rongyungo/probe/server/master/types"
-	"gopkg.in/mgo.v2/bson"
-	"log"
-	"time"
+	errutil "github.com/rongyungo/probe/util/errors"
 )
 
-func CreateTask(tk *types.Task) (string, error) {
-	c, close := getTaskC()
-	defer close()
-
-	tk.CreateComplete()
-
-	return tk.Id.Hex(), c.Insert(tk)
+func CreateTask(tk interface{}) (int64, error) {
+	return Orm.Insert(tk)
 }
 
-func DeleteTask(tid string) error {
-	c, close := getTaskC()
-	defer close()
-
-	return c.RemoveId(tid)
+func CreateTask_Http(tk *types.Task_Http) (int64, error) {
+	tk.Complete()
+	return Orm.Insert(tk)
 }
 
-func UpdateTask(tk *types.Task) error {
-	c, close := getTaskC()
-	defer close()
-	tk.UpdateTime = time.Now().Unix()
-
-	return c.UpdateId(tk.Id, tk)
+func GetTask(tp string, id int64) (interface{}, error) {
+	switch tp {
+	case "hkttp":
+		return GetTask_Http(id)
+	case "dns":
+	case "ping":
+	case "trace_route":
+	case "tcp":
+	case "udp":
+	case "ftp":
+	}
+	return nil, errutil.ErrUnSupportTaskType
 }
 
-func GetTask(tid string) (*types.Task, error) {
-	c, close := getTaskC()
-	defer close()
-
-	var tk types.Task
-	if err := c.FindId(bson.ObjectIdHex(tid)).One(&tk); err != nil {
+func GetTask_Http(tid int64) (*types.Task_Http, error) {
+	var task types.Task_Http
+	if ok, err := Orm.Id(tid).Get(&task); err != nil {
 		return nil, err
+	} else if !ok {
+		return nil, errutil.ErrTaskIdNotFound
 	}
-
-	return &tk, nil
+	return &task, nil
 }
 
-//@param inSec: the tasks should be executed in inSec second among the workers
-//1. normal condition: time.Now() >= task.updateTime && time.Now() < (task.UpdateTime + task.PeriodSec)
-//2. service down cause condition: time.Now() >= task.UpdateTime + task.PeriodSec
-func GetAllTasks() ([]*types.Task, error) {
-	c, close := getTaskC()
-	defer close()
-
-	var tasks []*types.Task
-	if err := c.Find(nil).All(&tasks); err != nil {
-		return nil, err
+func DeleteTask(tp string, id int64) error {
+	switch tp {
+	case "http":
+		return DeleteTask_Http(id)
+	case "dns":
+	case "ping":
+	case "trace_route":
+	case "tcp":
+	case "udp":
+	case "ftp":
 	}
-
-	return tasks, nil
+	return errutil.ErrUnSupportTaskType
 }
 
-func GetScheduleTasks() ([]*types.Task, error) {
-	c, close := getTaskC()
-	defer close()
+var th types.Task_Http
 
-	query := bson.M{
-		"periodsec":    bson.M{"$gt": 0},
-		"scheduletime": bson.M{"$lt": time.Now().Unix()},
-	}
-
-	var tasks []*types.Task
-	if err := c.Find(query).All(&tasks); err != nil {
-		return nil, err
-	}
-
-	return tasks, nil
-}
-
-func UpdateTaskTime(tk *types.Task) error {
-	c, close := getTaskC()
-	defer close()
-
-	return c.UpdateId(tk.Id, bson.M{"$set": bson.M{
-		"$executetime":  time.Now().Unix(),
-		"$scheduleTime": tk.ScheduleTime + int64(tk.PeriodSec)},
-	})
-}
-
-func CorrectScheduleTime() {
-	c, close := getTaskC()
-	defer close()
-
-	now := time.Now().Unix()
-	var tasks []*types.Task
-	if err := c.Find(bson.M{"scheduleTime": bson.M{"$lt": now}}).All(&tasks); err != nil {
-		log.Printf("scheduler: query correct schedule time err %v\n", err)
-	}
-
-	log.Printf("scheduler: query wrong scheduler time tasks: total: %d\n", len(tasks))
-
-	var errN int
-	for _, tk := range tasks {
-		if err := c.UpdateId(tk.Id, bson.M{"$set": bson.M{"scheduleTime": now + int64(tk.PeriodSec)}}); err != nil {
-			log.Printf("scheduler: correct schedule time err %v\n", err)
-			errN++
-		}
-	}
-	log.Printf("scheduler: query wrong scheduler time tasks: total: %d, error: %d\n", len(tasks), errN)
+func DeleteTask_Http(id int64) error {
+	_, err := Orm.Id(id).Delete(th)
+	return err
 }

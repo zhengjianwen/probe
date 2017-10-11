@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rongyungo/probe/server/master/model"
 	"github.com/rongyungo/probe/server/master/types"
+	"strconv"
 )
 
 func ReporterHandler(w http.ResponseWriter, r *http.Request) {
@@ -47,6 +48,11 @@ func RegisterWorkerHandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	wid := mux.Vars(r)["wid"]
+	id, err := strconv.ParseInt(wid, 10, 64)
+	if err != nil {
+		message.Error(w, err)
+		return
+	}
 
 	var worker types.Worker
 	if err := json.NewDecoder(r.Body).Decode(&worker); err != nil {
@@ -54,7 +60,7 @@ func RegisterWorkerHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	worker.ID = wid
+	worker.Id = id
 	if err := worker.Validate(); err != nil {
 		message.Error(w, err)
 		return

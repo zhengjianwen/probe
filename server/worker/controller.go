@@ -14,11 +14,11 @@ var (
 	allowStartPeriodSec int64 = 60
 )
 
-func StartController(c *StartConfig, m *taskManager) error {
+func StartController(c *StartConfig) error {
 	var (
 		ctx      context.Context
 		cancel   context.CancelFunc
-		taskCh   chan *pb.TaskInfo   = make(chan *pb.TaskInfo, 100)
+		taskCh   chan *pb.Task       = make(chan *pb.Task, 100)
 		resultCh chan *pb.TaskResult = make(chan *pb.TaskResult, 100)
 	)
 
@@ -41,9 +41,10 @@ func StartController(c *StartConfig, m *taskManager) error {
 			log.Printf("prepare exec task(%s) \n", t.String())
 			//m.AddTask(t)
 
-			go func(task *pb.TaskInfo) {
+			go func(task *pb.Task) {
 				if res := exec.Execute(task); res != nil {
-					log.Printf("exec task(%s-%s) result %s\n", t.Type.String(), t.TaskId, res.String())
+					log.Printf("exec %s task(%s) result %s\n",
+						t.GetBasicInfo().GetType().String(), t.GetBasicInfo().GetId(), res.String())
 					resultCh <- res
 				}
 			}(t)

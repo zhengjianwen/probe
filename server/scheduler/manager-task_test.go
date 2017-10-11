@@ -5,15 +5,10 @@ import (
 	"testing"
 )
 
-func TestInitTaskManager(t *testing.T) {
+func TestNewTaskManager(t *testing.T) {
 	if err := model.InitDb("127.0.0.1:27017"); err != nil {
 		t.Fatal(err)
 	}
 
-	err := InitTaskManager()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	StatTasks()
+	NewTaskManager()
 }

@@ -7,9 +7,12 @@ import (
 	"time"
 )
 
-func ProbeTcp(t *pb.TaskInfo) *pb.TaskResult {
+func ProbeTcp(t *pb.Task) *pb.TaskResult {
 	start := time.Now().UnixNano()
-	var res pb.TaskResult = pb.TaskResult{TaskId: t.TaskId, StartMs: start / 1e6}
+	res := pb.TaskResult{
+		TaskId:  t.BasicInfo.GetId(),
+		Type:    t.BasicInfo.GetType(),
+		StartMs: start / 1e6}
 
 	con, err := net.Dial("tcp", fmt.Sprintf("%s:%d", t.TcpSpec.Host, t.TcpSpec.Port))
 	if res.DelayMs = (time.Now().UnixNano() - start) / 1e6; err != nil {

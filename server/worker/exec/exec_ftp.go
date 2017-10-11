@@ -7,9 +7,13 @@ import (
 	"time"
 )
 
-func ProbeFtp(t *pb.TaskInfo) *pb.TaskResult {
+func ProbeFtp(t *pb.Task) *pb.TaskResult {
 	var start int64 = time.Now().UnixNano()
-	var res pb.TaskResult = pb.TaskResult{TaskId: t.TaskId, StartMs: start / 1e6}
+	var res pb.TaskResult = pb.TaskResult{
+		TaskId:  t.BasicInfo.GetId(),
+		Type:    t.BasicInfo.GetType(),
+		StartMs: start / 1e6,
+	}
 
 	con, err := ftp.Dial(fmt.Sprintf("%s:%d", t.FtpSpec.Host, t.FtpSpec.Port))
 	res.DelayMs = (time.Now().UnixNano() - start) / 1e6

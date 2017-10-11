@@ -6,7 +6,7 @@ type Reporter struct {
 }
 
 type StartConfig struct {
-	WorkerId       string
+	WorkerId       int64
 	HealthCheckSec uint16
 	MasterHttps    []string
 	MasterGRpcs    []string

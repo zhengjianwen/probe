@@ -23,30 +23,30 @@ type master struct {
 	//subPeriodSec uint16
 
 	// key:workerId, value:worker
-	workersMap map[string]*types.Worker
+	workersMap map[int64]*types.Worker
 
 	// key:workerId, value: a writable gRpc stream to worker
 	// when a new conn arrived, we should make sure the
 	// worker's workerToTaskChMap task should send to new conn
-	workerConnMap map[string]*conn
+	workerConnMap map[int64]*conn
 }
 
 func NewMaster() *master {
 	m := master{
 		RWMutex:       new(sync.RWMutex),
-		workersMap:    make(map[string]*types.Worker),
-		workerConnMap: make(map[string]*conn),
+		workersMap:    make(map[int64]*types.Worker),
+		workerConnMap: make(map[int64]*conn),
 	}
 
 	go m.initHouseKeeping()
 	return &m
 }
 
-func (m *master) GetWorkerIds() []string {
+func (m *master) GetWorkerIds() []int64 {
 	m.RLock()
 	defer m.RUnlock()
 
-	var ids []string
+	var ids []int64
 	for id := range m.workerConnMap {
 		ids = append(ids, id)
 	}
@@ -65,9 +65,9 @@ func (m *master) initHouseKeeping() {
 	}
 }
 
-func (m *master) serveWorker(wId string, ss pb.MasterWorker_SubscribeServer) chan<- struct{} {
+func (m *master) serveWorker(wId int64, ss pb.MasterWorker_SubscribeServer) chan<- struct{} {
 	con := m.acceptConn(wId)
-	log.Printf("------------------------- %#v\n", con.finalBuf)
+	//log.Printf("------------------------- %#v\n", con.finalBuf)
 	// this part need reduce client multi connect
 	if !con.ifSendMessageFnRun() {
 		go con.sendMessage(ss)
@@ -77,7 +77,7 @@ func (m *master) serveWorker(wId string, ss pb.MasterWorker_SubscribeServer) cha
 }
 
 // step1: worker connect to master
-func (m *master) acceptConn(wId string) *conn {
+func (m *master) acceptConn(wId int64) *conn {
 	m.Lock()
 	defer m.Unlock()
 
@@ -91,7 +91,7 @@ func (m *master) acceptConn(wId string) *conn {
 	return con
 }
 
-func (m *master) removeConn(wId string) {
+func (m *master) removeConn(wId int64) {
 	m.Lock()
 	defer m.Unlock()
 
@@ -100,7 +100,7 @@ func (m *master) removeConn(wId string) {
 	delete(m.workerConnMap, wId)
 }
 
-func (m *master) closeConnSession(wId string) {
+func (m *master) closeConnSession(wId int64) {
 	if con, ok := m.workerConnMap[wId]; ok {
 		con.closeCh <- struct{}{}
 	}
@@ -108,7 +108,7 @@ func (m *master) closeConnSession(wId string) {
 
 // @param wId := worker Id
 // @param wt  := worker timestamp
-func (m *master) healthCheck(wId string) {
+func (m *master) healthCheck(wId int64) {
 	m.RLock()
 	defer m.RUnlock()
 
@@ -136,7 +136,7 @@ func (m *master) cleanConn() {
 }
 
 // no health report in a short time
-func (m *master) isWorkerUnHealth(wId string) bool {
+func (m *master) isWorkerUnHealth(wId int64) bool {
 	con, ok := m.workerConnMap[wId]
 	if !ok {
 		return true
@@ -146,7 +146,7 @@ func (m *master) isWorkerUnHealth(wId string) bool {
 }
 
 // no health report in a long time, need lean memory
-func (m *master) isWorkerDeath(wId string) bool {
+func (m *master) isWorkerDeath(wId int64) bool {
 	con, ok := m.workerConnMap[wId]
 	if !ok {
 		return true

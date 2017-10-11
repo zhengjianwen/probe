@@ -9,11 +9,16 @@ import (
 	"time"
 )
 
-func ProbePing(t *pb.TaskInfo) *pb.TaskResult {
-	var res pb.TaskResult
-
+func ProbePing(t *pb.Task) *pb.TaskResult {
 	now := time.Now().UnixNano()
-	c, w := int(t.Ping_Spec.Count), int(t.Ping_Spec.Timeout)
+
+	res := pb.TaskResult{
+		TaskId:  t.BasicInfo.GetId(),
+		Type:    t.BasicInfo.GetType(),
+		StartMs: now / 1e6,
+	}
+
+	c, w := int(t.PingSpec.Count), int(t.PingSpec.Timeout)
 	if c == 0 {
 		c = 4
 	}
@@ -21,15 +26,14 @@ func ProbePing(t *pb.TaskInfo) *pb.TaskResult {
 		w = 4
 	}
 
-	err, lost := Pinger(t.Ping_Spec.Destination, c, w)
+	err, lost := Pinger(t.PingSpec.Destination, c, w)
 	res.DelayMs = (time.Now().UnixNano() - now) / 1e6
 	if err != nil {
 		res.Error = err.Error()
 	} else {
 		res.Success = true
 	}
-	res.TaskId = t.TaskId
-	res.StartMs = now / 1e6
+
 	res.Ping = &pb.TaskResultPing{uint32(lost / c)}
 
 	return &res

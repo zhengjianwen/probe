@@ -21,15 +21,11 @@ func (o startMasterOption) validate() error {
 		return errors.New("param httpListeningAddress not found")
 	}
 
-	if len(o.databaseAddress) == 0 {
-		return errors.New("param databaseAddress not found")
-	}
-
 	return nil
 }
 
 type startWorkerOption struct {
-	workerId string
+	workerId int64
 	pullSec  uint16
 
 	masterGRpcAddresses []string
@@ -37,9 +33,6 @@ type startWorkerOption struct {
 }
 
 func (o startWorkerOption) validate() error {
-	if len(o.workerId) <= 10 {
-		return errors.New("param name must large than 10")
-	}
 
 	if o.pullSec < 10 {
 		return fmt.Errorf("param pullSec(%d) less than 10", o.pullSec)
@@ -53,9 +46,9 @@ func (o startWorkerOption) validate() error {
 	return nil
 }
 
-func validateMaster(workName, address string) error {
+func validateMaster(workerId int64, address string) error {
 	spec := &http.HttpSpec{
-		URL:         "http://" + address + "/api/worker/" + workName + "/ping",
+		URL:         fmt.Sprintf("http://%s/api/worker/%d/ping", address, workerId),
 		Method:      "GET",
 		ContentType: http.ContentType_FORM,
 	}
