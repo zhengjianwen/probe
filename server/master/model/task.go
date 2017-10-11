@@ -16,7 +16,7 @@ func CreateTask_Http(tk *types.Task_Http) (int64, error) {
 
 func GetTask(tp string, id int64) (interface{}, error) {
 	switch tp {
-	case "hkttp":
+	case "http":
 		return GetTask_Http(id)
 	case "dns":
 	case "ping":
