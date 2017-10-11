@@ -70,7 +70,6 @@ func (m *ScheduleManager) CorrectScheduleTime() {
 	if rs, err := m.Db.Exec(sql); err != nil {
 		log.Printf("scheduler manager(%s) correct schedule_time err %v\n", m.TaskType.String(), err)
 	} else {
-
 		n, err := rs.RowsAffected()
 		log.Printf("scheduler manager(%s) correct %d schedule_time with err %v\n", m.TaskType.String(), n, err)
 	}
