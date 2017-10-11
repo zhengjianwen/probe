@@ -31,12 +31,17 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	case "http":
 		target = &types.Task_Http{}
 	case "dns":
+		target = &types.Task_Dns{}
 	case "ping":
+		target = &types.Task_Ping{}
 	case "trace_route":
+		target = &types.Task_TraceRoute{}
 	case "tcp":
+		target = &types.Task_Tcp{}
 	case "udp":
+		target = &types.Task_Udp{}
 	case "ftp":
-
+		target = &types.Task_Ftp{}
 	}
 
 	v, _ := target.(interface {
@@ -56,17 +61,10 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	if id, err := model.CreateTask(target); err != nil {
 		message.Error(w, err)
 	} else {
+		//	sc.AddTask(&task)
 		message.SuccessS(w, fmt.Sprintf("%d", id))
 	}
 
-	//
-	//if id, err := model.CreateTask(&task); err != nil {
-	//	log.Printf("create task(%v) err %v\n", task, err)
-	//	message.Error(w, err)
-	//} else {
-	//	sc.AddTask(&task)
-	//	message.SuccessS(w, id)
-	//}
 	return
 }
 

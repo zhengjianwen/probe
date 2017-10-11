@@ -139,6 +139,7 @@ func init() {
 func (m *taskManager) StatTasks() {
 	logger.Printf("stat task manager: total %d\n", m.taskList.Len())
 	t := new(types.Task)
+
 	logger.Println(t.Title())
 
 	for e := m.taskList.Front(); e != nil; e = e.Next() {
