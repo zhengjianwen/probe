@@ -9,61 +9,25 @@ import (
 )
 
 func (m *ScheduleManager) GetAllTasks() ([]types.TaskInterface, error) {
-	var ret []types.TaskInterface
-	switch m.TaskType {
-	case pb.TaskType_HTTP:
-		if tks, err := m.getAllHttpTasks(); err != nil {
-			return nil, err
-		} else {
-			ret = convertHttpTasks(tks)
-		}
+	l := getSliceByType(m.TaskType)
+	if err := m.Db.Where("type = ?", m.TaskType).Find(l); err != nil {
+		return nil, err
 	}
 
-	return ret, nil
+	return convertTasks(l), nil
 }
 
 func (m *ScheduleManager) GetScheduleTasks() ([]types.TaskInterface, error) {
-	var ret []types.TaskInterface
-	switch m.TaskType {
-	case pb.TaskType_HTTP:
-		if tks, err := m.getScheduleHttpTasks(); err != nil {
-			return nil, err
-		} else {
-			ret = convertHttpTasks(tks)
-		}
-	}
-
-	return ret, nil
-}
-
-func (m *ScheduleManager) getScheduleHttpTasks() ([]types.Task_Http, error) {
-	var res []types.Task_Http
 	now := time.Now().Unix()
+	l := getSliceByType(m.TaskType)
+
 	if err := m.Db.Where("type = ? and schedule_time < ? and ? <= schedule_time + period_sec",
-		pb.TaskType_HTTP, now, now).Find(&res); err != nil {
+		m.TaskType, now, now).Find(l); err != nil {
 		return nil, err
 	}
-
-	return res, nil
+	return convertTasks(l), nil
 }
 
-func (m *ScheduleManager) getAllHttpTasks() ([]types.Task_Http, error) {
-	var res []types.Task_Http
-	if err := m.Db.Where("type = ?", pb.TaskType_HTTP).Find(&res); err != nil {
-		return nil, err
-	}
-	return res, nil
-}
-
-func convertHttpTasks(ht []types.Task_Http) []types.TaskInterface {
-	var ret []types.TaskInterface
-
-	for i := range ht {
-		ret = append(ret, types.TaskInterface(&ht[i]))
-	}
-
-	return ret
-}
 func (m *ScheduleManager) CorrectScheduleTime() {
 	now := time.Now().Unix()
 

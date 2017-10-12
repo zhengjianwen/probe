@@ -8,16 +8,19 @@ import (
 	sqlutil "github.com/rongyungo/probe/util/sql"
 	"strings"
 
+	"github.com/rongyungo/probe/server/master/types"
 	"log"
+	"reflect"
 	"time"
 )
 
 type ScheduleManager struct {
-	TaskType    pb.TaskType
-	PeriodSec   uint8
-	DbConfig    *sqlutil.DatabaseConfig
-	Db          *xorm.Engine
-	taskManager *taskManager
+	TaskType        pb.TaskType
+	StructSliceType reflect.Type
+	PeriodSec       uint8
+	DbConfig        *sqlutil.DatabaseConfig
+	Db              *xorm.Engine
+	taskManager     *taskManager
 }
 
 func NewSchedulerManager(tp string, period uint8, c *sqlutil.DatabaseConfig) (*ScheduleManager, error) {
@@ -35,12 +38,18 @@ func NewSchedulerManager(tp string, period uint8, c *sqlutil.DatabaseConfig) (*S
 		return nil, err
 	}
 
+	sl, ok := types.TaskTypeToStructMappings[pb.TaskType(tpId)]
+	if !ok {
+		return nil, errutil.ErrTaskTypeMappingNotFound
+	}
+
 	return &ScheduleManager{
-		TaskType:    pb.TaskType(tpId),
-		PeriodSec:   period,
-		DbConfig:    c,
-		Db:          engine,
-		taskManager: NewTaskManager(),
+		TaskType:        pb.TaskType(tpId),
+		StructSliceType: reflect.TypeOf(sl),
+		PeriodSec:       period,
+		DbConfig:        c,
+		Db:              engine,
+		taskManager:     NewTaskManager(),
 	}, nil
 }
 

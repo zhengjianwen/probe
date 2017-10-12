@@ -8,6 +8,10 @@ func CreateTask(tk interface{}) (int64, error) {
 	return Orm.Insert(tk)
 }
 
+func GetTasks(tk interface{}) error {
+	return Orm.Table("task_http").Find(tk)
+}
+
 func GetTask(tp string, id int64) (interface{}, error) {
 	switch tp {
 	case "http":

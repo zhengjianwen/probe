@@ -6,9 +6,26 @@ import (
 	pb "github.com/rongyungo/probe/server/proto"
 	errutil "github.com/rongyungo/probe/util/errors"
 	"github.com/rongyungo/probe/util/sql"
+	"reflect"
 	"testing"
 )
 
+func TestGetTasks(t *testing.T) {
+	sql.DefaultDatabaseCfg.Host = "192.168.99.100"
+	if err := InitMySQL(&sql.DefaultDatabaseCfg); err != nil {
+		t.Fatal(err)
+	}
+
+	var target []interface{}
+	v := reflect.MakeSlice(reflect.TypeOf([]types.Task_Http{}), 10, 10).Interface().([]types.Task_Http)
+
+	fmt.Println(v)
+	if err := GetTasks(v); err != nil {
+		t.Fatal(err)
+	}
+
+	fmt.Println(len(target))
+}
 func TestCreateTask(t *testing.T) {
 	sql.DefaultDatabaseCfg.Host = "192.168.99.100"
 	if err := InitMySQL(&sql.DefaultDatabaseCfg); err != nil {
