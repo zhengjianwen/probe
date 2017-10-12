@@ -3,6 +3,7 @@ package model
 import (
 	"github.com/go-xorm/xorm"
 	"github.com/rongyungo/probe/server/master/types"
+	pb "github.com/rongyungo/probe/server/proto"
 	"github.com/rongyungo/probe/util/sql"
 )
 
@@ -23,5 +24,6 @@ func Sync() error {
 		new(types.Task_Http),
 		new(types.Task_Ping),
 		new(types.Task_TraceRoute),
+		new(pb.TaskResult),
 	)
 }

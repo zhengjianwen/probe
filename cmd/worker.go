@@ -44,7 +44,7 @@ var workerStartCmd = &cobra.Command{
 		}
 
 		log.Printf("validate master address %s ok.\n", startWorkerOptions.masterHttpAddresses)
-		log.Printf("worker id is %s.\n", startWorkerOptions.workerId)
+		log.Printf("worker id is %d.\n", startWorkerOptions.workerId)
 
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -53,7 +53,7 @@ var workerStartCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		log.Printf("register worker %s success\n", startWorkerOptions.workerId)
+		log.Printf("register worker %d success\n", startWorkerOptions.workerId)
 
 		worker.Start(&worker.StartConfig{
 			WorkerId:       startWorkerOptions.workerId,

@@ -39,7 +39,8 @@ func (m *ScheduleManager) GetScheduleTasks() ([]types.TaskInterface, error) {
 func (m *ScheduleManager) getScheduleHttpTasks() ([]types.Task_Http, error) {
 	var res []types.Task_Http
 	now := time.Now().Unix()
-	if err := m.Db.Where("schedule_time < ? and ? <= schedule_time + period_sec", now, now).Find(&res); err != nil {
+	if err := m.Db.Where("type = ? and schedule_time < ? and ? <= schedule_time + period_sec",
+		pb.TaskType_HTTP, now, now).Find(&res); err != nil {
 		return nil, err
 	}
 
@@ -48,7 +49,7 @@ func (m *ScheduleManager) getScheduleHttpTasks() ([]types.Task_Http, error) {
 
 func (m *ScheduleManager) getAllHttpTasks() ([]types.Task_Http, error) {
 	var res []types.Task_Http
-	if err := m.Db.Find(&res); err != nil {
+	if err := m.Db.Where("type = ?", pb.TaskType_HTTP).Find(&res); err != nil {
 		return nil, err
 	}
 	return res, nil

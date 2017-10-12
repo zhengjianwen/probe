@@ -100,7 +100,7 @@ func (c *conn) emitTaskBuf() {
 }
 
 func (c *conn) Print() {
-	log.Printf("worker(%s) conn  info:", c.workerId)
+	log.Printf("worker(%d) conn  info:", c.workerId)
 	log.Printf("health check: %s\n", time.Unix(c.healthCheckTime, 0).String())
 	log.Printf("create time: %s ", time.Unix(c.createTime, 0).String())
 	log.Printf("update time: %s", time.Unix(c.updateTime, 0).String())
@@ -108,7 +108,7 @@ func (c *conn) Print() {
 
 func (c *conn) recordMessage(tks ...types.TaskInterface) {
 	for _, tk := range tks {
-		if len(c.sendCh) <= maxSendChanLength-1 {
+		if len(c.sendCh) >= maxSendChanLength-1 {
 			log.Println("master grpc conn send channel full")
 		}
 		c.sendCh <- tk

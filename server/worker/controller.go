@@ -43,7 +43,7 @@ func StartController(c *StartConfig) error {
 
 			go func(task *pb.Task) {
 				if res := exec.Execute(task); res != nil {
-					log.Printf("exec %s task(%s) result %s\n",
+					log.Printf("exec %s task(%d) result %s\n",
 						t.GetBasicInfo().GetType().String(), t.GetBasicInfo().GetId(), res.String())
 					resultCh <- res
 				}
