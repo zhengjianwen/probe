@@ -26,6 +26,11 @@ var (
 	Status_UnHealth_Err string = "unhealth error"
 )
 
+// a health conn means server accept health check reporter
+// among the period of health, conn may lose it by a error
+// scheduler can send task to a unhealth conn
+// housekeeping will remove unhealth conn
+
 type conn struct {
 	*sync.RWMutex
 
@@ -44,6 +49,7 @@ type conn struct {
 	//finalBuf []*pb.TaskInfo //5 minutes
 
 	unHealthCKCh chan struct{}
+	closed       bool //if closed, no data will send to sendCh
 	closeCh      chan struct{}
 }
 
@@ -59,6 +65,7 @@ func newConn(wid int64) *conn {
 		//resendCh:        make(chan *pb.TaskInfo, maxResendChanLength),
 		//finalBuf:        make([]*pb.TaskInfo, 1),
 		unHealthCKCh: make(chan struct{}, 5),
+		closed:       false,
 		closeCh:      make(chan struct{}, 2),
 	}
 }
@@ -91,6 +98,25 @@ func (c *conn) addTaskBuf(t *pb.Task) {
 	if t != nil {
 		//c.finalBuf = append(c.finalBuf, t)
 	}
+}
+
+func (c *conn) close() {
+	c.Lock()
+	defer c.Unlock()
+
+	c.closed = true
+}
+
+func (c *conn) open() {
+	c.Lock()
+	defer c.Unlock()
+
+	c.closed = false
+}
+
+func (c *conn) isHealth() bool {
+	// no health report in a short time
+	return time.Now().Unix()-time.Unix(c.healthCheckTime, 0).Unix() < (healthCheckSec*2 + tolerantHealthCheckSec)
 }
 
 func (c *conn) emitTaskBuf() {
@@ -161,6 +187,7 @@ func (c *conn) sendMessage(stream pb.MasterWorker_SubscribeServer) {
 		//		c.setStatus(Status_UnHealth_Err)
 		//	}
 		case <-c.closeCh:
+			c.close()
 			log.Println("<<conn stop sending message goroutine>>")
 			return
 		}

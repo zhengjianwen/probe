@@ -2,7 +2,7 @@ package scheduler
 
 import (
 	"github.com/go-xorm/xorm"
-	"github.com/rongyungo/probe/server/master/grpc"
+
 	pb "github.com/rongyungo/probe/server/proto"
 	errutil "github.com/rongyungo/probe/util/errors"
 	sqlutil "github.com/rongyungo/probe/util/sql"
@@ -75,9 +75,7 @@ func (m *ScheduleManager) Run() {
 				log.Printf("scheduler[%s]: query prepare schedule tasks: %d\n", m.TaskType.String(), len(tasks))
 			}
 
-			workerIds := grpc.Master.GetWorkerIds()
-
-			m.Schedule(workerIds, nil, tasks)
+			m.Schedule(nil, tasks)
 
 		case <-ctk.C:
 			go m.CorrectScheduleTime()

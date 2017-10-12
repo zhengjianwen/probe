@@ -7,8 +7,8 @@ import (
 	"log"
 )
 
-func (m *ScheduleManager) Schedule(wids []int64, s *types.Strategy, ts []types.TaskInterface) error {
-	for _, wid := range wids {
+func (m *ScheduleManager) Schedule(s *types.Strategy, ts []types.TaskInterface) error {
+	for _, wid := range grpc.Master.GetWorkerIds() {
 		if err := grpc.Master.SendTask(wid, ts); err != nil {
 			log.Printf("schedule manager send worker %s err %v\n", wid, err)
 		}

@@ -11,13 +11,15 @@ var ErrConnClosed = errors.New("worker grpc stream closed")
 
 // send a task to a worker channel
 func (m *master) SendTask(wid int64, tk []types.TaskInterface) error {
-	c, err := m.getWorkerCon(wid)
+	conn, err := m.getWorkerCon(wid)
 	if err != nil {
 		return err
 	}
 
-	// record channel may be full error
-	go c.recordMessage(tk...)
+	if conn.isHealth() {
+		// record channel may be full error
+		go conn.recordMessage(tk...)
+	}
 
 	return nil
 }

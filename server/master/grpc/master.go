@@ -42,6 +42,7 @@ func NewMaster() *master {
 	return &m
 }
 
+//quickly get all workers with no condition
 func (m *master) GetWorkerIds() []int64 {
 	m.RLock()
 	defer m.RUnlock()
@@ -69,6 +70,7 @@ func (m *master) serveWorker(wId int64, ss pb.MasterWorker_SubscribeServer) chan
 	con := m.acceptConn(wId)
 	//log.Printf("------------------------- %#v\n", con.finalBuf)
 	// this part need reduce client multi connect
+
 	if !con.ifSendMessageFnRun() {
 		go con.sendMessage(ss)
 	}
@@ -87,6 +89,8 @@ func (m *master) acceptConn(wId int64) *conn {
 	}
 
 	con.updateTm()
+	con.open()
+
 	m.workerConnMap[wId] = con
 	return con
 }
@@ -142,7 +146,7 @@ func (m *master) isWorkerUnHealth(wId int64) bool {
 		return true
 	}
 
-	return time.Now().Unix()-time.Unix(con.healthCheckTime, 0).Unix() >= (healthCheckSec*2 + tolerantHealthCheckSec)
+	return !con.isHealth()
 }
 
 // no health report in a long time, need lean memory
