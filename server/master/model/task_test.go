@@ -6,26 +6,9 @@ import (
 	pb "github.com/rongyungo/probe/server/proto"
 	errutil "github.com/rongyungo/probe/util/errors"
 	"github.com/rongyungo/probe/util/sql"
-	"reflect"
 	"testing"
 )
 
-func TestGetTasks(t *testing.T) {
-	sql.DefaultDatabaseCfg.Host = "192.168.99.100"
-	if err := InitMySQL(&sql.DefaultDatabaseCfg); err != nil {
-		t.Fatal(err)
-	}
-
-	var target []interface{}
-	v := reflect.MakeSlice(reflect.TypeOf([]types.Task_Http{}), 10, 10).Interface().([]types.Task_Http)
-
-	fmt.Println(v)
-	if err := GetTasks(v); err != nil {
-		t.Fatal(err)
-	}
-
-	fmt.Println(len(target))
-}
 func TestCreateTask(t *testing.T) {
 	sql.DefaultDatabaseCfg.Host = "192.168.99.100"
 	if err := InitMySQL(&sql.DefaultDatabaseCfg); err != nil {
@@ -109,20 +92,7 @@ func TestGetTask_Http(t *testing.T) {
 //	}
 //}
 //
-//func Test_CreateTask_Dns(t *testing.T) {
-//	if err := InitDb("127.0.0.1:27017"); err != nil {
-//		t.Fatal(err)
-//	}
-//
-//	task := types.Task{
-//		DnsSpec: &pb.Task_Dns{
-//			Domain:         "www.baidu.com",
-//			Type:           pb.Task_Dns_A,
-//			ServerDesigned: true,
-//			DNSServer:      "114.114.114.114:53",
-//		},
-//		PeriodSec: 30,
-//	}
+
 //
 //	if id, err := CreateTask(&task); err != nil {
 //		t.Fatal(err)

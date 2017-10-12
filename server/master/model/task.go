@@ -1,6 +1,7 @@
 package model
 
 import (
+	"github.com/rongyungo/probe/server/master/types"
 	errutil "github.com/rongyungo/probe/util/errors"
 )
 
@@ -8,46 +9,45 @@ func CreateTask(tk interface{}) (int64, error) {
 	return Orm.Insert(tk)
 }
 
-func GetTasks(tk interface{}) error {
-	return Orm.Table("task_http").Find(tk)
+func GetTask(tp string, id int64) (interface{}, error) {
+	task := GetTypeStructPtr(tp)
+	if ok, err := Orm.Id(id).Get(task); err != nil {
+		return nil, err
+	} else if !ok {
+		return nil, errutil.ErrTaskIdNotFound
+	}
+
+	return task, nil
 }
 
-func GetTask(tp string, id int64) (interface{}, error) {
-	switch tp {
-	case "http":
-		return GetTask_Http(id)
-	case "dns":
-		return GetTask_Dns(id)
-	case "ping":
-		return GetTask_Ping(id)
-	case "trace_route":
-		return GetTask_TraceRoute(id)
-	case "tcp":
-		return GetTask_Tcp(id)
-	case "udp":
-		return GetTask_Udp(id)
-	case "ftp":
-		return GetTask_Ftp(id)
-	}
-	return nil, errutil.ErrUnSupportTaskType
+func UpdateTask(id int64, task interface{}) error {
+	_, err := Orm.Id(id).Update(task)
+	return err
 }
 
 func DeleteTask(tp string, id int64) error {
+	task := GetTypeStructPtr(tp)
+	_, err := Orm.Id(id).Delete(task)
+	return err
+}
+
+func GetTypeStructPtr(tp string) interface{} {
 	switch tp {
 	case "http":
-		return DeleteTask_Http(id)
+		return &types.Task_Http{}
 	case "dns":
-		return DeleteTask_Dns(id)
+		return &types.Task_Dns{}
 	case "ping":
-		return DeleteTask_Ping(id)
+		return &types.Task_Ping{}
 	case "trace_route":
-		return DeleteTask_TraceRoute(id)
+		return &types.Task_TraceRoute{}
 	case "tcp":
-		return DeleteTask_Tcp(id)
+		return &types.Task_Tcp{}
 	case "udp":
-		return DeleteTask_Udp(id)
+		return &types.Task_Udp{}
 	case "ftp":
-		return DeleteTask_Ftp(id)
+		return &types.Task_Ftp{}
 	}
-	return errutil.ErrUnSupportTaskType
+
+	return nil
 }
