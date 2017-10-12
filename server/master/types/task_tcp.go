@@ -43,7 +43,7 @@ func (t *Task_Tcp) Complete() {
 }
 
 func (t *Task_Tcp) TableName() string {
-	return "task_http"
+	return "task_tcp"
 }
 
 func (t *Task_Tcp) Convert() *pb.Task {

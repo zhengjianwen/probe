@@ -14,5 +14,14 @@ func InitMySQL(cfg *sql.DatabaseConfig) (err error) {
 }
 
 func Sync() error {
-	return Orm.Sync2(new(types.Task_Http), new(types.Worker))
+	return Orm.Sync2(
+		new(types.Worker),
+		new(types.Task_Ftp),
+		new(types.Task_Tcp),
+		new(types.Task_Udp),
+		new(types.Task_Dns),
+		new(types.Task_Http),
+		new(types.Task_Ping),
+		new(types.Task_TraceRoute),
+	)
 }

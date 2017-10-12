@@ -748,7 +748,7 @@ func (m *HttpSpecBasicAuth) GetPasswd() string {
 
 type DnsSpec struct {
 	Domain         string      `protobuf:"bytes,1,opt,name=Domain,json=domain" json:"Domain,omitempty"`
-	Type           DnsSpecType `protobuf:"varint,2,opt,name=Type,json=type,enum=DnsSpecType" json:"Type,omitempty"`
+	Type           DnsSpecType `protobuf:"varint,2,opt,name=Type,json=type,enum=DnsSpecType" json:"Type,omitempty" xorm:"query_type"`
 	IfMatchIp      bool        `protobuf:"varint,3,opt,name=IfMatchIp,json=ifMatchIp" json:"IfMatchIp,omitempty"`
 	MatchIps       []string    `protobuf:"bytes,4,rep,name=MatchIps,json=matchIps" json:"MatchIps,omitempty"`
 	IfMatchDomain  bool        `protobuf:"varint,5,opt,name=IfMatchDomain,json=ifMatchDomain" json:"IfMatchDomain,omitempty"`

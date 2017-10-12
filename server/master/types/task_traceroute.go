@@ -43,7 +43,7 @@ func (t *Task_TraceRoute) Complete() {
 }
 
 func (t *Task_TraceRoute) TableName() string {
-	return "task_http"
+	return "task_trace_route"
 }
 
 func (t *Task_TraceRoute) Convert() *pb.Task {
