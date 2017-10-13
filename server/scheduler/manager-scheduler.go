@@ -85,7 +85,9 @@ func (m *ScheduleManager) Run() {
 			}
 
 			m.Schedule(nil, tasks)
-
+			if len(tasks) > 0 {
+				log.Printf("<<scheduler manager(%s) scheduler %d task over>>", m.TaskType.String(), len(tasks))
+			}
 		case <-ctk.C:
 			go m.CorrectScheduleTime()
 		}

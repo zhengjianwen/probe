@@ -106,6 +106,7 @@ func readBodyToTask(rc io.Reader, tp string) (interface{}, error) {
 	v, _ := target.(interface {
 		Validate() error
 	})
+
 	if err := v.Validate(); err != nil {
 		return nil, err
 	}

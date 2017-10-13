@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/rongyungo/probe/server/apm"
 	"github.com/rongyungo/probe/server/master/start"
 	"github.com/rongyungo/probe/server/master/types"
 	sqlutil "github.com/rongyungo/probe/util/sql"
@@ -23,9 +24,12 @@ func init() {
 	masterStartCmd.PersistentFlags().StringVarP(&DbCfg.User, "user", "", "root", "master service database user name")
 	masterStartCmd.PersistentFlags().StringVarP(&DbCfg.Password, "password", "", "123456", "master service database password")
 	masterStartCmd.PersistentFlags().StringVarP(&DbCfg.DB, "instance", "", "probe", "master service database instance")
+
 	masterStartCmd.PersistentFlags().IntVarP(&DbCfg.ConnMax, "max", "", 3306, "master service database conn config")
 	masterStartCmd.PersistentFlags().IntVarP(&DbCfg.ConnIdle, "idle", "", 3306, "master service database conn config")
 
+	masterStartCmd.PersistentFlags().StringVarP(&apm.Conf.Url, "apm-url", "", "http://www.opdeck.com", "master apm service url")
+	masterStartCmd.PersistentFlags().StringVarP(&apm.Conf.Token, "apm-token", "", "ui49hfowlx0wkxoe,cjeaiqoei93ms8mx821kx", "master apm service token")
 }
 
 var masterCmd = &cobra.Command{
@@ -55,7 +59,7 @@ var masterStartCmd = &cobra.Command{
 		}
 
 		log.Printf("start all with config %#v\n", mCfg)
-		if err := start.StartAll(&mCfg, &DbCfg); err != nil {
+		if err := start.RunAll(&mCfg, &DbCfg); err != nil {
 			log.Printf("start all fail %v\n", err)
 			os.Exit(1)
 		}

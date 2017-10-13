@@ -19,29 +19,34 @@ var trans = &http.Transport{
 }
 
 func ProbeHttp(t *pb.Task) *pb.TaskResult {
-	err, code := DoHttp(t)
+	err, code, statusCode := DoHttp(t)
 
-	return ReturnWithCode(t.GetBasicInfo().GetId(), t.GetBasicInfo().GetType(),
+	res := ReturnWithCode(t.GetBasicInfo().GetId(), t.GetBasicInfo().GetType(),
 		err, time.Now().UnixNano(), code)
+	res.Http = &pb.TaskResultHttp{
+		StatusCode: uint32(statusCode),
+	}
+
+	return res
 }
 
-func DoHttp(t *pb.Task) (error, pb.TaskResultCode) {
+func DoHttp(t *pb.Task) (error, pb.TaskResultCode, int) {
 	if t.HttpSpec == nil {
-		return nil, pb.TaskResult__
+		return nil, pb.TaskResult__, 0
 	}
 
 	client := &http.Client{Transport: trans}
 	req, err := prepareReq(t)
 	if err != nil {
-		return err, pb.TaskResult_ERR_HTTP_NEW_REQUEST
+		return err, pb.TaskResult_ERR_HTTP_NEW_REQUEST, 0
 	}
 
 	rsp, err := client.Do(req)
 	if err != nil {
-		return err, pb.TaskResult_ERR_HTTP_DO_REQUEST
+		return err, pb.TaskResult_ERR_HTTP_DO_REQUEST, 0
 	}
-
-	return matchRsp(t.HttpSpec.Matcher, rsp)
+	err, rc := matchRsp(t.HttpSpec.Matcher, rsp)
+	return err, rc, rsp.StatusCode
 }
 
 func prepareReq(t *pb.Task) (*http.Request, error) {

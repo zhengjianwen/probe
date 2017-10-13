@@ -79,8 +79,14 @@ message taskResult {
     int64       ScheduleTime = 6; //master 派发任务的时间，这个时间充当执行任务ID
     int64       StartMs = 7; //worker 接受到task后执行的时间
     int64       DelayMs = 8; //worker 执行task所花费的时间
-    ping        Ping = 9;
-    traceroute  Traceroute = 10;
+    int64       PeriodSec = 9; // 用户定义的任务执行周期, 单位 秒
+    ping        Ping = 10;
+    traceroute  Traceroute = 11;
+    http        Http = 12;
+
+    message http {
+        uint32 StatusCode = 1;
+    }
 
     message ping {
         uint32 lost  = 1;

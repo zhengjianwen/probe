@@ -45,17 +45,17 @@ func (m *ScheduleManager) TableName() string {
 	case pb.TaskType_HTTP:
 		return new(types.Task_Http).TableName()
 	case pb.TaskType_DNS:
-		return new(types.Task_Http).TableName()
+		return new(types.Task_Dns).TableName()
 	case pb.TaskType_PING:
-		return new(types.Task_Http).TableName()
+		return new(types.Task_Ping).TableName()
 	case pb.TaskType_TRACE_ROUTE:
-		return new(types.Task_Http).TableName()
+		return new(types.Task_TraceRoute).TableName()
 	case pb.TaskType_TCP:
-		return new(types.Task_Http).TableName()
+		return new(types.Task_Tcp).TableName()
 	case pb.TaskType_UDP:
-		return new(types.Task_Http).TableName()
+		return new(types.Task_Udp).TableName()
 	case pb.TaskType_FTP:
-		return new(types.Task_Http).TableName()
+		return new(types.Task_Ftp).TableName()
 	}
 	return "xxx"
 }

@@ -6,6 +6,12 @@ import (
 )
 
 func CreateTask(tk interface{}) (int64, error) {
+	v, _ := tk.(interface {
+		Complete()
+	})
+
+	v.Complete()
+
 	return Orm.Insert(tk)
 }
 

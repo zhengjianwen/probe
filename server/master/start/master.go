@@ -14,24 +14,23 @@ import (
 	"github.com/rongyungo/probe/util/sql"
 )
 
-func StartAll(mCfg *types.StartMasterConfig, dbc *sql.DatabaseConfig) error {
+func RunAll(mCfg *types.StartMasterConfig, dbc *sql.DatabaseConfig) error {
 	if err := model.InitMySQL(dbc); err != nil {
 		return err
 	}
 
-	if err := StartScheduler(dbc); err != nil {
+	if err := RunScheduler(dbc); err != nil {
 		return err
 	}
 
-	if err := StartMaster(mCfg); err != nil {
+	if err := RunMaster(mCfg); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func StartMaster(cfg *types.StartMasterConfig) error {
-
+func RunMaster(cfg *types.StartMasterConfig) error {
 	rt := mux.NewRouter()
 	router.InitWorkerRouter(rt)
 	router.InitTaskRouter(rt)
@@ -54,7 +53,7 @@ func StartMaster(cfg *types.StartMasterConfig) error {
 	return nil
 }
 
-func StartScheduler(dbc *sql.DatabaseConfig) error {
+func RunScheduler(dbc *sql.DatabaseConfig) error {
 	var m1, m2, m3, m4, m5, m6, m7 *scheduler.ScheduleManager
 	var err error
 	if m1, err = scheduler.NewSchedulerManager("http", 60, dbc); err != nil {

@@ -6,6 +6,10 @@ import (
 
 func Execute(t *pb.Task) *pb.TaskResult {
 	var res *pb.TaskResult
+	if t.GetBasicInfo().PeriodSec <= 10 {
+		return nil
+	}
+
 	switch t.BasicInfo.GetType() {
 	case pb.TaskType_HTTP:
 		if t.HttpSpec == nil {
@@ -44,6 +48,7 @@ func Execute(t *pb.Task) *pb.TaskResult {
 		res = ProbeFtp(t)
 	}
 
+	res.PeriodSec = t.GetBasicInfo().PeriodSec
 	res.ScheduleTime = t.BasicInfo.GetScheduleTime()
 	return res
 }
