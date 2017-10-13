@@ -30,16 +30,6 @@ func init() {
 	Conf.Token = "ui49hfowlx0wkxoe,cjeaiqoei93ms8mx821kx"
 }
 
-type point struct {
-	Metric    string `json:"metric"`
-	Endpoint  string `json:"endpoint"`
-	Tags      string `json:"tags"`
-	Value     int    `json:"value"`
-	Timestamp int64  `json:"timestamp"`
-	Type      string `json:"type"`
-	Step      int    `json:"step"`
-}
-
 func Push(res *pb.TaskResult) error {
 	if res == nil {
 		return nil
@@ -47,37 +37,30 @@ func Push(res *pb.TaskResult) error {
 
 	switch res.GetType() {
 	case pb.TaskType_HTTP:
-		if res.GetHttp() != nil {
-			return pushHttp(res)
-		}
+		return pushHttp(res)
+
 	case pb.TaskType_DNS:
+		return pushDns(res)
+
 	case pb.TaskType_PING:
+		return pushPing(res)
+
 	case pb.TaskType_TRACE_ROUTE:
+		return pushTraceRoute(res)
+
 	case pb.TaskType_TCP:
+		return pushTcp(res)
+
 	case pb.TaskType_UDP:
+		return pushUdp(res)
+
 	case pb.TaskType_FTP:
+		return pushFtp(res)
 	}
 	return nil
 }
 
-func pushHttp(res *pb.TaskResult) error {
-	tm := time.Now().Unix() - 60
-	v1, v2, v3 := bufPool.Get().(model.MetricValue), bufPool.Get().(model.MetricValue), bufPool.Get().(model.MetricValue)
-	defer bufPool.Put(v1)
-	defer bufPool.Put(v2)
-	defer bufPool.Put(v3)
-
-	v1.Metric, v2.Metric, v3.Metric = getMetric(res.Type, "statuscode"), getMetric(res.Type, "delay"), getMetric(res.Type, "error")
-	v1.Endpoint, v2.Endpoint, v3.Endpoint = fmt.Sprintf("url-%d", res.TaskId), fmt.Sprintf("url-%d", res.TaskId), fmt.Sprintf("url-%d", res.TaskId)
-	v1.Value, v2.Value, v3.Value = res.GetHttp().GetStatusCode(), res.GetDelayMs(), res.GetErrorCode()
-	v1.Timestamp, v2.Timestamp, v3.Timestamp = tm, tm, tm
-	v1.Type, v2.Type, v3.Type = "GAUGE", "GAUGE", "GAUGE"
-	v1.Step, v2.Step, v3.Step = int(res.GetPeriodSec()), int(res.GetPeriodSec()), int(res.GetPeriodSec())
-
-	return push(&v1, &v2, &v3)
-}
-
-func push(vs ...*model.MetricValue) error {
+func pushToApm(vs ...*model.MetricValue) error {
 	bs, err := json.Marshal(vs)
 	if err != nil {
 		return err
@@ -100,6 +83,24 @@ func push(vs ...*model.MetricValue) error {
 	}
 
 	return nil
+}
+
+func getDelayMetric(res *pb.TaskResult) *model.MetricValue {
+	ret := bufPool.Get().(model.MetricValue)
+
+	ret.Metric, ret.Endpoint, ret.Value = getMetric(res.Type, "delay"), fmt.Sprintf("url-%d", res.TaskId), res.GetDelayMs()
+	ret.Timestamp, ret.Type, ret.Step = time.Now().Unix()-60, "GAUGE", int(res.GetPeriodSec())
+
+	return &ret
+}
+
+func getCodeMetric(res *pb.TaskResult) *model.MetricValue {
+	ret := bufPool.Get().(model.MetricValue)
+
+	ret.Metric, ret.Endpoint, ret.Value = getMetric(res.Type, "code"), fmt.Sprintf("url-%d", res.TaskId), res.GetErrorCode()
+	ret.Timestamp, ret.Type, ret.Step = time.Now().Unix()-60, "GAUGE", int(res.GetPeriodSec())
+
+	return &ret
 }
 
 func getMetric(tp pb.TaskType, key string) string {
