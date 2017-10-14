@@ -162,10 +162,10 @@ func Test_CreateTask_Dns(t *testing.T) {
 
 	task := types.Task_Dns{
 		DnsSpec: pb.DnsSpec{
-			Domain: "www.google.com",
-			Type: pb.DnsSpec_A,
+			Domain:         "www.google.com",
+			Type:           pb.DnsSpec_A,
 			ServerDesigned: true,
-			DNSServer: "114.114.114.114",
+			DNSServer:      "114.114.114.114",
 		},
 		BasicInfo: pb.BasicInfo{
 			PeriodSec: 30,

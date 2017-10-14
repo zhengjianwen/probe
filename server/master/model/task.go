@@ -20,7 +20,7 @@ func GetTask(tp string, id int64) (interface{}, error) {
 	if ok, err := Orm.Id(id).Get(task); err != nil {
 		return nil, err
 	} else if !ok {
-		return nil, errutil.ErrTaskIdNotFound
+		return nil, errutil.ErrTaskNotFound
 	}
 
 	return task, nil

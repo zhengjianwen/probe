@@ -7,8 +7,12 @@ import (
 
 func InitWorkerRouter(r *mux.Router) {
 	sub := r.PathPrefix("/api/worker").Subrouter()
-	sub.HandleFunc("/{wid}/ping", handler.PingHandler).Methods("GET")
+	sub.HandleFunc("/", handler.ListWorkersHandler).Methods("GET")
+	sub.HandleFunc("/{wid}", handler.GetWorkerHandler).Methods("GET")
 	sub.HandleFunc("/{wid}", handler.RegisterWorkerHandler).Methods("POST")
+	sub.HandleFunc("/{wid}", handler.AuthAdmin(handler.AdminEditWorkerHandler)).Methods("PUT")
+	sub.HandleFunc("/{wid}", handler.AuthAdmin(handler.AdminDelWorkerHandler)).Methods("DELETE")
+	sub.HandleFunc("/{wid}/ping", handler.PingHandler).Methods("GET")
 }
 
 func InitTaskRouter(r *mux.Router) {

@@ -9,6 +9,12 @@ import (
 	"strconv"
 )
 
+func AuthAdmin(fn func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+	}
+}
+
 func AuthTaskMid(fn func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		tid, ttp := mux.Vars(r)["tid"], mux.Vars(r)["ttp"]
