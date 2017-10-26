@@ -3,8 +3,6 @@ package grpc
 import (
 	"net"
 
-	"github.com/rongyungo/probe/server/apm"
-	"github.com/rongyungo/probe/server/master/model"
 	pb "github.com/rongyungo/probe/server/proto"
 	"google.golang.org/grpc"
 	"log"
@@ -46,14 +44,7 @@ func (m *master) Subscribe(stream pb.MasterWorker_SubscribeServer) error {
 		case pb.Topic_HEALTH_REPORT:
 			m.healthCheck(msg.WorkerId)
 		case pb.Topic_RESULT:
-			if err := model.InsertTaskResult(msg.Result); err != nil {
-				log.Printf("server store task result err %v\n", err)
-			}
-
-			if err := apm.Push(msg.Result); err != nil {
-				log.Printf("server push task result to apm err %v\n", err)
-			}
-
+			handleResult(msg)
 		}
 		log.Printf("server recv message %#v\n", msg.String())
 	}

@@ -14,6 +14,11 @@ import (
 	"time"
 )
 
+type taskScheduleInfo struct {
+	TaskId 		 int64
+	ScheduleTime int64
+}
+
 type ScheduleManager struct {
 	TaskType        pb.TaskType
 	StructSliceType reflect.Type
@@ -66,17 +71,20 @@ func (m *ScheduleManager) Start() error {
 }
 
 func (m *ScheduleManager) Run() {
-	go m.CorrectScheduleTime()
-	ctk := time.NewTicker(time.Second * time.Duration(m.PeriodSec)) //scheduler time correct ticker
 	tk := time.NewTicker(time.Second * time.Duration(5))
 
 	for {
 		select {
 		case <-tk.C:
-			tasks, err := m.GetScheduleTasks()
+			//tasks, err := m.GetScheduleTasks()
+			tasks, err := m.GetAllTasks()
 			if err != nil {
 				log.Printf("scheduler get to schedule tasks err %v\n", err)
 				continue
+			}
+
+			if len(tasks) > 0  {
+				log.Printf("scheduler get %d to schedule tasks \n", len(tasks))
 			}
 
 			tasks = m.taskManager.ReduceReplicatedTask(tasks)
@@ -88,8 +96,6 @@ func (m *ScheduleManager) Run() {
 			if len(tasks) > 0 {
 				log.Printf("<<scheduler manager(%s) scheduler %d task over>>", m.TaskType.String(), len(tasks))
 			}
-		case <-ctk.C:
-			go m.CorrectScheduleTime()
 		}
 	}
 }

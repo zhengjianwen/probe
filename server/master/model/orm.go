@@ -11,6 +11,9 @@ var Orm *xorm.Engine
 
 func InitMySQL(cfg *sql.DatabaseConfig) (err error) {
 	Orm, err = sql.InitMySQL(cfg)
+	if err != nil {
+		return err
+	}
 	return Sync()
 }
 
@@ -25,5 +28,6 @@ func Sync() error {
 		new(types.Task_Ping),
 		new(types.Task_TraceRoute),
 		new(pb.TaskResult),
+		new(types.TaskSchedule),
 	)
 }

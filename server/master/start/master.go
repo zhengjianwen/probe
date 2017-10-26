@@ -9,6 +9,7 @@ import (
 	"github.com/rongyungo/probe/server/master/grpc"
 	"github.com/rongyungo/probe/server/master/http/router"
 	"github.com/rongyungo/probe/server/master/model"
+	"github.com/rongyungo/probe/server/stat"
 	"github.com/rongyungo/probe/server/master/types"
 	"github.com/rongyungo/probe/server/scheduler"
 	"github.com/rongyungo/probe/util/sql"
@@ -18,6 +19,12 @@ func RunAll(mCfg *types.StartMasterConfig, dbc *sql.DatabaseConfig) error {
 	if err := model.InitMySQL(dbc); err != nil {
 		return err
 	}
+
+	if err := stat.InitMySQL(dbc);err != nil {
+		return err
+	}
+
+	go stat.Start()
 
 	if err := RunScheduler(dbc); err != nil {
 		return err
