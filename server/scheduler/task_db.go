@@ -1,10 +1,8 @@
 package scheduler
 
 import (
-	"fmt"
 	"github.com/rongyungo/probe/server/master/types"
 	pb "github.com/rongyungo/probe/server/proto"
-	"time"
 )
 
 func (m *ScheduleManager) GetAllTasks() ([]types.TaskInterface, error) {
@@ -35,11 +33,4 @@ func (m *ScheduleManager) TableName() string {
 		return new(types.Task_Ftp).TableName()
 	}
 	return "xxx"
-}
-
-func (m *ScheduleManager) UpdateTaskTime(tid int64) error {
-	sql := fmt.Sprintf("UPDATE %s SET schedule_time = %d WHERE id = %d",
-		m.TableName(), time.Now().Unix(), tid)
-	_, err := m.Db.Exec(sql)
-	return err
 }

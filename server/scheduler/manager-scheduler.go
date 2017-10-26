@@ -83,10 +83,6 @@ func (m *ScheduleManager) Run() {
 				continue
 			}
 
-			if len(tasks) > 0  {
-				log.Printf("scheduler get %d to schedule tasks \n", len(tasks))
-			}
-
 			tasks = m.taskManager.ReduceReplicatedTask(tasks)
 			if len(tasks) > 0 {
 				log.Printf("scheduler[%s]: query prepare schedule tasks: %d\n", m.TaskType.String(), len(tasks))

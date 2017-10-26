@@ -77,7 +77,6 @@ type taskRecord struct {
 	nextSt int64
 }
 
-
 func (m *taskManager) ReduceReplicatedTask(l []types.TaskInterface) []types.TaskInterface {
 	now := time.Now().Unix()
 	var ret []types.TaskInterface

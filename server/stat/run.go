@@ -21,7 +21,7 @@ func Start() {
 	for {
 		select {
 			case <- tk.C:
-				CalcuteTaskAvaliablilty()
+				CalculateTaskAvaliablilty()
 		}
 	}
 }
@@ -32,7 +32,7 @@ func sync() error {
 	)
 }
 
-func CalcuteTaskAvaliablilty() {
+func CalculateTaskAvaliablilty() {
 	var l []types.TaskSchedule
 	if err := Orm.Where("if_stat = false AND (UNIX_TIMESTAMP() - schedule_time) <= 20").
 	OrderBy("schedule_time").Asc("schedule_time").Find(&l); err != nil {

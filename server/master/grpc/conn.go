@@ -133,10 +133,12 @@ func (c *conn) Print() {
 }
 
 func (c *conn) recordMessage(tks ...types.TaskInterface) {
+	scheduleTime := time.Now().Unix()
 	for _, tk := range tks {
 		if len(c.sendCh) >= maxSendChanLength-1 {
 			log.Println("master grpc conn send channel full")
 		}
+		tk.SetScheduleTime(scheduleTime)
 		c.sendCh <- tk
 	}
 }

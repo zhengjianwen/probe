@@ -7,4 +7,5 @@ type TaskInterface interface {
 	GetId() int64
 	GetPeriodSec() int64
 	Convert() *pb.Task
+	SetScheduleTime(st int64)
 }

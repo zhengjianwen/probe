@@ -483,6 +483,12 @@ func (m *BasicInfo) GetScheduleTime() int64 {
 	return 0
 }
 
+func (m *BasicInfo) SetScheduleTime(st int64) {
+	if m != nil {
+		m.ScheduleTime = st
+	}
+}
+
 func (m *BasicInfo) GetPeriodSec() int64 {
 	if m != nil {
 		return m.PeriodSec
