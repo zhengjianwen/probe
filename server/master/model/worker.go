@@ -31,9 +31,14 @@ func AdminDelWorker(id int64) error {
 	return err
 }
 
-func ListWorkers() ([]types.Worker, error) {
+func ListWorkers(ids ...int64) (*[]types.Worker, error) {
 	var l []types.Worker
-	return l, Orm.Find(&l)
+
+	if len(ids) == 0 {
+		return &l, Orm.Find(&l)
+	} else {
+		return &l, Orm.In("id", ids).Find(&l)
+	}
 }
 
 func GetWorkerById(id int64) (*types.Worker, error) {

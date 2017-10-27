@@ -7,7 +7,7 @@ import (
 
 func InitWorkerRouter(r *mux.Router) {
 	sub := r.PathPrefix("/api/worker").Subrouter()
-	sub.HandleFunc("/", handler.ListWorkersHandler).Methods("GET")
+	sub.HandleFunc("", handler.ListWorkersHandler).Methods("GET")
 	sub.HandleFunc("/{wid}", handler.GetWorkerHandler).Methods("GET")
 	sub.HandleFunc("/{wid}", handler.RegisterWorkerHandler).Methods("POST")
 	sub.HandleFunc("/{wid}", handler.AuthAdmin(handler.AdminEditWorkerHandler)).Methods("PUT")

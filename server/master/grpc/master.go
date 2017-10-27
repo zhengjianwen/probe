@@ -38,7 +38,7 @@ func NewMaster() *master {
 		workerConnMap: make(map[int64]*conn),
 	}
 
-	go m.initHouseKeeping()
+	go m.syncWorker()
 	return &m
 }
 
@@ -55,12 +55,12 @@ func (m *master) GetWorkerIds() []int64 {
 	return ids
 }
 
-func (m *master) initHouseKeeping() {
+func (m *master) syncWorker() {
 	for {
 		select {
-		case <-time.Tick(time.Second * 30):
+		case  <-time.Tick(time.Second * 30):
 			log.Printf("master start house keeping")
-			m.cleanConn()
+			m.CleanWorkerConn()
 			log.Printf("master start house keeping over")
 		}
 	}
@@ -122,7 +122,7 @@ func (m *master) healthCheck(wId int64) {
 	}
 }
 
-func (m *master) cleanConn() {
+func (m *master) CleanWorkerConn() {
 	for workerId, conn := range m.workerConnMap {
 		if m.isWorkerUnHealth(workerId) {
 			log.Printf("master uninstall worker(%s) con\n", workerId)

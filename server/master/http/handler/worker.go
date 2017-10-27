@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rongyungo/probe/server/master/model"
 	"github.com/rongyungo/probe/server/master/types"
+	"github.com/rongyungo/probe/server/master/grpc"
 	"strconv"
 )
 
@@ -123,7 +124,15 @@ func AdminDelWorkerHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ListWorkersHandler(w http.ResponseWriter, r *http.Request) {
-	if wks, err := model.ListWorkers(); err != nil {
+	v := r.FormValue("source")
+
+	var ids []int64
+	if v == "memory" {
+		grpc.Master.CleanWorkerConn()
+		ids = grpc.Master.GetWorkerIds()
+	}
+
+	if wks, err := model.ListWorkers(ids...); err != nil {
 		message.Error(w, err)
 	} else {
 		message.SuccessI(w, wks)
