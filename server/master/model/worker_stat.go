@@ -1,33 +1,34 @@
 package model
 
 import (
+	pb "github.com/rongyungo/probe/server/proto"
 	"github.com/rongyungo/probe/server/master/types"
 	"fmt"
 )
 
-func SyncTackScheduleResult(wid, tid, scheduleT int64, ok bool) error {
+func SyncTackScheduleResult(wid int64, res *pb.TaskResult) error {
 	var wks types.TaskSchedule
 	exist, err := Orm.Where("worker_id = ? AND task_id = ? AND schedule_time = ?",
-		wid, tid, scheduleT).Get(&wks)
+		wid, res.TaskId, res.ScheduleTime).Get(&wks)
 	if err != nil {
 		return err
 	}
 
 	if !exist {
-		return CreateTaskSchedule(wid, tid, scheduleT, ok )
+		return CreateTaskSchedule(wid, res)
 	}
 
-	sql := "UPDATE task_schedule SET %s WHERE worker_id = ? AND task_id = ? AND schedule_time = ?"
+	sql := "UPDATE task_schedule SET %s WHERE worker_id = ? AND task_id = ? AND schedule_time = ? AND period_sec = ?"
 	var setSql = "success_n = success_n + 1"
-	if !ok {
+	if !res.Success {
 		setSql = "error_n = error_n +1"
 	}
 
-	_, err = Orm.Exec(fmt.Sprintf(sql, setSql), wid, tid, scheduleT)
+	_, err = Orm.Exec(fmt.Sprintf(sql, setSql), wid, res.TaskId, res.ScheduleTime, res.PeriodSec)
 	return err
 }
 
-func CreateTaskSchedule(wid, tid, scheduleT int64, ok bool) error {
+func CreateTaskSchedule(wid int64, res *pb.TaskResult) error {
 	session := Orm.NewSession()
 	defer session.Close()
 
@@ -37,12 +38,13 @@ func CreateTaskSchedule(wid, tid, scheduleT int64, ok bool) error {
 	}
 
 	ts := types.TaskSchedule{
-		WorkerId: wid,
-		TaskId: tid,
-		ScheduleTime: scheduleT,
+		WorkerId: 		wid,
+		TaskId: 		res.TaskId,
+		ScheduleTime: 	res.ScheduleTime,
+		PeriodSec: 		int32(res.PeriodSec),
 	}
 
-	if ok {
+	if res.Success {
 		ts.SuccessN = 1
 	} else {
 		ts.ErrorN = 1

@@ -22,6 +22,7 @@ func Start() {
 		select {
 			case <- tk.C:
 				CalculateTaskAvaliablilty()
+
 		}
 	}
 }
@@ -34,7 +35,8 @@ func sync() error {
 
 func CalculateTaskAvaliablilty() {
 	var l []types.TaskSchedule
-	if err := Orm.Where("if_stat = false AND (UNIX_TIMESTAMP() - schedule_time) <= 20").
+	//if err := Orm.Where("if_stat = false AND (UNIX_TIMESTAMP() - schedule_time) <= 20").
+	if err := Orm.Where("if_stat = false AND (UNIX_TIMESTAMP() - schedule_time) <= 60 * 10").
 	OrderBy("schedule_time").Asc("schedule_time").Find(&l); err != nil {
 		log.Printf("[stat] query task schedule result to calcute err %v\n", err)
 	}
@@ -46,9 +48,13 @@ func CalculateTaskAvaliablilty() {
 			l[0].WorkerId, l[0].TaskId, l[0].ScheduleTime).Cols("if_stat").Update(types.TaskSchedule{
 				IfStat: true,
 		})
-
 		if err != nil {
 			log.Printf("[stat] update task schedule result stat err %v\n", err)
+			return
 		}
+
+		//apm.PushHttpStat()
+
 	}
 }
+

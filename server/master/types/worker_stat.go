@@ -6,6 +6,7 @@ type TaskSchedule struct {
 	ScheduleTime 	int64 	`xorm:"schedule_time pk"`
 	SuccessN 		int64
 	ErrorN 			int64
+	PeriodSec       int32
 	IfStat          bool
 }
 

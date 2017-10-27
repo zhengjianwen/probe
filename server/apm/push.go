@@ -30,14 +30,14 @@ func init() {
 	Conf.Token = "ui49hfowlx0wkxoe,cjeaiqoei93ms8mx821kx"
 }
 
-func Push(res *pb.TaskResult) error {
+func PushWorker(wid int64, res *pb.TaskResult) error {
 	if res == nil {
 		return nil
 	}
 
 	switch res.GetType() {
 	case pb.TaskType_HTTP:
-		return pushHttp(res)
+		return pushWorkerHttp(wid, res)
 
 	case pb.TaskType_DNS:
 		return pushDns(res)
@@ -93,6 +93,16 @@ func getDelayMetric(res *pb.TaskResult) *model.MetricValue {
 
 	return &ret
 }
+
+func getWorkerDelayMetric(wid int64, res *pb.TaskResult) *model.MetricValue {
+	ret := bufPool.Get().(model.MetricValue)
+
+	ret.Metric, ret.Endpoint, ret.Value = getMetric(res.Type, "delay"), fmt.Sprintf("url-%d-%d", wid, res.TaskId), res.GetDelayMs()
+	ret.Timestamp, ret.Type, ret.Step = time.Now().Unix()-60, "GAUGE", int(res.GetPeriodSec())
+
+	return &ret
+}
+
 
 func getCodeMetric(res *pb.TaskResult) *model.MetricValue {
 	ret := bufPool.Get().(model.MetricValue)

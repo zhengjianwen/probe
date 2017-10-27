@@ -6,7 +6,7 @@ import (
 )
 
 func TestPush(t *testing.T) {
-	if err := Push(&pb.TaskResult{
+	if err := PushWorker(1, &pb.TaskResult{
 		TaskId:    900,
 		Type:      pb.TaskType_HTTP,
 		Http:      &pb.TaskResultHttp{400},

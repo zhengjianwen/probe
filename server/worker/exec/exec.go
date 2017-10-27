@@ -48,7 +48,9 @@ func Execute(t *pb.Task) *pb.TaskResult {
 		res = ProbeFtp(t)
 	}
 
+
 	res.PeriodSec = t.GetBasicInfo().PeriodSec
 	res.ScheduleTime = t.BasicInfo.GetScheduleTime()
+
 	return res
 }

@@ -12,7 +12,7 @@ func handleResult(msg *pb.Topic) {
 		log.Printf("server storage hand task result err %v\n", err)
 	}
 
-	if err := apm.Push(msg.Result); err != nil {
+	if err := apm.PushWorker(msg.WorkerId, msg.Result); err != nil {
 		log.Printf("server push task result to apm err %v\n", err)
 	}
 }
