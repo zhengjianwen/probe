@@ -12,7 +12,7 @@ func RegisterWorker(worker *types.Worker) error {
 
 //Country        string //国家
 //Province       string //省
-//City 		   string //市
+//City 		     string //市
 //Operator       string //运营商
 func AdminEditWorker(id int64, worker *types.Worker) error {
 	if id <= 0 {

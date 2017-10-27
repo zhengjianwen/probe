@@ -6,29 +6,28 @@ import (
 	"fmt"
 )
 
-func SyncTackScheduleResult(wid int64, res *pb.TaskResult) error {
+func SyncTackScheduleResult(res *pb.TaskResult) error {
 	var wks types.TaskSchedule
-	exist, err := Orm.Where("worker_id = ? AND task_id = ? AND schedule_time = ?",
-		wid, res.TaskId, res.ScheduleTime).Get(&wks)
+	exist, err := Orm.Where("task_id = ? AND schedule_time = ?", res.TaskId, res.ScheduleTime).Get(&wks)
 	if err != nil {
 		return err
 	}
 
 	if !exist {
-		return CreateTaskSchedule(wid, res)
+		return CreateTaskSchedule(res)
 	}
 
-	sql := "UPDATE task_schedule SET %s WHERE worker_id = ? AND task_id = ? AND schedule_time = ? AND period_sec = ?"
+	sql := "UPDATE task_schedule SET %s WHERE task_id = ? AND schedule_time = ? AND period_sec = ?"
 	var setSql = "success_n = success_n + 1"
 	if !res.Success {
 		setSql = "error_n = error_n +1"
 	}
 
-	_, err = Orm.Exec(fmt.Sprintf(sql, setSql), wid, res.TaskId, res.ScheduleTime, res.PeriodSec)
+	_, err = Orm.Exec(fmt.Sprintf(sql, setSql), res.TaskId, res.ScheduleTime, res.PeriodSec)
 	return err
 }
 
-func CreateTaskSchedule(wid int64, res *pb.TaskResult) error {
+func CreateTaskSchedule( res *pb.TaskResult) error {
 	session := Orm.NewSession()
 	defer session.Close()
 
@@ -38,7 +37,6 @@ func CreateTaskSchedule(wid int64, res *pb.TaskResult) error {
 	}
 
 	ts := types.TaskSchedule{
-		WorkerId: 		wid,
 		TaskId: 		res.TaskId,
 		ScheduleTime: 	res.ScheduleTime,
 		PeriodSec: 		int32(res.PeriodSec),

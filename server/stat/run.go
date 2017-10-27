@@ -5,7 +5,7 @@ import (
 	"github.com/go-xorm/xorm"
 	"github.com/rongyungo/probe/server/master/types"
 	"time"
-	//"github.com/rongyungo/probe/server/apm"
+	"github.com/rongyungo/probe/server/apm"
 	"log"
 )
 
@@ -43,18 +43,20 @@ func CalculateTaskAvaliablilty() {
 
 	//当存在2组以上的task result没有处理时， 处理最old的item
 	if len(l) >= 2 {
-		log.Printf("---------> get result %#v\n <---------------", l[0])
-		_, err := Orm.Where("worker_id = ? AND task_id = ? AND schedule_time = ?",
-			l[0].WorkerId, l[0].TaskId, l[0].ScheduleTime).Cols("if_stat").Update(types.TaskSchedule{
-				IfStat: true,
+		log.Printf("[stat] %#v\n <---------------", l[0])
+
+		err := apm.PushHttpStat(l[0].TaskId, float64(l[0]. SuccessN%10), int(l[0].PeriodSec))
+		if err != nil {
+			log.Printf("")
+		}
+
+		_, err = Orm.Where("task_id = ? AND schedule_time = ?", l[0].TaskId, l[0].ScheduleTime).Cols("if_stat").Update(types.TaskSchedule{
+			IfStat: true,
 		})
 		if err != nil {
 			log.Printf("[stat] update task schedule result stat err %v\n", err)
 			return
 		}
-
-		//apm.PushHttpStat(l[0].ta)
-
 	}
 }
 

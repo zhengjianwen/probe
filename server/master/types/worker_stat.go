@@ -1,7 +1,6 @@
 package types
 
 type TaskSchedule struct {
-	WorkerId 		int64 	`xorm:"worker_id pk"`
 	TaskId      	int64 	`xorm:"task_id pk"`
 	ScheduleTime 	int64 	`xorm:"schedule_time pk"`
 	SuccessN 		int64

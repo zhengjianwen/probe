@@ -8,7 +8,7 @@ import (
 )
 
 func handleResult(msg *pb.Topic) {
-	if err := model.HandleTaskResult(msg.WorkerId, msg.Result); err != nil {
+	if err := model.HandleTaskResult(msg.Result); err != nil {
 		log.Printf("server storage hand task result err %v\n", err)
 	}
 

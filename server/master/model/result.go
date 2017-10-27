@@ -4,9 +4,9 @@ import (
 	pb "github.com/rongyungo/probe/server/proto"
 )
 
-func HandleTaskResult(wid int64, r *pb.TaskResult) error {
+func HandleTaskResult(r *pb.TaskResult) error {
 	if r.Type == pb.TaskType_HTTP {
-		return SyncTackScheduleResult(wid, r)
+		return SyncTackScheduleResult(r)
 	}
 	//_, err := Orm.Insert(r)
 	return nil
