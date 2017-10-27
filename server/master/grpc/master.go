@@ -126,7 +126,7 @@ func (m *master) CleanWorkerConn() {
 	for workerId, conn := range m.workerConnMap {
 		if m.isWorkerUnHealth(workerId) {
 			log.Printf("master uninstall worker(%s) con\n", workerId)
-			conn.Print()
+			//conn.Print()
 
 			// TODO 主动监测
 			if m.isWorkerDeath(workerId) {
@@ -135,7 +135,7 @@ func (m *master) CleanWorkerConn() {
 		} else if len(conn.getStatus()) == 0 {
 			conn.setStatus(Status_Health)
 		}
-		conn.Print()
+		//conn.Print()
 	}
 }
 

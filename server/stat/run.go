@@ -22,7 +22,6 @@ func Start() {
 		select {
 			case <- tk.C:
 				CalculateTaskAvaliablilty()
-
 		}
 	}
 }
@@ -41,22 +40,33 @@ func CalculateTaskAvaliablilty() {
 		log.Printf("[stat] query task schedule result to calcute err %v\n", err)
 	}
 
+	if len(l) <= 1 {
+		return
+	}
+
 	//当存在2组以上的task result没有处理时， 处理最old的item
-	if len(l) >= 2 {
-		log.Printf("[stat] %#v\n <---------------", l[0])
+	wks, err := ListWorkerWithCached()
+	if err != nil {
+		log.Printf("[stat] list working workers err %v\n", err)
+		return
+	}
 
-		err := apm.PushHttpStat(l[0].TaskId, float64(l[0]. SuccessN%10), int(l[0].PeriodSec))
-		if err != nil {
-			log.Printf("")
-		}
+	length := len(wks)
 
-		_, err = Orm.Where("task_id = ? AND schedule_time = ?", l[0].TaskId, l[0].ScheduleTime).Cols("if_stat").Update(types.TaskSchedule{
-			IfStat: true,
-		})
-		if err != nil {
-			log.Printf("[stat] update task schedule result stat err %v\n", err)
-			return
-		}
+	if length == 0 {
+		return
+	}
+
+	v := int(float64(l[0]. SuccessN)/float64(length) * 100)
+	err = apm.PushHttpStat(l[0].TaskId, v, int(l[0].PeriodSec))
+	if err != nil {
+		log.Printf("[stat] push http stat err %v\n", err)
+		return
+	}
+
+	if _, err = Orm.Where("task_id = ? AND schedule_time = ?", l[0].TaskId, l[0].ScheduleTime).
+	Cols("if_stat").Update(types.TaskSchedule{IfStat: true,}); err != nil {
+		log.Printf("[stat] update task schedule result stat err %v\n", err)
 	}
 }
 

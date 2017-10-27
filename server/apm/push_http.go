@@ -27,11 +27,12 @@ func pushWorkerHttp(wid int64, res *pb.TaskResult) error {
 	return pushToApm(&mv1, getWorkerDelayMetric(wid, res), &mv2)
 }
 
-func PushHttpStat(tid int64, av float64, step int) error {
-	return pushToApm(getTaskHttpStatMetric(tid, av, step))
+func PushHttpStat(tid int64, av, step int) error {
+	m:= getTaskHttpStatMetric(tid, av, step)
+	return pushToApm(m)
 }
 
-func getTaskHttpStatMetric(tid int64, av float64, step int) *model.MetricValue {
+func getTaskHttpStatMetric(tid int64, av, step int) *model.MetricValue {
 	ret := bufPool.Get().(model.MetricValue)
 
 	ret.Metric, ret.Endpoint, ret.Value = getMetric(pb.TaskType_HTTP, "av"), fmt.Sprintf("url-%d", tid), av
