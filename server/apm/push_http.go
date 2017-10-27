@@ -17,7 +17,7 @@ func pushWorkerHttp(wid int64, res *pb.TaskResult) error {
 	defer bufPool.Put(mv1)
 	defer bufPool.Put(mv2)
 
-	mv1.Metric, mv2.Metric = getMetric(res.Type, "statuscode"), getMetric(res.Type, "error")
+	mv1.Metric, mv2.Metric = getMetric(res.Type, "sc"), getMetric(res.Type, "error")
 	mv1.Endpoint, mv2.Endpoint = fmt.Sprintf("url-%d-%d", wid, res.TaskId), fmt.Sprintf("url-%d-%d", wid, res.TaskId)
 	mv1.Value, mv2.Value = res.GetHttp().GetStatusCode(), res.GetErrorCode()
 	mv1.Timestamp, mv2.Timestamp = tm, tm
