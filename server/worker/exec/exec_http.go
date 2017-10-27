@@ -19,10 +19,11 @@ var trans = &http.Transport{
 }
 
 func ProbeHttp(t *pb.Task) *pb.TaskResult {
+	start := time.Now().UnixNano()
 	err, code, statusCode := DoHttp(t)
 
 	res := ReturnWithCode(t.GetBasicInfo().GetId(), t.GetBasicInfo().GetType(),
-		err, time.Now().UnixNano(), code)
+		err, start, code)
 	res.Http = &pb.TaskResultHttp{
 		StatusCode: uint32(statusCode),
 	}
