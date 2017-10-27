@@ -25,7 +25,8 @@ func (o startMasterOption) validate() error {
 }
 
 type startWorkerOption struct {
-	workerId int64
+	Id       int64
+	Password string
 	pullSec  uint16
 
 	masterGRpcAddresses []string
@@ -39,7 +40,7 @@ func (o startWorkerOption) validate() error {
 	}
 
 	for _, addr := range o.masterHttpAddresses {
-		if err := validateMaster(o.workerId, addr); err != nil {
+		if err := validateMaster(o.Id, addr); err != nil {
 			return err
 		}
 	}
@@ -52,7 +53,6 @@ func validateMaster(workerId int64, address string) error {
 		Method:      "GET",
 		ContentType: http.ContentType_FORM,
 	}
-	fmt.Println(spec.URL)
 	_, err := http.Send(spec)
 	return err
 }

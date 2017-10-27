@@ -6,6 +6,7 @@ var (
 
 type Worker struct {
 	Id             int64
+	Password       string
 	Status         string
 	StartTimestamp int64
 	Country        string //国家

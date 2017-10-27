@@ -3,10 +3,24 @@ package model
 import (
 	"github.com/rongyungo/probe/server/master/types"
 	errutil "github.com/rongyungo/probe/util/errors"
+	"log"
 )
 
 func RegisterWorker(worker *types.Worker) error {
-	_, err := Orm.Insert(worker)
+	var wk types.Worker
+	exist, err := Orm.Table("worker").Where("id = ?", worker.Id).Get(&wk)
+	if err != nil {
+		log.Printf("--------> errr %v", err)
+		return err
+	}
+
+	if exist {
+		if wk.Password != worker.Password {
+			err = errutil.ErrWorkerUnAuthorized
+		}
+	} else {
+		_, err = Orm.InsertOne(worker)
+	}
 	return err
 }
 

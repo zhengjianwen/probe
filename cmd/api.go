@@ -12,10 +12,12 @@ import (
 )
 
 func registerWorker(opt *startWorkerOption) error {
-	var wk types.Worker
-	wk.Id = opt.workerId
-	wk.Status = types.Worker_Status_New
-	wk.StartTimestamp = time.Now().Unix()
+	wk := types.Worker {
+		Id: 			opt.Id,
+		Password: 		opt.Password,
+		Status: 		types.Worker_Status_New,
+		StartTimestamp: time.Now().Unix(),
+	}
 
 	s := http.HttpSpec{
 		URL:         fmt.Sprintf("http://%s/api/worker/%d", opt.masterHttpAddresses[0], wk.Id),

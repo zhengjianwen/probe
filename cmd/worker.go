@@ -16,10 +16,11 @@ var startWorkerOptions startWorkerOption = startWorkerOption{
 }
 
 func init() {
-	workerStartCmd.PersistentFlags().Uint16VarP(&startWorkerOptions.pullSec, "period", "p", 60, "worker service report period second")
+	workerStartCmd.PersistentFlags().Uint16VarP(&startWorkerOptions.pullSec, "period", "", 60, "worker service report period second")
 	workerStartCmd.PersistentFlags().StringSliceVarP(&startWorkerOptions.masterHttpAddresses, "master_http", "", []string{"127.0.0.1:9100"}, "worker's master http addresses")
 	workerStartCmd.PersistentFlags().StringSliceVarP(&startWorkerOptions.masterGRpcAddresses, "master_grpc", "", []string{"127.0.0.1:9000"}, "worker's master grpc ddresses")
-	workerStartCmd.PersistentFlags().Int64VarP(&startWorkerOptions.workerId, "id", "i", int64(rand.Intn(100000)), "worker name that user assigned")
+	workerStartCmd.PersistentFlags().Int64VarP(&startWorkerOptions.Id, "id", "i", int64(rand.Intn(100000)), "worker name that user assigned")
+	workerStartCmd.PersistentFlags().StringVarP(&startWorkerOptions.Password, "password", "p", "123456", "worker service password for restart auth")
 }
 
 var workerCmd = &cobra.Command{
@@ -44,7 +45,7 @@ var workerStartCmd = &cobra.Command{
 		}
 
 		log.Printf("validate master address %s ok.\n", startWorkerOptions.masterHttpAddresses)
-		log.Printf("worker id is %d.\n", startWorkerOptions.workerId)
+		log.Printf("worker id is %d.\n", startWorkerOptions.Id)
 
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -53,10 +54,10 @@ var workerStartCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		log.Printf("register worker %d success\n", startWorkerOptions.workerId)
+		log.Printf("register worker %d success\n", startWorkerOptions.Id)
 
 		worker.Start(&worker.StartConfig{
-			WorkerId:       startWorkerOptions.workerId,
+			WorkerId:       startWorkerOptions.Id,
 			HealthCheckSec: startWorkerOptions.pullSec,
 			MasterHttps:    startWorkerOptions.masterHttpAddresses,
 			MasterGRpcs:    startWorkerOptions.masterGRpcAddresses,
