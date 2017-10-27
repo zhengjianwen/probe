@@ -53,7 +53,7 @@ func CalculateTaskAvaliablilty() {
 			return
 		}
 
-		//apm.PushHttpStat()
+		//apm.PushHttpStat(l[0].ta)
 
 	}
 }
