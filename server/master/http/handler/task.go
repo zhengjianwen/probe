@@ -113,13 +113,16 @@ func GetTaskHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func readBodyToTask(rc io.Reader, tp string) (interface{}, error) {
-	data, err := ioutil.ReadAll(io.LimitReader(rc, 200))
+	data, err := ioutil.ReadAll(rc)
 	if err != nil {
+		log.Printf("read task body data err %v\n", err)
 		return nil, err
 	}
+	log.Printf("read task body data %s\n", string(data))
 
 	target := model.GetTypeStructPtr(tp)
 	if err := json.Unmarshal(data, target); err != nil {
+		log.Printf("parse task body data err %v\n", err)
 		return nil, err
 	}
 

@@ -49,7 +49,7 @@ func (o startWorkerOption) validate() error {
 
 func validateMaster(workerId int64, address string) error {
 	spec := &http.HttpSpec{
-		URL:         fmt.Sprintf("http://%s/api/worker/%d/ping", address, workerId),
+		URL:         fmt.Sprintf("http://%s/probe/worker/%d/ping", address, workerId),
 		Method:      "GET",
 		ContentType: http.ContentType_FORM,
 	}

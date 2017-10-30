@@ -20,7 +20,7 @@ func registerWorker(opt *startWorkerOption) error {
 	}
 
 	s := http.HttpSpec{
-		URL:         fmt.Sprintf("http://%s/api/worker/%d", opt.masterHttpAddresses[0], wk.Id),
+		URL:         fmt.Sprintf("http://%s/probe/worker/%d", opt.masterHttpAddresses[0], wk.Id),
 		Method:      "POST",
 		ContentType: http.ContentType_JSON,
 		BodyObject:  wk,

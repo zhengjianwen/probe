@@ -5,6 +5,7 @@ import (
 	"github.com/rongyungo/probe/server/apm"
 	"github.com/rongyungo/probe/server/master/start"
 	"github.com/rongyungo/probe/server/master/types"
+	"github.com/rongyungo/probe/server/master/auth"
 	sqlutil "github.com/rongyungo/probe/util/sql"
 	"github.com/spf13/cobra"
 	"log"
@@ -14,6 +15,7 @@ import (
 var (
 	startMasterOptions startMasterOption
 	DbCfg              sqlutil.DatabaseConfig
+	authCfg 		   auth.AuthConfig
 )
 
 func init() {
@@ -25,11 +27,16 @@ func init() {
 	masterStartCmd.PersistentFlags().StringVarP(&DbCfg.Password, "password", "", "123456", "master service database password")
 	masterStartCmd.PersistentFlags().StringVarP(&DbCfg.DB, "instance", "", "probe", "master service database instance")
 
-	masterStartCmd.PersistentFlags().IntVarP(&DbCfg.ConnMax, "max", "", 3306, "master service database conn config")
-	masterStartCmd.PersistentFlags().IntVarP(&DbCfg.ConnIdle, "idle", "", 3306, "master service database conn config")
+	masterStartCmd.PersistentFlags().IntVarP(&DbCfg.ConnMax, "max", "", 200, "master service database conn config")
+	masterStartCmd.PersistentFlags().IntVarP(&DbCfg.ConnIdle, "idle", "", 100, "master service database conn config")
 
 	masterStartCmd.PersistentFlags().StringVarP(&apm.Conf.Url, "apm-url", "", "http://www.opdeck.com", "master apm service url")
 	masterStartCmd.PersistentFlags().StringVarP(&apm.Conf.Token, "apm-token", "", "ui49hfowlx0wkxoe,cjeaiqoei93ms8mx821kx", "master apm service token")
+
+	masterStartCmd.PersistentFlags().StringVarP(&authCfg.CookieSecret, "cookie-secret", "c", "36005025221c6e1ff4bf9b255e49d356", "web cookie decode secret")
+	masterStartCmd.PersistentFlags().StringVarP(&authCfg.CloudAddr, "svc-cloud", "", "127.0.0.1:3410", "rpc request address of cloud service")
+	masterStartCmd.PersistentFlags().StringVarP(&authCfg.UicAddr, "scv-uic", "", "127.0.0.1:7772", "rpc request address of uic service")
+
 }
 
 var masterCmd = &cobra.Command{
@@ -50,6 +57,11 @@ var masterStartCmd = &cobra.Command{
 			fmt.Printf("master config validate err %v\n", err)
 			os.Exit(1)
 		}
+
+		if err := authCfg.Validate(); err != nil {
+			fmt.Printf("auth config err %v\n", err)
+			os.Exit(1)
+		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		mCfg := types.StartMasterConfig{
@@ -59,7 +71,7 @@ var masterStartCmd = &cobra.Command{
 		}
 
 		log.Printf("start all with config %#v\n", mCfg)
-		if err := start.RunAll(&mCfg, &DbCfg); err != nil {
+		if err := start.RunAll(&mCfg, &DbCfg, &authCfg); err != nil {
 			log.Printf("start all fail %v\n", err)
 			os.Exit(1)
 		}

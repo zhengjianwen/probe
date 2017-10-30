@@ -10,7 +10,7 @@ import (
 var MasterAddr = "http://127.0.0.1:9100"
 
 func ListWorkingWorkers() ([]types.Worker, error) {
-	rsp, err := http.Get(MasterAddr + "/api/worker?source=memory")
+	rsp, err := http.Get(MasterAddr + "/probe/worker?source=memory")
 	if err != nil {
 		return nil, err
 	}

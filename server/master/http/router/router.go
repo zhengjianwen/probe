@@ -3,10 +3,11 @@ package router
 import (
 	"github.com/gorilla/mux"
 	"github.com/rongyungo/probe/server/master/http/handler"
+	"github.com/rongyungo/probe/server/master/auth"
 )
 
 func InitWorkerRouter(r *mux.Router) {
-	sub := r.PathPrefix("/api/worker").Subrouter()
+	sub := r.PathPrefix("/probe/worker").Subrouter()
 	sub.HandleFunc("", handler.ListWorkersHandler).Methods("GET")
 	sub.HandleFunc("/{wid}", handler.GetWorkerHandler).Methods("GET")
 	sub.HandleFunc("/{wid}", handler.RegisterWorkerHandler).Methods("POST")
@@ -16,12 +17,12 @@ func InitWorkerRouter(r *mux.Router) {
 }
 
 func InitTaskRouter(r *mux.Router) {
-	sub := r.PathPrefix("/api/task").Subrouter()
+	sub := r.PathPrefix("/probe/task").Subrouter()
 
 	sub.HandleFunc("/{ttp}/{tid}/snapshot", handler.GetTaskWorkerSnapShotHandler).Methods("GET")
 
 	//strategy and label are child resource of task
-	sub.HandleFunc("/{ttp}", handler.CreateTaskHandler).Methods("POST")
+	sub.HandleFunc("/{ttp}", auth.AuthUser(handler.CreateTaskHandler)).Methods("POST")
 	sub.HandleFunc("/{ttp}/{tid}", handler.DeleteTaskHandler).Methods("DELETE")
 	sub.HandleFunc("/{ttp}/{tid}", handler.UpdateTaskHandler).Methods("PUT")
 	sub.HandleFunc("/{ttp}/{tid}", handler.GetTaskHandler).Methods("GET")
