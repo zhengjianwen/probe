@@ -13,9 +13,9 @@ import (
 var trans = &http.Transport{
 	Dial: (&net.Dialer{
 		Timeout:   5 * time.Second,
-		KeepAlive: 20 * time.Second,
+		KeepAlive: 300 * time.Second,
 	}).Dial,
-	MaxIdleConnsPerHost: 1,
+	MaxIdleConnsPerHost: 10,
 }
 
 func ProbeHttp(t *pb.Task) *pb.TaskResult {
