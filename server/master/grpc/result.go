@@ -8,7 +8,7 @@ import (
 )
 
 func handleResult(msg *pb.Topic) {
-	model.CoverSnapShotM(msg.WorkerId, msg.GetResult().GetTaskId(), msg.GetResult().GetDelayMs())
+	model.CoverSnapShotM(msg.GetResult().GetType().String(), msg.WorkerId, msg.GetResult().GetTaskId(), msg.GetResult().GetDelayMs())
 
 	if err := model.HandleTaskResult(msg.Result); err != nil {
 		log.Printf("server storage hand task result err %v\n", err)

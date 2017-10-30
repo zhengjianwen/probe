@@ -18,7 +18,7 @@ func InitWorkerRouter(r *mux.Router) {
 func InitTaskRouter(r *mux.Router) {
 	sub := r.PathPrefix("/api/task").Subrouter()
 
-	sub.HandleFunc("/{tid}/snapshot", handler.GetTaskWorkerSnapShotHandler).Methods("GET")
+	sub.HandleFunc("/{ttp}/{tid}/snapshot", handler.GetTaskWorkerSnapShotHandler).Methods("GET")
 
 	//strategy and label are child resource of task
 	sub.HandleFunc("/{ttp}", handler.CreateTaskHandler).Methods("POST")

@@ -53,22 +53,47 @@ func CreateTaskSchedule( res *pb.TaskResult) error {
 	return session.Commit()
 }
 
-//taskId to workerId to DelayMs mapping
-var TaskSnapShotMapping = make(map[int64]map[int64]struct{
+//taskType to taskId to workerId to DelayMs mapping
+var TaskSnapShotMapping = map[string]map[int64]map[int64]struct{
 	SnapShotTimeStamp int64
 	DelayMs           int64
-})
+}{
+	"HTTP": make(map[int64]map[int64]struct{
+	SnapShotTimeStamp int64
+	DelayMs           int64}),
+	"DNS": make(map[int64]map[int64]struct{
+		SnapShotTimeStamp int64
+		DelayMs           int64}),
+	"PING": make(map[int64]map[int64]struct{
+		SnapShotTimeStamp int64
+		DelayMs           int64}),
+	"FTP": make(map[int64]map[int64]struct{
+		SnapShotTimeStamp int64
+		DelayMs           int64}),
+	"TCP": make(map[int64]map[int64]struct{
+		SnapShotTimeStamp int64
+		DelayMs           int64}),
+	"UDP": make(map[int64]map[int64]struct{
+		SnapShotTimeStamp int64
+		DelayMs           int64}),
+	"TRACE_ROUTE": make(map[int64]map[int64]struct{
+		SnapShotTimeStamp int64
+		DelayMs           int64}),
+}
 
-func CoverSnapShotM(tid, wid int64, delayMs int64) {
-	_, ok :=  TaskSnapShotMapping[tid]
-	if !ok {
-		TaskSnapShotMapping[tid] = make(map[int64]struct{
+func CoverSnapShotM(tp string, tid, wid int64, delayMs int64) {
+	if _, ok := TaskSnapShotMapping[tp]; !ok {
+		return
+	}
+
+	if _, ok := TaskSnapShotMapping[tp][tid]; !ok {
+		TaskSnapShotMapping[tp][tid] = make(map[int64]struct{
 			SnapShotTimeStamp int64
 			DelayMs int64
 		})
 	}
 
-  	TaskSnapShotMapping[tid][wid] = struct{
+  	TaskSnapShotMapping[tp][tid][wid] = struct{
 		SnapShotTimeStamp int64
 		DelayMs int64
   	}{
