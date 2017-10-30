@@ -29,5 +29,6 @@ func Sync() error {
 		new(types.Task_TraceRoute),
 		new(pb.TaskResult),
 		new(types.TaskSchedule),
+		new(types.WorkerDelaySnapShot),
 	)
 }

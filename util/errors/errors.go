@@ -9,3 +9,5 @@ var ErrTaskTypeMappingNotFound error = errors.New("task to type  mapping not fou
 var ErrWorkerIdEmpty error = errors.New("worker id empty")
 var ErrWorkerNotFound error = errors.New("worker not found")
 var ErrWorkerUnAuthorized error = errors.New("worker unauthorized")
+var ErrTaskIdInvalid error = errors.New("task id invalid")
+var ErrWorkerIdInvalid error = errors.New("worker id invalid")

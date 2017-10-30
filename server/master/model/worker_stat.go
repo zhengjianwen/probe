@@ -4,6 +4,7 @@ import (
 	pb "github.com/rongyungo/probe/server/proto"
 	"github.com/rongyungo/probe/server/master/types"
 	"fmt"
+	"time"
 )
 
 func SyncTackScheduleResult(res *pb.TaskResult) error {
@@ -51,6 +52,33 @@ func CreateTaskSchedule( res *pb.TaskResult) error {
 	_, err = session.InsertOne(ts)
 	return session.Commit()
 }
+
+//taskId to workerId to DelayMs mapping
+var TaskSnapShotMapping = make(map[int64]map[int64]struct{
+	SnapShotTimeStamp int64
+	DelayMs           int64
+})
+
+func CoverSnapShotM(tid, wid int64, delayMs int64) {
+	_, ok :=  TaskSnapShotMapping[tid]
+	if !ok {
+		TaskSnapShotMapping[tid] = make(map[int64]struct{
+			SnapShotTimeStamp int64
+			DelayMs int64
+		})
+	}
+
+  	TaskSnapShotMapping[tid][wid] = struct{
+		SnapShotTimeStamp int64
+		DelayMs int64
+  	}{
+		SnapShotTimeStamp : time.Now().Unix(),
+		DelayMs: delayMs,
+  	}
+}
+
+
+
 //func StatTaskAvailabilityInHours(wid, tid, h int64) (float64, error) {
 //	var l []types.WorkerStatHour
 //	nowHour := time.Now().Truncate(time.Hour * time.Duration(h)).Format("2006-01-02 15")

@@ -12,7 +12,25 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rongyungo/probe/server/master/model"
 	"strconv"
+	errutil "github.com/rongyungo/probe/util/errors"
 )
+
+func GetTaskWorkerSnapShotHandler(w http.ResponseWriter, r *http.Request) {
+	tidStr := mux.Vars(r)["tid"]
+	tid, err := strconv.ParseInt(tidStr, 10, 64)
+	if err != nil {
+		message.Error(w, errutil.ErrTaskIdInvalid)
+		return
+	}
+
+	taskSS, ok := model.TaskSnapShotMapping[tid]
+	if !ok {
+		message.NotFoundError(w)
+	}
+
+	message.SuccessI(w, taskSS)
+	return
+}
 
 func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
