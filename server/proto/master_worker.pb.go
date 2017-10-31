@@ -429,7 +429,7 @@ type BasicInfo struct {
 	ExecuteTime  int64    `protobuf:"varint,8,opt,name=ExecuteTime,json=executeTime" json:"ExecuteTime,omitempty"`
 	ScheduleTime int64    `protobuf:"varint,9,opt,name=ScheduleTime,json=scheduleTime" json:"ScheduleTime,omitempty"`
 	PeriodSec    int64    `protobuf:"varint,10,opt,name=PeriodSec,json=periodSec" json:"PeriodSec,omitempty"`
-	RuleIds      []string `protobuf:"bytes,11,rep,name=RuleIds,json=ruleIds" json:"RuleIds,omitempty"`
+	RuleIds      []string `protobuf:"bytes,11,rep,name=RuleIds,json=ruleIds" json:"RuleIds,omitempty" xorm:"rule_ids json"`
 }
 
 func (m *BasicInfo) Reset()                    { *m = BasicInfo{} }
@@ -524,6 +524,25 @@ func (m *BasicInfo) GetRuleIds() []string {
 		return m.RuleIds
 	}
 	return nil
+}
+
+func (m *BasicInfo) AddRuleId(id int64) {
+	if m != nil {
+		if m.RuleIds == nil {
+			m.RuleIds = []int64{id}
+		} else if !contains(m.RuleIds, id) {
+			m.RuleIds = append(m.RuleIds, id)
+		}
+	}
+}
+
+func contains(l []int64, i int64) bool{
+	for _, ele := range l {
+		if ele == i {
+			return true
+		}
+	}
+	return false
 }
 
 type TaskResult struct {
