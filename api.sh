@@ -252,4 +252,11 @@ small
     3. title:""
 2. msg:""
 
-curl -XPOST http://www.opdeck.com/probe/task -d '{"Url":"http://www.baidu.com", "Method":"GET", "PeriodSec": 120}'
+
+//创建任务
+ curl -XPOST http://^Cw.opdeck.com/probe/task/1/http -d '{"Url":"http://www.baidu.com", "Method":1,"PeriodSec":120}' --cookieie rywww=MTUwOTA5MDA5MHxNUC1CQXdFQkNrTnZiMnRwWlVSaGRHRUJfNElBQVFJQkJsVnpaWEpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFBQUJIX2dnRUNBUW94UUhSbGMzUXVZMjl0QUE9PXx4YcSYcXa6iuZ1ozI5p_N4Zf86WF_Il_KP54WNE7VWpbA==ZiMnRwWlVSaGRHRUJfNElBQVFJQk
+
+
+
+
+

@@ -15,9 +15,9 @@ func CreateTask(tk interface{}) (int64, error) {
 	return Orm.Insert(tk)
 }
 
-func GetTask(tp string, id int64) (interface{}, error) {
-	task := GetTypeStructPtr(tp)
-	if ok, err := Orm.Id(id).Get(task); err != nil {
+func GetTask(orgId, tid int64, tp string) (interface{}, error) {
+	task := NewTaskPtr(tp)
+	if ok, err := Orm.Where("id = ? AND org_id = ?", tid, orgId).Get(task); err != nil {
 		return nil, err
 	} else if !ok {
 		return nil, errutil.ErrTaskNotFound
@@ -26,18 +26,26 @@ func GetTask(tp string, id int64) (interface{}, error) {
 	return task, nil
 }
 
-func UpdateTask(id int64, task interface{}) error {
-	_, err := Orm.Id(id).Update(task)
+func GetOrgTask(orgId int64, tp string) (interface{}, error) {
+	l := NewTaskListPtr(tp)
+	if err := Orm.Where("org_id = ?", orgId).Find(l); err != nil {
+		return nil, err
+	}
+	return l, nil
+}
+
+func UpdateTask(orgId, tid int64, task interface{}) error {
+	_, err := Orm.Where("id = ? AND org_id = ?", tid, orgId).Update(task)
 	return err
 }
 
-func DeleteTask(tp string, id int64) error {
-	task := GetTypeStructPtr(tp)
-	_, err := Orm.Id(id).Delete(task)
+func DeleteTask(orgId, tid int64, tp string) error {
+	task := NewTaskPtr(tp)
+	_, err := Orm.Where("id = ? AND org_id = ?", tid, orgId).Delete(task)
 	return err
 }
 
-func GetTypeStructPtr(tp string) interface{} {
+func NewTaskPtr(tp string) interface{} {
 	switch tp {
 	case "http":
 		return &types.Task_Http{}
@@ -53,6 +61,27 @@ func GetTypeStructPtr(tp string) interface{} {
 		return &types.Task_Udp{}
 	case "ftp":
 		return &types.Task_Ftp{}
+	}
+
+	return nil
+}
+
+func NewTaskListPtr(tp string) interface{} {
+	switch tp {
+	case "http":
+		return &[]types.Task_Http{}
+	case "dns":
+		return &[]types.Task_Dns{}
+	case "ping":
+		return &[]types.Task_Ping{}
+	case "trace_route":
+		return &[]types.Task_TraceRoute{}
+	case "tcp":
+		return &[]types.Task_Tcp{}
+	case "udp":
+		return &[]types.Task_Udp{}
+	case "ftp":
+		return &[]types.Task_Ftp{}
 	}
 
 	return nil

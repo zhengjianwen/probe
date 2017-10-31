@@ -22,15 +22,16 @@ func InitTaskRouter(r *mux.Router) {
 	sub.HandleFunc("/{ttp}/{tid}/snapshot", handler.GetTaskWorkerSnapShotHandler).Methods("GET")
 
 	//strategy and label are child resource of task
-	sub.HandleFunc("/{ttp}", auth.AuthUser(handler.CreateTaskHandler)).Methods("POST")
-	sub.HandleFunc("/{ttp}/{tid}", handler.DeleteTaskHandler).Methods("DELETE")
-	sub.HandleFunc("/{ttp}/{tid}", handler.UpdateTaskHandler).Methods("PUT")
-	sub.HandleFunc("/{ttp}/{tid}", handler.GetTaskHandler).Methods("GET")
+	sub.HandleFunc("/{oid}/{ttp}", auth.AuthUser(handler.CreateTaskHandler)).Methods("POST")
+	sub.HandleFunc("/{oid}/{ttp}", auth.AuthUser(handler.ListTasksHandler)).Methods("GET")
+	sub.HandleFunc("/{oid}/{ttp}/{tid}", auth.AuthUser(handler.GetTaskHandler)).Methods("GET")
+	sub.HandleFunc("/{oid}/{ttp}/{tid}", auth.AuthUser(handler.DeleteTaskHandler)).Methods("DELETE")
+	sub.HandleFunc("/{oid}/{ttp}/{tid}", auth.AuthUser(handler.UpdateTaskHandler)).Methods("PUT")
 
-	sub.HandleFunc("/{ttp}/{tid}/strategy", handler.AuthTaskMid(handler.CreateStrategyHandler)).Methods("POST")
-	sub.HandleFunc("/{ttp}/{tid}/strategy", handler.AuthTaskMid(handler.DeleteStrategyHandler)).Methods("DELETE")
-	sub.HandleFunc("/{ttp}/{tid}/strategy", handler.AuthTaskMid(handler.UpdateStrategyHandler)).Methods("PUT")
-	sub.HandleFunc("/{ttp}/{tid}/strategy", handler.AuthTaskMid(handler.GetStrategyHandler)).Methods("GET")
+	//sub.HandleFunc("/{ttp}/{tid}/strategy", handler.AuthTaskMid(handler.CreateStrategyHandler)).Methods("POST")
+	//sub.HandleFunc("/{ttp}/{tid}/strategy", handler.AuthTaskMid(handler.DeleteStrategyHandler)).Methods("DELETE")
+	//sub.HandleFunc("/{ttp}/{tid}/strategy", handler.AuthTaskMid(handler.UpdateStrategyHandler)).Methods("PUT")
+	//sub.HandleFunc("/{ttp}/{tid}/strategy", handler.AuthTaskMid(handler.GetStrategyHandler)).Methods("GET")
 
 	sub.HandleFunc("/{tid}/label", handler.EditLabelHandler).Methods("PUT")
 }

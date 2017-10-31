@@ -449,6 +449,12 @@ func (m *BasicInfo) GetOrgId() int64 {
 	return 0
 }
 
+func (m *BasicInfo) SetOrgId(id int64)  {
+	if m != nil {
+		 m.OrgId = id
+	}
+}
+
 func (m *BasicInfo) GetType() TaskType {
 	if m != nil {
 		return m.Type

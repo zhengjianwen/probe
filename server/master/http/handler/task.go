@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-
 	"encoding/json"
 	"fmt"
 	"github.com/1851616111/util/message"
@@ -14,6 +13,8 @@ import (
 	"strconv"
 	errutil "github.com/rongyungo/probe/util/errors"
 	"strings"
+
+	"github.com/rongyungo/probe/server/master/auth"
 )
 
 func GetTaskWorkerSnapShotHandler(w http.ResponseWriter, r *http.Request) {
@@ -37,8 +38,9 @@ func GetTaskWorkerSnapShotHandler(w http.ResponseWriter, r *http.Request) {
 func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	ttp := mux.Vars(r)["ttp"]
+	orgId := r.Context().Value(auth.CONTEXT_KEY_ORG_ID).(int64)
 
-	task, err := readBodyToTask(r.Body, ttp)
+	task, err := readBodyToTask(r.Body, ttp, orgId)
 	if err != nil {
 		message.Error(w, err)
 		return
@@ -52,40 +54,56 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func ListTasksHandler(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	ttp := mux.Vars(r)["ttp"]
+	orgId := r.Context().Value(auth.CONTEXT_KEY_ORG_ID).(int64)
+
+	if tasks, err := model.GetOrgTask(orgId, ttp); err != nil {
+		message.Error(w, err)
+	} else {
+		message.SuccessI(w, tasks)
+	}
+	return
+}
+
 func DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
-	tid, ttp := mux.Vars(r)["tid"], mux.Vars(r)["ttp"]
-	id, err := strconv.ParseInt(tid, 10, 64)
+	tidStr, ttp := mux.Vars(r)["tid"], mux.Vars(r)["ttp"]
+	tid, err := strconv.ParseInt(tidStr, 10, 64)
 	if err != nil {
 		message.Error(w, err)
 		return
 	}
+	orgId := r.Context().Value(auth.CONTEXT_KEY_ORG_ID).(int64)
 
-	if err := model.DeleteTask(ttp, id); err != nil {
-		log.Printf("delete task(%s) err %v\n", tid, err)
+	if err := model.DeleteTask(orgId, tid, ttp); err != nil {
+		log.Printf("delete task(%s) err %v\n", tidStr, err)
 		message.Error(w, err)
 		return
 	}
 
-	//sc.DelTask(tid)
+	//sc.DelTask(tidStr)
 	message.Success(w)
 }
 
 func UpdateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	tid, ttp := mux.Vars(r)["tid"], mux.Vars(r)["ttp"]
-	id, err := strconv.ParseInt(tid, 10, 64)
+	tidStr, ttp := mux.Vars(r)["tid"], mux.Vars(r)["ttp"]
+
+	orgId := r.Context().Value(auth.CONTEXT_KEY_ORG_ID).(int64)
+	task, err := readBodyToTask(r.Body, ttp, orgId)
 	if err != nil {
 		message.Error(w, err)
 		return
 	}
 
-	task, err := readBodyToTask(r.Body, ttp)
+	tid, err := strconv.ParseInt(tidStr, 10, 64)
 	if err != nil {
 		message.Error(w, err)
 		return
 	}
 
-	if err := model.UpdateTask(id, task); err != nil {
+	if err := model.UpdateTask(orgId, tid, task); err != nil {
 		message.Error(w, err)
 	} else {
 		//sc.UpdateTask(&task)
@@ -94,17 +112,19 @@ func UpdateTaskHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetTaskHandler(w http.ResponseWriter, r *http.Request) {
-	ttp, tid := mux.Vars(r)["ttp"], mux.Vars(r)["tid"]
-	id, err := strconv.ParseInt(tid, 10, 64)
+	ttp, tidStr := mux.Vars(r)["ttp"], mux.Vars(r)["tid"]
+	tid, err := strconv.ParseInt(tidStr, 10, 64)
 	if err != nil {
-		log.Printf("auth middlerwre: get task id=%s invalide %v\n", tid, err)
+		log.Printf("auth middlerwre: get task tid=%s invalide %v\n", tidStr, err)
 		message.Error(w, err)
+		return
 	}
+	orgId := r.Context().Value(auth.CONTEXT_KEY_ORG_ID).(int64)
 	defer r.Body.Close()
 
-	task, err := model.GetTask(ttp, id)
+	task, err := model.GetTask(orgId, tid, ttp)
 	if err != nil {
-		log.Printf("get task(%s) err %v\n", tid, err)
+		log.Printf("get task(%s) err %v\n", tidStr, err)
 		message.Error(w, err)
 	} else {
 		message.SuccessI(w, task)
@@ -112,7 +132,8 @@ func GetTaskHandler(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func readBodyToTask(rc io.Reader, tp string) (interface{}, error) {
+
+func readBodyToTask(rc io.Reader, tp string, orgId int64) (interface{}, error) {
 	data, err := ioutil.ReadAll(rc)
 	if err != nil {
 		log.Printf("read task body data err %v\n", err)
@@ -120,7 +141,7 @@ func readBodyToTask(rc io.Reader, tp string) (interface{}, error) {
 	}
 	log.Printf("read task body data %s\n", string(data))
 
-	target := model.GetTypeStructPtr(tp)
+	target := model.NewTaskPtr(tp)
 	if err := json.Unmarshal(data, target); err != nil {
 		log.Printf("parse task body data err %v\n", err)
 		return nil, err
@@ -128,11 +149,14 @@ func readBodyToTask(rc io.Reader, tp string) (interface{}, error) {
 
 	v, _ := target.(interface {
 		Validate() error
+		SetOrgId(int64)
 	})
 
 	if err := v.Validate(); err != nil {
 		return nil, err
 	}
+
+	v.SetOrgId(orgId)
 
 	return target, nil
 }

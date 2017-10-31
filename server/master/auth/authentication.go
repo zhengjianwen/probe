@@ -4,13 +4,15 @@ import (
 	"net/http"
 	"context"
 	"strconv"
+	"github.com/gorilla/mux"
 )
 
 const CONTEXT_KEY_USER = "key_user"
+const CONTEXT_KEY_ORG_ID = "org_id"
 
 func AuthUser(handler func(http.ResponseWriter, *http.Request)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		orgIdStr := r.URL.Query().Get("org_id")
+		orgIdStr := mux.Vars(r)["oid"]
 		if len(orgIdStr) == 0 {
 			http.Error(w, "param org_id not found" , http.StatusBadRequest)
 			return
@@ -36,6 +38,7 @@ func AuthUser(handler func(http.ResponseWriter, *http.Request)) http.HandlerFunc
 		}
 
 		r = r.WithContext(context.WithValue(r.Context(), CONTEXT_KEY_USER, userId))
+		r = r.WithContext(context.WithValue(r.Context(), CONTEXT_KEY_ORG_ID, orgId))
 		handler(w, r)
 	}
 }
