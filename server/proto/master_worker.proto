@@ -45,12 +45,13 @@ message BasicInfo {
     int64           Id = 1;
     int64           OrgId = 2;
     TaskType        Type = 3;
-    string          Version = 4;
-    int64           CreateTime = 5;
-    int64           UpdateTime = 6;
-    int64           ExecuteTime = 7;
-    int64           ScheduleTime = 8;
-    int64           PeriodSec = 9;
+    string          Name = 4;
+    string          Version = 5;
+    int64           CreateTime = 6;
+    int64           UpdateTime = 7;
+    int64           ExecuteTime = 8;
+    int64           ScheduleTime = 9;
+    int64           PeriodSec = 10;
 }
 
 message taskResult {

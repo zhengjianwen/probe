@@ -255,8 +255,27 @@ small
 
 //创建任务
  curl -XPOST http://^Cw.opdeck.com/probe/task/1/http -d '{"Url":"http://www.baidu.com", "Method":1,"PeriodSec":120}' --cookieie rywww=MTUwOTA5MDA5MHxNUC1CQXdFQkNrTnZiMnRwWlVSaGRHRUJfNElBQVFJQkJsVnpaWEpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFBQUJIX2dnRUNBUW94UUhSbGMzUXVZMjl0QUE9PXx4YcSYcXa6iuZ1ozI5p_N4Zf86WF_Il_KP54WNE7VWpbA==ZiMnRwWlVSaGRHRUJfNElBQVFJQk
+{
+
+	PeriodSec  int
+	Url       string
+	Method    int  1:GET 2:POST 3:HEAD
+	Header    {}
+	Cookies   string
+	BasicAuth {
+	    User   string
+	    Passwd string
+	}
+	ServerIp  string
+	Matcher  {
+	    Target   int   1:BODY 2:HEAD
+	    Method   int   1:INCLUD 2:EXCLUDE
+	    Content  string
+	    StatusCode int
+     }
+}
 
 
-
+ curl -XPOST http://www.opdeck.com/probe/task/1/http -d '{"Url":"http://www.baidu.com", "Method":1,"PeriodSec":120}' --cookie rywww=MTUwOTA5MDA5MHxNUC1CQXdFQkNrTnZiMnRwWlVSaGRHRUJfNElBQVFJQkJsVnpaWEpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFBQUJIX2dnRUNBUW94UUhSbGMzUXVZMjl0QUE9PXx4cSYcXa6iuZ1ozI5p_N4Zf86WF_Il_KP54WNE7VWpbA==
 
 
