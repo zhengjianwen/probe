@@ -275,7 +275,12 @@ small
      }
 }
 
+#创建http task
+curl -XPOST http://www.opdeck.com/probe/task/1/http -d '{"Url":"http://www.baidu.com", "Method":1,"PeriodSec":120}' --cookie rywww=MTUwOTA5MDA5MHxNUC1CQXdFQkNrTnZiMnRwWlVSaGRHRUJfNElBQVFJQkJsVnpaWEpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFBQUJIX2dnRUNBUW94UUhSbGMzUXVZMjl0QUE9PXx4cSYcXa6iuZ1ozI5p_N4Zf86WF_Il_KP54WNE7VWpbA==
 
- curl -XPOST http://www.opdeck.com/probe/task/1/http -d '{"Url":"http://www.baidu.com", "Method":1,"PeriodSec":120}' --cookie rywww=MTUwOTA5MDA5MHxNUC1CQXdFQkNrTnZiMnRwWlVSaGRHRUJfNElBQVFJQkJsVnpaWEpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFBQUJIX2dnRUNBUW94UUhSbGMzUXVZMjl0QUE9PXx4cSYcXa6iuZ1ozI5p_N4Zf86WF_Il_KP54WNE7VWpbA==
+#/org/{oid}/{ttp}/task/{tid}
+curl  http://www.opdeck.com/probe/task/org/1/http/task/2  --cookie rywww=MTUwOTA5MDA5MHxNUC1CQXdFQkNrTnZiMnRwWlVSaGRHRUJfNElBQVFJQkJsVnpaWEpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFBQUJIX2dnRUNBUW94UUhSbGMzUXVZMjl0QUE9PXx4cSYcXa6iuZ1ozI5p_N4Zf86WF_Il_KP54WNE7VWpbA==
 
+#绑定rule id
+curl -XPOST http://www.opdeck.com/probe/task/1/http/2/bind/5  --cookie rywww=MTUwOTA5MDA5MHxNUC1CQXdFQkNrTnZiMnRwWlVSaGRHRUJfNElBQVFJQkJsVnpaWEpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFBQUJIX2dnRUNBUW94UUhSbGMzUXVZMjl0QUE9PXx4cSYcXa6iuZ1ozI5p_N4Zf86WF_Il_KP54WNE7VWpbA==
 

@@ -3,6 +3,7 @@ package model
 import (
 	"github.com/rongyungo/probe/server/master/types"
 	errutil "github.com/rongyungo/probe/util/errors"
+	"fmt"
 )
 
 func CreateTask(tk interface{}) (int64, error) {
@@ -37,6 +38,22 @@ func GetOrgTask(orgId int64, tp string) (interface{}, error) {
 func UpdateTask(orgId, tid int64, task interface{}) error {
 	_, err := Orm.Where("id = ? AND org_id = ?", tid, orgId).Update(task)
 	return err
+}
+
+func UpdateTaskRuleId1(orgId, tid int64, task interface{}) error {
+	_, err := Orm.Where("id = ? AND org_id = ?", tid, orgId).Update(task)
+	return err
+}
+
+func UpdateTaskRuleId2(orgId, tid int64, tp string, task interface{GetRuleIds() []int64}) error {
+	if len(task.GetRuleIds()) == 0 {
+		sql := fmt.Sprintf("UPDATE %s SET rule_ids = NULL where id = %d AND org_id = %d",
+			fmt.Sprintf("task_%s", tp), tid, orgId)
+		_, err := Orm.Exec(sql)
+		return err
+	} else {
+		return UpdateTaskRuleId1(orgId, tid, task)
+	}
 }
 
 func DeleteTask(orgId, tid int64, tp string) error {
