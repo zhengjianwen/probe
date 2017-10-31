@@ -52,6 +52,7 @@ message BasicInfo {
     int64           ExecuteTime = 8;
     int64           ScheduleTime = 9;
     int64           PeriodSec = 10;
+    repeated string RuleIds = 11;
 }
 
 message taskResult {
