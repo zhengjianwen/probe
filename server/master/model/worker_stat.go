@@ -28,7 +28,7 @@ func SyncTackScheduleResult(res *pb.TaskResult) error {
 	return err
 }
 
-func CreateTaskSchedule( res *pb.TaskResult) error {
+func CreateTaskSchedule(res *pb.TaskResult) error {
 	session := Orm.NewSession()
 	defer session.Close()
 
@@ -101,55 +101,3 @@ func CoverSnapShotM(tp string, tid, wid int64, delayMs int64) {
 		DelayMs: delayMs,
   	}
 }
-
-
-
-//func StatTaskAvailabilityInHours(wid, tid, h int64) (float64, error) {
-//	var l []types.WorkerStatHour
-//	nowHour := time.Now().Truncate(time.Hour * time.Duration(h)).Format("2006-01-02 15")
-//	if err := Orm.Where("worker_id = ? AND task_id = ? AND hour >= ?",
-//		wid, tid, nowHour).Find(&l); err != nil {
-//			return -1, err
-//	}
-//
-//	return statHoursAvailability(l), nil
-//}
-
-//func StatTaskAvailabilityInDays(wid, tid, h int64) (float64, error) {
-//	var l []types.WorkerStatDay
-//	nowHour := time.Now().Truncate(time.Hour * time.Duration(h) * 24).Format("2006-01-02 15")
-//	if err := Orm.Where("worker_id = ? AND task_id = ? AND hour >= ?",
-//		wid, tid, nowHour).Find(&l); err != nil {
-//		return -1, err
-//	}
-//
-//	return statDaysAvailability(l), nil
-//}
-//
-//func statHoursAvailability(l []types.WorkerStatHour) float64 {
-//	var sum_total, sum_success int64
-//	for _, s := range l {
-//		sum_total += s.RequestN
-//		sum_success += s.SuccessN
-//	}
-//
-//	if sum_total == 0 {
-//		return 0
-//	} else {
-//		return float64(sum_success) / float64(sum_total)
-//	}
-//}
-//
-//func statDaysAvailability(l []types.WorkerStatDay) float64 {
-//	var sum_total, sum_success int64
-//	for _, s := range l {
-//		sum_total += s.RequestN
-//		sum_success += s.SuccessN
-//	}
-//
-//	if sum_total == 0 {
-//		return 0
-//	} else {
-//		return float64(sum_success) / float64(sum_total)
-//	}
-//}

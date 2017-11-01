@@ -8,6 +8,5 @@ func HandleTaskResult(r *pb.TaskResult) error {
 	if r.Type == pb.TaskType_HTTP {
 		return SyncTackScheduleResult(r)
 	}
-	//_, err := Orm.Insert(r)
 	return nil
 }
