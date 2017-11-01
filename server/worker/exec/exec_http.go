@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+	"io"
+	"bytes"
 )
 
 var trans = &http.Transport{
@@ -53,7 +55,12 @@ func DoHttp(t *pb.Task) (error, pb.TaskResultCode, int) {
 func prepareReq(t *pb.Task) (*http.Request, error) {
 	spec := t.HttpSpec
 
-	req, err := http.NewRequest(spec.Method.String(), spec.Url, nil)
+	var body io.Reader = nil
+	if spec.GetMethod() == pb.HttpSpec_POST && len(spec.GetBody()) > 0 {
+		body = bytes.NewBuffer(spec.GetBody())
+	}
+
+	req, err := http.NewRequest(spec.Method.String(), spec.Url, body)
 	if err != nil {
 		return nil, err
 	}
