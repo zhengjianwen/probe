@@ -4,6 +4,7 @@ import (
 	"github.com/rongyungo/probe/server/master/types"
 	errutil "github.com/rongyungo/probe/util/errors"
 	"log"
+	"time"
 )
 
 func RegisterWorker(worker *types.Worker) error {
@@ -22,6 +23,17 @@ func RegisterWorker(worker *types.Worker) error {
 		_, err = Orm.InsertOne(worker)
 	}
 	return err
+}
+
+func UpdateWorkerTime(ids ...int64) error {
+	if len(ids) > 0 {
+		_, err := Orm.In("id", ids).Update(types.Worker{
+			UpdateTimestamp: 	time.Now().Unix(),
+			Status: 			"ok",
+		})
+		return err
+	}
+	return nil
 }
 
 //Country        string //国家

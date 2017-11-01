@@ -275,12 +275,16 @@ small
      }
 }
 
-#创建http task
-curl -XPOST http://www.opdeck.com/probe/task/1/http -d '{"Url":"http://www.baidu.com", "Method":1,"PeriodSec":120}' --cookie rywww=MTUwOTA5MDA5MHxNUC1CQXdFQkNrTnZiMnRwWlVSaGRHRUJfNElBQVFJQkJsVnpaWEpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFBQUJIX2dnRUNBUW94UUhSbGMzUXVZMjl0QUE9PXx4cSYcXa6iuZ1ozI5p_N4Zf86WF_Il_KP54WNE7VWpbA==
 
-#/org/{oid}/{ttp}/task/{tid}
+
+#根据task id(2) 查询 orgId = 1 下面的http task详细信息
 curl  http://www.opdeck.com/probe/task/org/1/http/task/2  --cookie rywww=MTUwOTA5MDA5MHxNUC1CQXdFQkNrTnZiMnRwWlVSaGRHRUJfNElBQVFJQkJsVnpaWEpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFBQUJIX2dnRUNBUW94UUhSbGMzUXVZMjl0QUE9PXx4cSYcXa6iuZ1ozI5p_N4Zf86WF_Il_KP54WNE7VWpbA==
 
-#绑定rule id
-curl -XPOST http://www.opdeck.com/probe/task/1/http/2/bind/5  --cookie rywww=MTUwOTA5MDA5MHxNUC1CQXdFQkNrTnZiMnRwWlVSaGRHRUJfNElBQVFJQkJsVnpaWEpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFBQUJIX2dnRUNBUW94UUhSbGMzUXVZMjl0QUE9PXx4cSYcXa6iuZ1ozI5p_N4Zf86WF_Il_KP54WNE7VWpbA==
+#查询orgId = 1  下面的http task详细信息
+curl  http://www.opdeck.com/probe/task/org/1/http  --cookie rywww=MTUwOTA5MDA5MHxNUC1CQXdFQkNrTnZiMnRwWlVSaGRHRUJfNElBQVFJQkJsVnpaWEpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFBQUJIX2dnRUNBUW94UUhSbGMzUXVZMjl0QUE9PXx4cSYcXa6iuZ1ozI5p_N4Zf86WF_Il_KP54WNE7VWpbA==
 
+#将orgID=1下的task id = 2 的task 绑定 rule=7的报警规则
+curl -XPOST http://www.opdeck.com/probe/task/org/1/http/task/2/bind/rule/7   --cookie rywww=MTUwOTA5MDA5MHxNUC1CQXdFQkNrTnZiMnRwWlVSaGRHRUJfNElBQVFJQkJsVnpaWEpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFBQUJIX2dnRUNBUW94UUhSbGMzUXVZMjl0QUE9PXx4cSYcXa6iuZ1ozI5p_N4Zf86WF_Il_KP54WNE7VWpbA==
+
+##将orgID=1下的task id = 2 的task 解绑定 rule=7的报警规则
+curl -XPOST http://www.opdeck.com/probe/task/org/1/http/task/2/unbind/rule/7   --cookie rywww=MTUwOTA5MDA5MHxNUC1CQXdFQkNrTnZiMnRwWlVSaGRHRUJfNElBQVFJQkJsVnpaWEpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFBQUJIX2dnRUNBUW94UUhSbGMzUXVZMjl0QUE9PXx4cSYcXa6iuZ1ozI5p_N4Zf86WF_Il_KP54WNE7VWpbA==

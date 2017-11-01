@@ -6,6 +6,7 @@ import (
 	"time"
 
 	pb "github.com/rongyungo/probe/server/proto"
+	"github.com/rongyungo/probe/server/master/model"
 	"log"
 )
 
@@ -59,11 +60,28 @@ func (m *master) syncWorker() {
 	for {
 		select {
 		case  <-time.Tick(time.Second * 30):
-			log.Printf("master start house keeping")
+			log.Printf("master start workers house keeping")
 			m.CleanWorkerConn()
-			log.Printf("master start house keeping over")
+
+			ids := m.getWorkerIds()
+			if err := 	 model.UpdateWorkerTime(ids...); err != nil {
+				log.Printf("master sync workers(%v) err %s\n", ids, err)
+			} else {
+				log.Printf("master finish workers house keeping, workers ids in (%v)\n", ids)
+			}
 		}
 	}
+}
+
+func (m *master) getWorkerIds() []int64 {
+	m.RLock()
+	defer m.RUnlock()
+
+	var res []int64
+	for workerId := range m.workerConnMap {
+		res = append(res, workerId)
+	}
+	return res
 }
 
 func (m *master) serveWorker(wId int64, ss pb.MasterWorker_SubscribeServer) chan<- struct{} {
