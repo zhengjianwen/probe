@@ -3,7 +3,6 @@ package model
 import (
 	"github.com/rongyungo/probe/server/master/types"
 	errutil "github.com/rongyungo/probe/util/errors"
-	"log"
 	"time"
 )
 
@@ -11,7 +10,6 @@ func RegisterWorker(worker *types.Worker) error {
 	var wk types.Worker
 	exist, err := Orm.Table("worker").Where("id = ?", worker.Id).Get(&wk)
 	if err != nil {
-		log.Printf("--------> errr %v", err)
 		return err
 	}
 
@@ -59,12 +57,7 @@ func AdminDelWorker(id int64) error {
 
 func ListWorkers(ids ...int64) (*[]types.Worker, error) {
 	var l []types.Worker
-
-	if len(ids) == 0 {
-		return &l, Orm.Find(&l)
-	} else {
-		return &l, Orm.In("id", ids).Find(&l)
-	}
+	return &l, Orm.In("id", ids).Where("status = 'ok' AND (UNIX_TIMESTAMP() - update_timestamp) < 300").Find(&l)
 }
 
 func GetWorkerById(id int64) (*types.Worker, error) {

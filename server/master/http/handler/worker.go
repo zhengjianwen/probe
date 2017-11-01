@@ -124,13 +124,8 @@ func AdminDelWorkerHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ListWorkersHandler(w http.ResponseWriter, r *http.Request) {
-	v := r.FormValue("source")
-
-	var ids []int64
-	if v == "memory" {
-		grpc.Master.CleanWorkerConn()
-		ids = grpc.Master.GetWorkerIds()
-	}
+	grpc.Master.CleanWorkerConn()
+	ids := grpc.Master.GetWorkerIds()
 
 	if wks, err := model.ListWorkers(ids...); err != nil {
 		message.Error(w, err)
