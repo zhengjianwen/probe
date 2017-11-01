@@ -133,8 +133,10 @@ message HttpSpec {
     map<string, string> header = 3;
     string              Cookies = 4;
     basicAuth           BasicAuth = 5;
-    string              ServerIp = 6;
-    matcher             Matcher = 7;
+    string              StrBody = 6;
+    bytes               BinBody = 7;
+    string              ServerIp = 8;
+    matcher             Matcher = 9;
 }
 
 message DnsSpec {
