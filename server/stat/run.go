@@ -17,17 +17,24 @@ func InitMySQL(cfg *sql.DatabaseConfig) (err error) {
 }
 
 func Start() {
-	tk := time.NewTicker(time.Second * time.Duration(20))
+	if err := Reduce(); err != nil {
+		panic(err)
+	}
+	tk1 := time.NewTicker(time.Second * time.Duration(20))
+	tk2 := time.NewTicker(time.Minute * time.Duration(20))
 	for {
 		select {
-			case <- tk.C:
+			case <- tk1.C:
 				CalculateTaskAvaliablilty()
+			case <- tk2.C:
+				Reduce()
 		}
 	}
 }
 
 func sync() error {
 	return Orm.Sync2(
+		new(types.TaskStat),
 		new(types.TaskSchedule),
 	)
 }
@@ -37,7 +44,7 @@ func CalculateTaskAvaliablilty() {
 	//if err := Orm.Where("if_stat = false AND (UNIX_TIMESTAMP() - schedule_time) <= 20").
 	if err := Orm.Where("if_stat = false AND (UNIX_TIMESTAMP() - schedule_time) <= 60 * 10").
 	OrderBy("schedule_time").Asc("schedule_time").Find(&l); err != nil {
-		log.Printf("[stat] query task schedule result to calcute err %v\n", err)
+		log.Printf("[stat] taskCount task schedule result to calcute err %v\n", err)
 	}
 
 	if len(l) <= 1 {

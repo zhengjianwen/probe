@@ -38,6 +38,7 @@ func CreateTaskSchedule(res *pb.TaskResult) error {
 	}
 
 	ts := types.TaskSchedule{
+		TaskType: 		int64(int32(res.Type)),
 		TaskId: 		res.TaskId,
 		ScheduleTime: 	res.ScheduleTime,
 		PeriodSec: 		int32(res.PeriodSec),

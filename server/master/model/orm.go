@@ -26,6 +26,5 @@ func Sync() error {
 		new(types.Task_Http),
 		new(types.Task_Ping),
 		new(types.Task_TraceRoute),
-		new(types.TaskSchedule),
 	)
 }
