@@ -2,11 +2,17 @@ package handler
 
 import (
 	"net/http"
+	"github.com/1851616111/util/message"
 )
 
 func AuthAdmin(fn func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-
+		user, passwd, ok := r.BasicAuth()
+		if !ok || (user != "admin" && passwd != "qweasd") {
+			message.Unauthorized(w)
+		} else {
+			fn(w, r)
+		}
 	}
 }
 
