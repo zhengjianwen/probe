@@ -53,7 +53,8 @@ message BasicInfo {
     int64           ExecuteTime = 9;
     int64           ScheduleTime = 10;
     int64           PeriodSec = 11;
-    repeated int64  RuleIds = 12;
+    bool            Stop = 12;
+    repeated int64  RuleIds = 13;
 }
 
 message taskResult {
