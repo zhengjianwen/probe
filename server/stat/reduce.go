@@ -146,8 +146,8 @@ func appendTaskStat(ttp, tid, successN, errorN int64) error {
 	if n == 0 {
 		_, err = Orm.InsertOne(ts)
 	} else {
-		_, err= Orm.Exec("UPDATE task_stat SET success_n = success_n + ? AND error_n = error_n + ? WHERE task_type = ? AND task_id = ?",
-			successN, errorN, ttp, tid)
+		sql := fmt.Sprintf("UPDATE task_stat SET success_n = success_n + %d , error_n = error_n + %d WHERE task_type = %d AND task_id = %d", successN, errorN, ttp, tid)
+		_, err= Orm.Exec(sql)
 	}
 	return err
 }
