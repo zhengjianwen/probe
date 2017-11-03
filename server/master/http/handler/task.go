@@ -40,11 +40,28 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	ttp := mux.Vars(r)["ttp"]
 	orgId := r.Context().Value(auth.CONTEXT_KEY_ORG_ID).(int64)
+	userID := r.Context().Value(auth.CONTEXT_KEY_USER).(int64)
 
 	task, err := readBodyToTask(r.Body, ttp, orgId)
 	if err != nil {
 		message.Error(w, err)
 		return
+	}
+
+	ti, ok := task.(interface {GetNodeId() int64})
+	if !ok {
+		message.Error(w, errors.New("Server Inter Error"))
+		return
+	}
+
+	if nodeId := ti.GetNodeId(); nodeId > 0 {
+		if ok, err := auth.CanWriteNode(userID, nodeId); err != nil  {
+			message.Error(w, err)
+			return
+		} else if !ok {
+			message.Error(w, errors.New("no privileged"))
+			return
+		}
 	}
 
 	if id, err := model.CreateTask(task); err != nil {
@@ -57,10 +74,20 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 func ListTasksHandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	ttp := mux.Vars(r)["ttp"]
+	var nid int
+	ttp, nidStr := mux.Vars(r)["ttp"], r.FormValue("nid")
+	if len(nidStr) > 0 {
+		var err error
+		nid, err = strconv.Atoi(nidStr)
+		if err != nil {
+			message.Error(w, err)
+			return
+		}
+	}
+
 	orgId := r.Context().Value(auth.CONTEXT_KEY_ORG_ID).(int64)
 
-	if tasks, err := model.GetOrgTask(orgId, ttp); err != nil {
+	if tasks, err := model.GetOrgTask(orgId, int64(nid), ttp); err != nil {
 		message.Error(w, err)
 	} else {
 		message.SuccessI(w, tasks)
@@ -91,6 +118,7 @@ func UpdateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	tidStr, ttp := mux.Vars(r)["tid"], mux.Vars(r)["ttp"]
 
+	userID := r.Context().Value(auth.CONTEXT_KEY_USER).(int64)
 	orgId := r.Context().Value(auth.CONTEXT_KEY_ORG_ID).(int64)
 	task, err := readBodyToTask(r.Body, ttp, orgId)
 	if err != nil {
@@ -102,6 +130,22 @@ func UpdateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		message.Error(w, err)
 		return
+	}
+
+	ti, ok := task.(interface {GetNodeId() int64})
+	if !ok {
+		message.Error(w, errors.New("Server Inter Error"))
+		return
+	}
+
+	if nodeId := ti.GetNodeId(); nodeId > 0 {
+		if ok, err := auth.CanWriteNode(userID, nodeId); err != nil  {
+			message.Error(w, err)
+			return
+		} else if !ok {
+			message.Error(w, errors.New("no privileged"))
+			return
+		}
 	}
 
 	if err := model.UpdateTask(orgId, tid, task); err != nil {

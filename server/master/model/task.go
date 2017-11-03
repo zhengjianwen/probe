@@ -27,11 +27,19 @@ func GetTask(orgId, tid int64, tp string) (interface{}, error) {
 	return task, nil
 }
 
-func GetOrgTask(orgId int64, tp string) (interface{}, error) {
+func GetOrgTask(orgId, nodeId int64, tp string) (interface{}, error) {
 	l := NewTaskListPtr(tp)
-	if err := Orm.Where("org_id = ?", orgId).Find(l); err != nil {
-		return nil, err
+
+	if nodeId == 0 {
+		if err := Orm.Where("org_id = ?", orgId).Find(l); err != nil {
+			return nil, err
+		}
+	} else {
+		if err := Orm.Where("org_id = ? AND node_id = ?", orgId, nodeId).Find(l); err != nil {
+			return nil, err
+		}
 	}
+
 	return l, nil
 }
 

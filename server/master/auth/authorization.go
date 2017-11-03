@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-func CanWriteNode(myid, nodeid int64) (bool, error) {
+func CanWriteNode(userId, nodeid int64) (bool, error) {
 	var node Node
 	err := CallCloud("Srv.NodeInfo", uint64(nodeid), &node)
 	if err != nil {
@@ -17,7 +17,7 @@ func CanWriteNode(myid, nodeid int64) (bool, error) {
 
 	var res HasPermissionResponse
 	if err := CallUIC("Authority.HasPermission", HasPermissionRequest{
-		UserId:    myid,
+		UserId:    userId,
 		NodeId:    nodeid,
 		Operation: "tree.modify",
 	}, &res); err != nil {
