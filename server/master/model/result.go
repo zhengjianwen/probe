@@ -6,7 +6,7 @@ import (
 
 func HandleTaskResult(r *pb.TaskResult) error {
 	if r.Type == pb.TaskType_HTTP {
-		return SyncTackScheduleResult(r)
+		return SyncTaskResult(r)
 	}
 	return nil
 }

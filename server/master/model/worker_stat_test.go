@@ -17,11 +17,11 @@ func TestSyncWorkerStat(t *testing.T) {
 		scheduleTime := time.Now().Unix()
 		for i := 1; i <= 10; i ++ {
 			if i%2 == 0 {
-				if err := SyncTackScheduleResult(1, 100, scheduleTime, true); err != nil {
+				if err := SyncTaskResult(1, 100, scheduleTime, true); err != nil {
 					t.Fatal(err)
 				}
 			} else {
-				if err := SyncTackScheduleResult(1, 100, scheduleTime, false); err != nil {
+				if err := SyncTaskResult(1, 100, scheduleTime, false); err != nil {
 					t.Fatal(err)
 				}
 			}

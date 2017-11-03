@@ -25,15 +25,27 @@ func pushWorkerHttp(wid int64, res *pb.TaskResult) error {
 	return pushToApm(&mv1, getWorkerDelayMetric(wid, res))
 }
 
-func PushHttpStat(tid int64, av, step int) error {
-	m:= getTaskHttpStatMetric(tid, av, step)
-	return pushToApm(m)
+func PushHttpStat(tid int64, av, delay, step int) error {
+	mav := getHttpTaskAvMetric(tid, av, step)
+	mdelay := getHttpTaskDelayMetric(tid, delay, step)
+	return pushToApm(mav, mdelay)
 }
 
-func getTaskHttpStatMetric(tid int64, av, step int) *model.MetricValue {
+func getHttpTaskAvMetric(tid int64, av, step int) *model.MetricValue {
 	ret := bufPool.Get().(model.MetricValue)
+	defer bufPool.Put(ret)
 
 	ret.Metric, ret.Endpoint, ret.Value = getMetric(pb.TaskType_HTTP, "av"), fmt.Sprintf("url-%d", tid), av
+	ret.Timestamp, ret.Type, ret.Step = time.Now().Unix()-60, "GAUGE", step
+
+	return &ret
+}
+
+func getHttpTaskDelayMetric(tid int64, delay, step int) *model.MetricValue {
+	ret := bufPool.Get().(model.MetricValue)
+	defer bufPool.Put(ret)
+
+	ret.Metric, ret.Endpoint, ret.Value = getMetric(pb.TaskType_HTTP, "delay"), fmt.Sprintf("url-%d", tid), delay
 	ret.Timestamp, ret.Type, ret.Step = time.Now().Unix()-60, "GAUGE", step
 
 	return &ret

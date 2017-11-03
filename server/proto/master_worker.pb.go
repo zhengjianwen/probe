@@ -430,7 +430,7 @@ type BasicInfo struct {
 	ExecuteTime  int64    `protobuf:"varint,9,opt,name=ExecuteTime,json=executeTime" json:"ExecuteTime,omitempty"`
 	ScheduleTime int64    `protobuf:"varint,10,opt,name=ScheduleTime,json=scheduleTime" json:"ScheduleTime,omitempty"`
 	PeriodSec    int64    `protobuf:"varint,11,opt,name=PeriodSec,json=periodSec" json:"PeriodSec,omitempty"`
-	Stop         bool     `protobuf:"varint,12,opt,name=Stop,json=stop" json:"Stop,omitempty"`
+	Stop         bool     `protobuf:"varint,12,opt,name=Stop,json=stop" json:"Stop,omitempty" xorm:"default false"`
 	RuleIds      []int64  `protobuf:"varint,13,rep,packed,name=RuleIds,json=ruleIds" json:"RuleIds,omitempty" xorm:"rule_ids json"`
 }
 
