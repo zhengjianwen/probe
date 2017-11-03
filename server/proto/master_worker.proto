@@ -44,15 +44,16 @@ enum TaskType {
 message BasicInfo {
     int64           Id = 1;
     int64           OrgId = 2;
-    TaskType        Type = 3;
-    string          Name = 4;
-    string          Version = 5;
-    int64           CreateTime = 6;
-    int64           UpdateTime = 7;
-    int64           ExecuteTime = 8;
-    int64           ScheduleTime = 9;
-    int64           PeriodSec = 10;
-    repeated int64  RuleIds = 11;
+    int64           NodeId = 3;
+    TaskType        Type = 4;
+    string          Name = 5;
+    string          Version = 6;
+    int64           CreateTime = 7;
+    int64           UpdateTime = 8;
+    int64           ExecuteTime = 9;
+    int64           ScheduleTime = 10;
+    int64           PeriodSec = 11;
+    repeated int64  RuleIds = 12;
 }
 
 message taskResult {
