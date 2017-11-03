@@ -5,9 +5,9 @@ import (
 	pb "github.com/rongyungo/probe/server/proto"
 )
 
-func (m *ScheduleManager) GetAllTasks() ([]types.TaskInterface, error) {
+func (m *ScheduleManager) GetRunningTasks() ([]types.TaskInterface, error) {
 	l := getSliceByType(m.TaskType)
-	if err := m.Db.Where("type = ?", m.TaskType).Find(l); err != nil {
+	if err := m.Db.Where("stop = false AND type = ? ", m.TaskType).Find(l); err != nil {
 		return nil, err
 	}
 

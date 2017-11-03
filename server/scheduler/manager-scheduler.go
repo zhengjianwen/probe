@@ -61,7 +61,7 @@ func NewSchedulerManager(tp string, period uint8, c *sqlutil.DatabaseConfig) (*S
 func (m *ScheduleManager) Start() error {
 	go m.Run()
 
-	tks, err := m.GetAllTasks()
+	tks, err := m.GetRunningTasks()
 	if err != nil {
 		return err
 	}
@@ -77,7 +77,7 @@ func (m *ScheduleManager) Run() {
 		select {
 		case <-tk.C:
 			//tasks, err := m.GetScheduleTasks()
-			tasks, err := m.GetAllTasks()
+			tasks, err := m.GetRunningTasks()
 			if err != nil {
 				log.Printf("scheduler get to schedule tasks err %v\n", err)
 				continue
