@@ -419,19 +419,19 @@ func (m *Task) GetFtpSpec() *FtpSpec {
 }
 
 type BasicInfo struct {
-	Id           int64    `protobuf:"varint,1,opt,name=Id,json=id" json:"Id,omitempty"`
-	OrgId        int64    `protobuf:"varint,2,opt,name=OrgId,json=orgId" json:"OrgId,omitempty"`
-	NodeId       int64    `protobuf:"varint,3,opt,name=NodeId,json=nodeId" json:"NodeId,omitempty"`
-	Type         TaskType `protobuf:"varint,4,opt,name=Type,json=type,enum=TaskType" json:"Type,omitempty"`
-	Name         string   `protobuf:"bytes,5,opt,name=Name,json=name" json:"Name,omitempty"`
-	Version      string   `protobuf:"bytes,6,opt,name=Version,json=version" json:"Version,omitempty"`
-	CreateTime   int64    `protobuf:"varint,7,opt,name=CreateTime,json=createTime" json:"CreateTime,omitempty"`
-	UpdateTime   int64    `protobuf:"varint,8,opt,name=UpdateTime,json=updateTime" json:"UpdateTime,omitempty"`
-	ExecuteTime  int64    `protobuf:"varint,9,opt,name=ExecuteTime,json=executeTime" json:"ExecuteTime,omitempty"`
-	ScheduleTime int64    `protobuf:"varint,10,opt,name=ScheduleTime,json=scheduleTime" json:"ScheduleTime,omitempty"`
-	PeriodSec    int64    `protobuf:"varint,11,opt,name=PeriodSec,json=periodSec" json:"PeriodSec,omitempty"`
-	Stop         bool     `protobuf:"varint,12,opt,name=Stop,json=stop" json:"Stop,omitempty" xorm:"default false"`
-	RuleIds      []int64  `protobuf:"varint,13,rep,packed,name=RuleIds,json=ruleIds" json:"RuleIds,omitempty" xorm:"rule_ids json"`
+	Id           int64    `protobuf:"varint,1,opt,name=Id,json=id" json:"Id"`
+	OrgId        int64    `protobuf:"varint,2,opt,name=OrgId,json=orgId" json:"OrgId"`
+	NodeId       int64    `protobuf:"varint,3,opt,name=NodeId,json=nodeId" json:"NodeId"`
+	Type         TaskType `protobuf:"varint,4,opt,name=Type,json=type,enum=TaskType" json:"Type"`
+	Name         string   `protobuf:"bytes,5,opt,name=Name,json=name" json:"Name"`
+	Version      string   `protobuf:"bytes,6,opt,name=Version,json=version" json:"Version"`
+	CreateTime   int64    `protobuf:"varint,7,opt,name=CreateTime,json=createTime" json:"CreateTime"`
+	UpdateTime   int64    `protobuf:"varint,8,opt,name=UpdateTime,json=updateTime" json:"UpdateTime"`
+	ExecuteTime  int64    `protobuf:"varint,9,opt,name=ExecuteTime,json=executeTime" json:"ExecuteTime"`
+	ScheduleTime int64    `protobuf:"varint,10,opt,name=ScheduleTime,json=scheduleTime" json:"ScheduleTime"`
+	PeriodSec    int64    `protobuf:"varint,11,opt,name=PeriodSec,json=periodSec" json:"PeriodSec"`
+	Stop         bool     `protobuf:"varint,12,opt,name=Stop,json=stop" json:"Stop" xorm:"default false"`
+	RuleIds      []int64  `protobuf:"varint,13,rep,packed,name=RuleIds,json=ruleIds" json:"RuleIds" xorm:"rule_ids json"`
 }
 
 func (m *BasicInfo) Reset()                    { *m = BasicInfo{} }
@@ -741,15 +741,15 @@ func (m *TaskResultTraceroute) GetErrHops() int32 {
 }
 
 type HttpSpec struct {
-	Url       string             `protobuf:"bytes,1,opt,name=Url,json=url" json:"Url,omitempty"`
-	Method    HttpSpecMethod     `protobuf:"varint,2,opt,name=Method,json=method,enum=HttpSpecMethod" json:"Method,omitempty"`
-	Header    map[string]string  `protobuf:"bytes,3,rep,name=header" json:"header,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	Cookies   string             `protobuf:"bytes,4,opt,name=Cookies,json=cookies" json:"Cookies,omitempty"`
-	BasicAuth *HttpSpecBasicAuth `protobuf:"bytes,5,opt,name=BasicAuth,json=basicAuth" json:"BasicAuth,omitempty" xorm:"json"`
-	Body      []byte             `protobuf:"bytes,6,opt,name=Body,json=body,proto3" json:"Body,omitempty" xorm:"json"`
-	IsBodyStr bool               `protobuf:"varint,7,opt,name=IsBodyStr,json=isBodyStr" json:"IsBodyStr,omitempty"`
-	ServerIp  string             `protobuf:"bytes,8,opt,name=ServerIp,json=serverIp" json:"ServerIp,omitempty"`
-	Matcher   *HttpSpecMatcher   `protobuf:"bytes,9,opt,name=Matcher,json=matcher" json:"Matcher,omitempty" xorm:"json"`
+	Url       string             `protobuf:"bytes,1,opt,name=Url,json=url" json:"Url"`
+	Method    HttpSpecMethod     `protobuf:"varint,2,opt,name=Method,json=method,enum=HttpSpecMethod" json:"Method"`
+	Header    map[string]string  `protobuf:"bytes,3,rep,name=header" json:"header" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Cookies   string             `protobuf:"bytes,4,opt,name=Cookies,json=cookies" json:"Cookies"`
+	BasicAuth *HttpSpecBasicAuth `protobuf:"bytes,5,opt,name=BasicAuth,json=basicAuth" json:"BasicAuth" xorm:"json"`
+	Body      []byte             `protobuf:"bytes,6,opt,name=Body,json=body,proto3" json:"Body" xorm:"json"`
+	IsBodyStr bool               `protobuf:"varint,7,opt,name=IsBodyStr,json=isBodyStr" json:"IsBodyStr"`
+	ServerIp  string             `protobuf:"bytes,8,opt,name=ServerIp,json=serverIp" json:"ServerIp"`
+	Matcher   *HttpSpecMatcher   `protobuf:"bytes,9,opt,name=Matcher,json=matcher" json:"Matcher" xorm:"json"`
 }
 
 func (m *HttpSpec) Reset()                    { *m = HttpSpec{} }
