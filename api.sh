@@ -288,3 +288,5 @@ curl -XPOST http://www.opdeck.com/probe/task/org/1/http/task/2/bind/rule/7   --c
 
 ##将orgID=1下的task id = 2 的task 解绑定 rule=7的报警规则
 curl -XPOST http://www.opdeck.com/probe/task/org/1/http/task/2/unbind/rule/7   --cookie rywww=MTUwOTA5MDA5MHxNUC1CQXdFQkNrTnZiMnRwWlVSaGRHRUJfNElBQVFJQkJsVnpaWEpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFBQUJIX2dnRUNBUW94UUhSbGMzUXVZMjl0QUE9PXx4cSYcXa6iuZ1ozI5p_N4Zf86WF_Il_KP54WNE7VWpbA==
+
+curl -XPUT http://www.opdeck.com/probe/worker/2 -d '{"Id":0,"Password":"","Status":"","StartTimestamp":0,"UpdateTimestamp":0,"Country":"中国","Province":"","City":"深圳","Operator":"联通","Label":{"sys":null,"user":null,"other":{"Location":[114.07,22.62]}}}' --cookie rywww=MTUxMDAyMzk5NXxNUC1CQXdFQkNrTnZiMnRwWlVSaGRHRUJfNElBQVFJQkJsVnpaWEpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFBQUJIX2dnRUNBUW94UUhSbGMzUXVZMjl0QUE9PXx-VgnClo6DFJwNiczfRqfXRu3P4Da8znrvOfFWwugJ6g==

@@ -12,14 +12,13 @@ import (
 	"github.com/rongyungo/probe/server/master/model"
 	"strconv"
 	errutil "github.com/rongyungo/probe/util/errors"
-	"strings"
 
 	"github.com/rongyungo/probe/server/master/auth"
 	"errors"
 )
 
 func GetTaskWorkerSnapShotHandler(w http.ResponseWriter, r *http.Request) {
-	tType := strings.ToUpper(mux.Vars(r)["ttp"])
+	tType := mux.Vars(r)["ttp"]
 	tidStr := mux.Vars(r)["tid"]
 	tid, err := strconv.ParseInt(tidStr, 10, 64)
 	if err != nil {
@@ -27,9 +26,15 @@ func GetTaskWorkerSnapShotHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	taskSS, ok := model.TaskSnapShotMapping[tType][tid]
+	if tType != "http" {
+		message.NotFoundError(w)
+		return
+	}
+
+	taskSS, ok := model.HttpSnapShotMapping[tid]
 	if !ok {
 		message.NotFoundError(w)
+		return
 	}
 
 	message.SuccessI(w, taskSS)

@@ -25,7 +25,7 @@ func RegisterWorker(worker *types.Worker) error {
 
 func UpdateWorkerTime(ids ...int64) error {
 	if len(ids) > 0 {
-		_, err := Orm.In("id", ids).Update(types.Worker{
+		_, err := Orm.In("id", ids).Cols("status", "update_timestamp").Update(types.Worker{
 			UpdateTimestamp: 	time.Now().Unix(),
 			Status: 			"ok",
 		})
@@ -42,7 +42,7 @@ func AdminEditWorker(id int64, worker *types.Worker) error {
 	if id <= 0 {
 		return errutil.ErrWorkerIdEmpty
 	}
-	_, err := Orm.Id(id).Cols("country", "province", "city", "operator").Update(worker)
+	_, err := Orm.Id(id).Cols("country", "province", "city", "operator", "label").Update(worker)
 	return err
 }
 
