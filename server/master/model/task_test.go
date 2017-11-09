@@ -21,7 +21,7 @@ func TestCreateTask_Http(t *testing.T) {
 			//BasicAuth: &pb.HttpSpecBasicAuth{"michael", "123456"},
 		},
 		BasicInfo: pb.BasicInfo{
-			PeriodSec: 30,
+			PeriodSec: 50,
 		},
 	}
 

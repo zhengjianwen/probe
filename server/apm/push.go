@@ -85,6 +85,32 @@ func pushToApm(vs ...*model.MetricValue) error {
 	return nil
 }
 
+func pushToApmWithOrgId(oid int64, vs ...*model.MetricValue) error {
+	bs, err := json.Marshal(vs)
+	if err != nil {
+		return err
+	}
+
+	buf := bytes.NewBuffer(bs)
+
+	url := fmt.Sprintf("%s/v1/push?orgid=%d&token=%s", Conf.Url, oid, Conf.Token)
+	var resp *http.Response
+	resp, err = http.Post(url, "application/json", buf)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		if resp.Body != nil {
+			defer resp.Body.Close()
+			data, _ := ioutil.ReadAll(resp.Body)
+			return errors.New(string(data))
+		}
+	}
+
+	return nil
+}
+
 func getDelayMetric(res *pb.TaskResult) *model.MetricValue {
 	ret := bufPool.Get().(model.MetricValue)
 

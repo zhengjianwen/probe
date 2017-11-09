@@ -49,7 +49,8 @@ func Execute(t *pb.Task) *pb.TaskResult {
 	}
 
 	res.PeriodSec = t.GetBasicInfo().PeriodSec
-	res.ScheduleTime = t.BasicInfo.GetScheduleTime()
+	res.ScheduleTime = t.GetBasicInfo().GetScheduleTime()
+	res.OrgId = t.GetBasicInfo().GetOrgId()
 
 	return res
 }

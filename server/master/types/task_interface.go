@@ -11,4 +11,5 @@ type TaskInterface interface {
 	AddRuleId(int64)
 	RemoveRuleId(int64)
 	GetType() pb.TaskType
+	GetOrgId() int64
 }

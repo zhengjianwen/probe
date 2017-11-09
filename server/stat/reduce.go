@@ -25,6 +25,7 @@ func appendTaskStat(task *types.TaskSchedule) error {
 	ts := types.TaskStat{
 		TaskType: task.TaskType,
 		TaskId:   task.TaskId,
+		OrgId:    task.OrgId,
 		SuccessN: task.SuccessN,
 		ErrorN:   task.ErrorN,
 		DelaySum: task.DelaySum,

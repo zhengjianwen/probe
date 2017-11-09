@@ -43,6 +43,7 @@ func (m *ScheduleManager) CreateTaskSchedule(scheduleTime int64, workerN int, ts
 			ScheduleTime: scheduleTime,
 			WorkerN:      workerN,
 			PeriodSec:    task.GetPeriodSec(),
+			OrgId: 		  task.GetOrgId(),
 		})
 	}
 

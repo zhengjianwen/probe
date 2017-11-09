@@ -57,7 +57,7 @@ func CalculateTaskAvaliablilty() {
 			total := float64(task.SuccessN + task.ErrorN)
 			av := int(float64(task.SuccessN) / total * 100)
 			delay := int(float64(task.DelaySum) / total)
-			err := apm.PushHttpStat(task.TaskId, av, delay, int(task.PeriodSec))
+			err := apm.PushHttpStat(task.TaskId, task.OrgId, av, delay, int(task.PeriodSec))
 			if err != nil {
 				log.Printf("[stat] push http stat err %v\n", err)
 				continue

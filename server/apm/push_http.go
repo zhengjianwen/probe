@@ -22,13 +22,13 @@ func pushWorkerHttp(wid int64, res *pb.TaskResult) error {
 	mv1.Type = "GAUGE"
 	mv1.Step = int(res.GetPeriodSec())
 
-	return pushToApm(&mv1, getWorkerDelayMetric(wid, res))
+	return pushToApmWithOrgId(res.GetOrgId(), &mv1, getWorkerDelayMetric(wid, res))
 }
 
-func PushHttpStat(tid int64, av, delay, step int) error {
+func PushHttpStat(tid, oid int64, av, delay, step int) error {
 	mav := getHttpTaskAvMetric(tid, av, step)
 	mdelay := getHttpTaskDelayMetric(tid, delay, step)
-	return pushToApm(mav, mdelay)
+	return pushToApmWithOrgId(oid, mav, mdelay)
 }
 
 func getHttpTaskAvMetric(tid int64, av, step int) *model.MetricValue {
