@@ -56,7 +56,7 @@ func CreateTaskResult(res *pb.TaskResult) error {
 	return session.Commit()
 }
 
-var l *sync.RWMutex = new(sync.RWMutex)
+var l *sync.Mutex = new(sync.Mutex)
 var HttpSnapShotMapping = map[int64]map[int64]struct{
 	SnapShotTimeStamp int64
 	DelayMs           int64
@@ -65,8 +65,8 @@ var HttpSnapShotMapping = map[int64]map[int64]struct{
 func CoverSnapShotM(tp string, tid, wid int64, delayMs int64) {
 	switch tp {
 	case "HTTP":
-		l.RLock()
-		defer l.RUnlock()
+		l.Lock()
+		defer l.Unlock()
 		if wm, ok := HttpSnapShotMapping[tid]; !ok {
 			HttpSnapShotMapping[tid] = make(map[int64]struct {
 				SnapShotTimeStamp int64
