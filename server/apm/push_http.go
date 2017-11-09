@@ -15,10 +15,10 @@ func pushWorkerHttp(wid int64, res *pb.TaskResult) error {
 	mv1 := bufPool.Get().(model.MetricValue)
 	defer bufPool.Put(mv1)
 
-	mv1.Metric  = getMetric(res.Type, "sc")
-	mv1.Endpoint  = fmt.Sprintf("url-%d-%d", wid, res.TaskId)
+	mv1.Metric = getMetric(res.Type, "sc")
+	mv1.Endpoint = fmt.Sprintf("url-%d-%d", wid, res.TaskId)
 	mv1.Value = res.GetHttp().GetStatusCode()
-	mv1.Timestamp  =  time.Now().Unix() - 60
+	mv1.Timestamp = time.Now().Unix() - 60
 	mv1.Type = "GAUGE"
 	mv1.Step = int(res.GetPeriodSec())
 

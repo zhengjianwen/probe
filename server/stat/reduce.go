@@ -2,8 +2,8 @@ package stat
 
 import (
 	"fmt"
-	"log"
 	"github.com/rongyungo/probe/server/master/types"
+	"log"
 )
 
 // reduce is used to merge some task_schedule into one raw
@@ -14,7 +14,7 @@ var reduceCh chan *types.TaskSchedule = make(chan *types.TaskSchedule, 5000)
 func ReduceScheduleTask(task *types.TaskSchedule) error {
 	err := appendTaskStat(task)
 	if err != nil {
-		log.Printf("append task(%d) schedule result err %v\n", task.TaskId,  err)
+		log.Printf("append task(%d) schedule result err %v\n", task.TaskId, err)
 		return err
 	}
 	_, err = removeScheduleTask(task)
@@ -23,11 +23,11 @@ func ReduceScheduleTask(task *types.TaskSchedule) error {
 
 func appendTaskStat(task *types.TaskSchedule) error {
 	ts := types.TaskStat{
-		TaskType: 	task.TaskType,
-		TaskId: 	task.TaskId,
-		SuccessN: 	task.SuccessN,
-		ErrorN: 	task.ErrorN,
-		DelaySum:   task.DelaySum,
+		TaskType: task.TaskType,
+		TaskId:   task.TaskId,
+		SuccessN: task.SuccessN,
+		ErrorN:   task.ErrorN,
+		DelaySum: task.DelaySum,
 	}
 	n, err := Orm.Table(ts).Where("task_type = ? AND task_id = ?", task.TaskType, task.TaskId).Count()
 	if err != nil {
@@ -39,7 +39,7 @@ func appendTaskStat(task *types.TaskSchedule) error {
 	} else {
 		sql := fmt.Sprintf("UPDATE task_stat SET success_n = success_n + %d, error_n = error_n + %d, delay_sum = delay_sum + %d WHERE task_type = %d AND task_id = %d",
 			task.SuccessN, task.ErrorN, task.DelaySum, task.TaskType, task.TaskId)
-		_, err= Orm.Exec(sql)
+		_, err = Orm.Exec(sql)
 	}
 	return err
 }

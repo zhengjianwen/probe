@@ -1,10 +1,10 @@
 package auth
 
 import (
-	"net/http"
 	"context"
-	"strconv"
 	"github.com/gorilla/mux"
+	"net/http"
+	"strconv"
 )
 
 const CONTEXT_KEY_USER = "key_user"
@@ -14,13 +14,13 @@ func AuthUser(handler func(http.ResponseWriter, *http.Request)) http.HandlerFunc
 	return func(w http.ResponseWriter, r *http.Request) {
 		orgIdStr := mux.Vars(r)["oid"]
 		if len(orgIdStr) == 0 {
-			http.Error(w, "param org_id not found" , http.StatusBadRequest)
+			http.Error(w, "param org_id not found", http.StatusBadRequest)
 			return
 		}
 
 		orgId, err := strconv.ParseInt(orgIdStr, 10, 64)
 		if err != nil {
-			http.Error(w, "param org_id invalid" , http.StatusBadRequest)
+			http.Error(w, "param org_id invalid", http.StatusBadRequest)
 			return
 		}
 
@@ -28,12 +28,12 @@ func AuthUser(handler func(http.ResponseWriter, *http.Request)) http.HandlerFunc
 
 		is, err := IsMember(userId, orgId)
 		if err != nil {
-			http.Error(w, err.Error() , http.StatusUnauthorized)
+			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
 
 		if !is {
-			http.Error(w, "unauthorized" , http.StatusUnauthorized)
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
 			return
 		}
 
@@ -49,7 +49,7 @@ func IsMember(myid, orgid int64) (bool, error) {
 		UserID: myid,
 		OrgID:  orgid,
 	}, &res); err != nil {
-		return false , err
+		return false, err
 	}
 
 	return res.Is, nil

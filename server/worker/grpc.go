@@ -58,10 +58,10 @@ func Subscribe(ctx context.Context, addr string, workerId int64, in chan *pb.Tas
 
 			case result := <-in:
 				if err := stream.Send(&pb.Topic{
-					Type:   	pb.Topic_RESULT,
-					WorkerId: 	workerId,
+					Type:       pb.Topic_RESULT,
+					WorkerId:   workerId,
 					WorkerTime: time.Now().Unix(),
-					Result: 	result,
+					Result:     result,
 				}); err != nil {
 					connectErrCh <- err
 					return

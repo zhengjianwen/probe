@@ -3,15 +3,15 @@ package types
 import "sort"
 
 type TaskSchedule struct {
-	TaskType 		int64   `xorm:"task_type pk"`
-	TaskId      	int64 	`xorm:"task_id pk"`
-	ScheduleTime 	int64 	`xorm:"schedule_time pk"`
-	DelaySum        int64 	`xorm:"delay_sum default 0"` //ms
-	WorkerN 		int
-	SuccessN 		int64   `xorm:"success_n default 0"`
-	ErrorN 			int64   `xorm:"error_n default 0"`
-	PeriodSec       int64
-	IfStat          bool
+	TaskType     int64 `xorm:"task_type pk"`
+	TaskId       int64 `xorm:"task_id pk"`
+	ScheduleTime int64 `xorm:"schedule_time pk"`
+	DelaySum     int64 `xorm:"delay_sum default 0"` //ms
+	WorkerN      int
+	SuccessN     int64 `xorm:"success_n default 0"`
+	ErrorN       int64 `xorm:"error_n default 0"`
+	PeriodSec    int64
+	IfStat       bool
 }
 
 func (p *TaskSchedule) TableName() string {
@@ -19,7 +19,7 @@ func (p *TaskSchedule) TableName() string {
 }
 
 func (p TaskSchedule) CanFinish() bool {
-	return p.SuccessN + p.ErrorN == int64(p.WorkerN)
+	return p.SuccessN+p.ErrorN == int64(p.WorkerN)
 }
 
 type TaskScheduleList []TaskSchedule
@@ -55,19 +55,18 @@ func (p TaskScheduleList) Less(i, j int) bool {
 	return p[i].ScheduleTime < p[j].ScheduleTime
 }
 
-func(p TaskScheduleList) Swap(i, j int) {
+func (p TaskScheduleList) Swap(i, j int) {
 	p[i], p[j] = p[j], p[i]
 }
 
 type TaskStat struct {
-	TaskType    int64 `xorm:"task_type default 0"`
-	TaskId   	int64 `xorm:"task_id default 0"`
-	DelaySum 	int64 `xorm:"delay_sum default 0"`
-	SuccessN  	int64 `xorm:"success_n default 0"`
-	ErrorN 		int64 `xorm:"error_n default 0"`
+	TaskType int64 `xorm:"task_type default 0"`
+	TaskId   int64 `xorm:"task_id default 0"`
+	DelaySum int64 `xorm:"delay_sum default 0"`
+	SuccessN int64 `xorm:"success_n default 0"`
+	ErrorN   int64 `xorm:"error_n default 0"`
 }
 
 func (p *TaskStat) TableName() string {
 	return "task_stat"
 }
-

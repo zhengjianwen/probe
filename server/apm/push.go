@@ -103,7 +103,6 @@ func getWorkerDelayMetric(wid int64, res *pb.TaskResult) *model.MetricValue {
 	return &ret
 }
 
-
 func getCodeMetric(res *pb.TaskResult) *model.MetricValue {
 	ret := bufPool.Get().(model.MetricValue)
 

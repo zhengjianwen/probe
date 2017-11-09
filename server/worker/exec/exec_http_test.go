@@ -4,8 +4,8 @@ import (
 	//"github.com/headzoo/surf"
 	"testing"
 
-	pb "github.com/rongyungo/probe/server/proto"
 	"fmt"
+	pb "github.com/rongyungo/probe/server/proto"
 )
 
 //
@@ -23,11 +23,10 @@ import (
 //	fmt.Println(bow.Title())
 //}
 
-
 func TestProbeHttp(t *testing.T) {
 	task := pb.Task{
 		HttpSpec: &pb.HttpSpec{
-			Url: "",
+			Url:    "",
 			Method: 1,
 		},
 	}

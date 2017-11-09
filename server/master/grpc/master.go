@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	pb "github.com/rongyungo/probe/server/proto"
 	"github.com/rongyungo/probe/server/master/model"
+	pb "github.com/rongyungo/probe/server/proto"
 	"log"
 )
 
@@ -59,12 +59,12 @@ func (m *master) GetWorkerIds() []int64 {
 func (m *master) syncWorker() {
 	for {
 		select {
-		case  <-time.Tick(time.Second * 30):
+		case <-time.Tick(time.Second * 30):
 			log.Printf("master start workers house keeping")
 			m.CleanWorkerConn()
 
 			ids := m.getWorkerIds()
-			if err := 	 model.UpdateWorkerTime(ids...); err != nil {
+			if err := model.UpdateWorkerTime(ids...); err != nil {
 				log.Printf("master sync workers(%v) err %s\n", ids, err)
 			} else {
 				log.Printf("master finish workers house keeping, workers ids in (%v)\n", ids)

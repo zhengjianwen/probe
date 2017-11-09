@@ -1,12 +1,12 @@
 package stat
 
 import (
-	"github.com/rongyungo/probe/util/sql"
 	"github.com/go-xorm/xorm"
-	"github.com/rongyungo/probe/server/master/types"
-	"time"
 	"github.com/rongyungo/probe/server/apm"
+	"github.com/rongyungo/probe/server/master/types"
+	"github.com/rongyungo/probe/util/sql"
 	"log"
+	"time"
 )
 
 var Orm *xorm.Engine
@@ -20,12 +20,12 @@ func Start() {
 	tk1 := time.NewTicker(time.Second * time.Duration(20))
 	for {
 		select {
-			case <- tk1.C:
-				CalculateTaskAvaliablilty()
-			case task := <- reduceCh:
-				if err:= ReduceScheduleTask(task); err != nil {
-					log.Printf("[stat] reduce schedule task err %v\n", err)
-				}
+		case <-tk1.C:
+			CalculateTaskAvaliablilty()
+		case task := <-reduceCh:
+			if err := ReduceScheduleTask(task); err != nil {
+				log.Printf("[stat] reduce schedule task err %v\n", err)
+			}
 		}
 	}
 }
@@ -47,15 +47,15 @@ func CalculateTaskAvaliablilty() {
 	for _, ts := range l {
 		var taskList types.TaskScheduleList
 		err := Orm.Where("task_type = ? AND task_id = ? AND (UNIX_TIMESTAMP()-schedule_time) <= 3 * period_sec", ts.TaskType, ts.TaskId).
-		Find(&taskList)
+			Find(&taskList)
 		if err != nil {
 			log.Printf("<<<<<<<<<<<<<<<handler one task err %v>>>>>>>>>>>>>> ", err)
 			continue
 		}
 
 		if task := taskList.ReturnFinishedTask(); task != nil {
-			total := float64(task. SuccessN + task.ErrorN)
-			av := int(float64(task. SuccessN)/ total  * 100)
+			total := float64(task.SuccessN + task.ErrorN)
+			av := int(float64(task.SuccessN) / total * 100)
 			delay := int(float64(task.DelaySum) / total)
 			err := apm.PushHttpStat(task.TaskId, av, delay, int(task.PeriodSec))
 			if err != nil {
@@ -67,4 +67,3 @@ func CalculateTaskAvaliablilty() {
 		}
 	}
 }
-

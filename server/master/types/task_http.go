@@ -42,7 +42,7 @@ func (t *Task_Http) Validate() error {
 		return errutil.ErrTaskPeriodTooLess
 	}
 
-	if t.Method != pb.HttpSpec_GET &&  t.Method != pb.HttpSpec_POST &&  t.Method != pb.HttpSpec_HEAD {
+	if t.Method != pb.HttpSpec_GET && t.Method != pb.HttpSpec_POST && t.Method != pb.HttpSpec_HEAD {
 		return errutil.ErrHttpTaskMethodInvalid
 	}
 

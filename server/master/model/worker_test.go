@@ -1,10 +1,10 @@
 package model
 
 import (
-	"github.com/rongyungo/probe/server/master/types"
-	"testing"
 	"encoding/json"
 	"fmt"
+	"github.com/rongyungo/probe/server/master/types"
+	"testing"
 )
 
 func Test_AdminEditWorker(t *testing.T) {
@@ -16,7 +16,7 @@ func Test_AdminEditWorker(t *testing.T) {
 	wk := &types.Worker{
 		Country: "中国", Province: "", City: "深圳", Operator: "联通",
 		Label: types.Label{
-			Other: map[string]interface{}{"Location":[]float32{114.07, 22.62}},
+			Other: map[string]interface{}{"Location": []float32{114.07, 22.62}},
 		},
 	}
 	//if err := AdminEditWorker(1, wk); err != nil {

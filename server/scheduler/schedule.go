@@ -1,8 +1,8 @@
 package scheduler
 
 import (
-	"github.com/rongyungo/probe/server/master/types"
 	"github.com/rongyungo/probe/server/master/grpc"
+	"github.com/rongyungo/probe/server/master/types"
 	"log"
 	"time"
 )

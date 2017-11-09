@@ -26,8 +26,8 @@ func RegisterWorker(worker *types.Worker) error {
 func UpdateWorkerTime(ids ...int64) error {
 	if len(ids) > 0 {
 		_, err := Orm.In("id", ids).Cols("status", "update_timestamp").Update(types.Worker{
-			UpdateTimestamp: 	time.Now().Unix(),
-			Status: 			"ok",
+			UpdateTimestamp: time.Now().Unix(),
+			Status:          "ok",
 		})
 		return err
 	}

@@ -7,9 +7,9 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/rongyungo/probe/server/master/grpc"
 	"github.com/rongyungo/probe/server/master/model"
 	"github.com/rongyungo/probe/server/master/types"
-	"github.com/rongyungo/probe/server/master/grpc"
 	"strconv"
 )
 

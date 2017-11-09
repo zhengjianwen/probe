@@ -1,20 +1,20 @@
 package handler
 
 import (
-	"io"
-	"io/ioutil"
-	"log"
-	"net/http"
 	"encoding/json"
 	"fmt"
 	"github.com/1851616111/util/message"
 	"github.com/gorilla/mux"
 	"github.com/rongyungo/probe/server/master/model"
-	"strconv"
 	errutil "github.com/rongyungo/probe/util/errors"
+	"io"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"strconv"
 
-	"github.com/rongyungo/probe/server/master/auth"
 	"errors"
+	"github.com/rongyungo/probe/server/master/auth"
 )
 
 func GetTaskWorkerSnapShotHandler(w http.ResponseWriter, r *http.Request) {
@@ -53,14 +53,16 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ti, ok := task.(interface {GetNodeId() int64})
+	ti, ok := task.(interface {
+		GetNodeId() int64
+	})
 	if !ok {
 		message.Error(w, errors.New("Server Inter Error"))
 		return
 	}
 
 	if nodeId := ti.GetNodeId(); nodeId > 0 {
-		if ok, err := auth.CanWriteNode(userID, nodeId); err != nil  {
+		if ok, err := auth.CanWriteNode(userID, nodeId); err != nil {
 			message.Error(w, err)
 			return
 		} else if !ok {
@@ -137,14 +139,16 @@ func UpdateTaskHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ti, ok := task.(interface {GetNodeId() int64})
+	ti, ok := task.(interface {
+		GetNodeId() int64
+	})
 	if !ok {
 		message.Error(w, errors.New("Server Inter Error"))
 		return
 	}
 
 	if nodeId := ti.GetNodeId(); nodeId > 0 {
-		if ok, err := auth.CanWriteNode(userID, nodeId); err != nil  {
+		if ok, err := auth.CanWriteNode(userID, nodeId); err != nil {
 			message.Error(w, err)
 			return
 		} else if !ok {
@@ -225,7 +229,9 @@ func TaskOptRuleHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch opt {
 	case "bind":
-		task, ok := tk.(interface{AddRuleId(int64)})
+		task, ok := tk.(interface {
+			AddRuleId(int64)
+		})
 		if !ok {
 			message.Error(w, errors.New("task type not satisfied"))
 			return
@@ -234,10 +240,10 @@ func TaskOptRuleHandler(w http.ResponseWriter, r *http.Request) {
 		err = model.UpdateTaskRuleId1(orgId, tid, task)
 
 	case "unbind":
-		task, ok := tk.(interface{
+		task, ok := tk.(interface {
 			RemoveRuleId(int64)
 			GetRuleIds() []int64
-			})
+		})
 		if !ok {
 			message.Error(w, errors.New("task type not satisfied"))
 			return
@@ -253,7 +259,6 @@ func TaskOptRuleHandler(w http.ResponseWriter, r *http.Request) {
 		message.Success(w)
 	}
 }
-
 
 func readBodyToTask(rc io.Reader, tp string, orgId int64) (interface{}, error) {
 	data, err := ioutil.ReadAll(rc)

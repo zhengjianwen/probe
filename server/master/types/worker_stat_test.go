@@ -1,12 +1,12 @@
 package types
 
 import (
-	"testing"
 	"sort"
+	"testing"
 )
 
 func TestTaskSchedule_Sort(t *testing.T) {
-	l := []TaskSchedule {
+	l := []TaskSchedule{
 		{TaskId: 1, ScheduleTime: 2000},
 		{TaskId: 1, ScheduleTime: 100},
 		{TaskId: 2, ScheduleTime: 1000},

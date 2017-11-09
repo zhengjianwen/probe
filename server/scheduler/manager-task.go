@@ -85,7 +85,7 @@ func (m *taskManager) ReduceReplicatedTask(l []types.TaskInterface) []types.Task
 		if !ok {
 			m.scheduleMap[tk.GetId()] = &taskRecord{
 				task:   tk,
-				nextSt: now + tk.GetPeriodSec() -1,
+				nextSt: now + tk.GetPeriodSec() - 1,
 			}
 			ret = append(ret, tk)
 			continue

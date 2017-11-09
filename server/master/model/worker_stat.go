@@ -1,10 +1,10 @@
 package model
 
 import (
-	pb "github.com/rongyungo/probe/server/proto"
 	"fmt"
-	"time"
+	pb "github.com/rongyungo/probe/server/proto"
 	"sync"
+	"time"
 )
 
 func SyncTaskResult(res *pb.TaskResult) error {
@@ -27,7 +27,7 @@ func SyncTaskResult(res *pb.TaskResult) error {
 }
 
 var l *sync.Mutex = new(sync.Mutex)
-var HttpSnapShotMapping = map[int64]map[int64]struct{
+var HttpSnapShotMapping = map[int64]map[int64]struct {
 	SnapShotTimeStamp int64
 	DelayMs           int64
 }{}

@@ -2,9 +2,9 @@ package grpc
 
 import (
 	"github.com/rongyungo/probe/server/apm"
+	"github.com/rongyungo/probe/server/master/model"
 	pb "github.com/rongyungo/probe/server/proto"
 	"log"
-	"github.com/rongyungo/probe/server/master/model"
 )
 
 func handleResult(msg *pb.Topic) {

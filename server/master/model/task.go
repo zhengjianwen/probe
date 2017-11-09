@@ -1,9 +1,9 @@
 package model
 
 import (
+	"fmt"
 	"github.com/rongyungo/probe/server/master/types"
 	errutil "github.com/rongyungo/probe/util/errors"
-	"fmt"
 )
 
 func CreateTask(tk interface{}) (int64, error) {
@@ -53,7 +53,9 @@ func UpdateTaskRuleId1(orgId, tid int64, task interface{}) error {
 	return err
 }
 
-func UpdateTaskRuleId2(orgId, tid int64, tp string, task interface{GetRuleIds() []int64}) error {
+func UpdateTaskRuleId2(orgId, tid int64, tp string, task interface {
+	GetRuleIds() []int64
+}) error {
 	if len(task.GetRuleIds()) == 0 {
 		sql := fmt.Sprintf("UPDATE %s SET rule_ids = NULL where id = %d AND org_id = %d",
 			fmt.Sprintf("task_%s", tp), tid, orgId)

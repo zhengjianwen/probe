@@ -4,12 +4,12 @@ import (
 	pb "github.com/rongyungo/probe/server/proto"
 	"io/ioutil"
 
+	"bytes"
+	"io"
 	"net"
 	"net/http"
 	"strings"
 	"time"
-	"io"
-	"bytes"
 )
 
 var trans = &http.Transport{

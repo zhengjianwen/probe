@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 	"github.com/rongyungo/probe/server/apm"
+	"github.com/rongyungo/probe/server/master/auth"
 	"github.com/rongyungo/probe/server/master/start"
 	"github.com/rongyungo/probe/server/master/types"
-	"github.com/rongyungo/probe/server/master/auth"
 	sqlutil "github.com/rongyungo/probe/util/sql"
 	"github.com/spf13/cobra"
 	"log"
@@ -15,7 +15,7 @@ import (
 var (
 	startMasterOptions startMasterOption
 	DbCfg              sqlutil.DatabaseConfig
-	authCfg 		   auth.AuthConfig
+	authCfg            auth.AuthConfig
 )
 
 func init() {

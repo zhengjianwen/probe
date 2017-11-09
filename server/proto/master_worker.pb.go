@@ -453,7 +453,7 @@ func (m *BasicInfo) GetOrgId() int64 {
 	return 0
 }
 
-func (m *BasicInfo) SetOrgId(id int64)  {
+func (m *BasicInfo) SetOrgId(id int64) {
 	if m != nil {
 		m.OrgId = id
 	}
@@ -466,7 +466,7 @@ func (m *BasicInfo) GetNodeId() int64 {
 	return 0
 }
 
-func (m *BasicInfo) SetNodeId(id int64)  {
+func (m *BasicInfo) SetNodeId(id int64) {
 	if m != nil {
 		m.NodeId = id
 	}
@@ -571,7 +571,7 @@ func (m *BasicInfo) RemoveRuleId(id int64) {
 	}
 }
 
-func contains(l []int64, i int64) bool{
+func contains(l []int64, i int64) bool {
 	for _, ele := range l {
 		if ele == i {
 			return true
