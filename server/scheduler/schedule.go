@@ -4,13 +4,26 @@ import (
 	"github.com/rongyungo/probe/server/master/types"
 	"github.com/rongyungo/probe/server/master/grpc"
 	"log"
+	"time"
 )
 
 func (m *ScheduleManager) Schedule(s *types.Strategy, ts []types.TaskInterface) error {
-	for _, wid := range grpc.Master.GetWorkerIds() {
-		if err := grpc.Master.SendTask(wid, ts); err != nil {
+	scheduleId := time.Now().Unix()
+
+	wIds := grpc.Master.GetWorkerIds()
+	if len(wIds) == 0 {
+		return nil
+	}
+
+	if err := m.CreateTaskSchedule(scheduleId, len(wIds), ts); err != nil {
+		return err
+	}
+
+	for _, wid := range wIds {
+		if err := grpc.Master.SendTask(wid, ts, scheduleId); err != nil {
 			log.Printf("schedule manager send worker %s err %v\n", wid, err)
 		}
 	}
+
 	return nil
 }

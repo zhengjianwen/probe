@@ -34,3 +34,19 @@ func (m *ScheduleManager) TableName() string {
 	}
 	return "xxx"
 }
+
+func (m *ScheduleManager) CreateTaskSchedule(scheduleTime int64, workerN int, ts []types.TaskInterface) error {
+	var ss []types.TaskSchedule
+	for _, task := range ts {
+		ss = append(ss, types.TaskSchedule{
+			TaskType: 		int64(task.GetType()),
+			TaskId: 		task.GetId(),
+			ScheduleTime: 	scheduleTime,
+			WorkerN:  		workerN,
+			PeriodSec:  	task.GetPeriodSec(),
+		})
+	}
+
+	_, err := m.Db.Insert(ss)
+	return err
+}

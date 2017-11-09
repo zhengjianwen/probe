@@ -10,4 +10,5 @@ type TaskInterface interface {
 	SetScheduleTime(st int64)
 	AddRuleId(int64)
 	RemoveRuleId(int64)
+	GetType() pb.TaskType
 }

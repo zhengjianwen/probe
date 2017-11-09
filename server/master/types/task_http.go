@@ -6,6 +6,7 @@ import (
 
 	"fmt"
 	errutil "github.com/rongyungo/probe/util/errors"
+	"strings"
 )
 
 type Task_Http struct {
@@ -29,8 +30,20 @@ func (t *Task_Http) GetPeriodSec() int64 {
 }
 
 func (t *Task_Http) Validate() error {
+	if strings.Contains(t.Url, "http://") && strings.Contains(t.Url, "https://") {
+		return errutil.ErrHttpTaskUrlInvalid
+	}
+
+	if strings.Contains(t.Url, "127.0.0.1") || strings.Contains(t.Url, "0.0.0.0") || strings.Contains(t.Url, "localhost") {
+		return errutil.ErrHttpTaskUrlInvalid
+	}
+
 	if t.PeriodSec < MinPeriodSec {
 		return errutil.ErrTaskPeriodTooLess
+	}
+
+	if t.Method != pb.HttpSpec_GET &&  t.Method != pb.HttpSpec_POST &&  t.Method != pb.HttpSpec_HEAD {
+		return errutil.ErrHttpTaskMethodInvalid
 	}
 
 	return nil

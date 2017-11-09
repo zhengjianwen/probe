@@ -2,58 +2,28 @@ package model
 
 import (
 	pb "github.com/rongyungo/probe/server/proto"
-	"github.com/rongyungo/probe/server/master/types"
 	"fmt"
 	"time"
 	"sync"
 )
 
 func SyncTaskResult(res *pb.TaskResult) error {
-	var wks types.TaskSchedule
-	exist, err := Orm.Where("task_id = ? AND schedule_time = ?", res.TaskId, res.ScheduleTime).Get(&wks)
-	if err != nil {
-		return err
-	}
-
-	if !exist {
-		return CreateTaskResult(res)
-	}
-
-	sql := "UPDATE task_schedule SET delay_sum = delay_sum + ?, %s WHERE task_id = ? AND schedule_time = ? AND period_sec = ?"
+	//exist, err := Orm.Where("task_type = ? AND task_id = ? AND schedule_time = ?", int(res.GetType()), res.TaskId, res.ScheduleTime).Get(&wks)
+	//if err != nil {
+	//	return err
+	//}
+	//
+	//if !exist {
+	//	return CreateTaskResult(res)
+	//}
 	var setSql = "success_n = success_n + 1"
 	if !res.Success {
 		setSql = "error_n = error_n +1"
 	}
+	sql := fmt.Sprintf("UPDATE task_schedule SET delay_sum = delay_sum + ?, %s WHERE task_type = ? AND task_id = ? AND schedule_time = ?", setSql)
 
-	_, err = Orm.Exec(fmt.Sprintf(sql, setSql), res.DelayMs, res.TaskId, res.ScheduleTime, res.PeriodSec)
+	_, err := Orm.Exec(sql, res.DelayMs, int(res.GetType()), res.TaskId, res.ScheduleTime)
 	return err
-}
-
-func CreateTaskResult(res *pb.TaskResult) error {
-	session := Orm.NewSession()
-	defer session.Close()
-
-	err := session.Begin()
-	if err != nil {
-		return err
-	}
-
-	ts := types.TaskSchedule{
-		TaskType: 		int64(int32(res.Type)),
-		TaskId: 		res.TaskId,
-		DelaySum:  		res.DelayMs,
-		ScheduleTime: 	res.ScheduleTime,
-		PeriodSec: 		int32(res.PeriodSec),
-	}
-
-	if res.Success {
-		ts.SuccessN = 1
-	} else {
-		ts.ErrorN = 1
-	}
-
-	_, err = session.InsertOne(ts)
-	return session.Commit()
 }
 
 var l *sync.Mutex = new(sync.Mutex)
@@ -63,6 +33,7 @@ var HttpSnapShotMapping = map[int64]map[int64]struct{
 }{}
 
 func CoverSnapShotM(tp string, tid, wid int64, delayMs int64) {
+	now := time.Now().Unix()
 	switch tp {
 	case "HTTP":
 		l.Lock()
@@ -77,7 +48,7 @@ func CoverSnapShotM(tp string, tid, wid int64, delayMs int64) {
 				SnapShotTimeStamp int64
 				DelayMs           int64
 			}{
-				SnapShotTimeStamp: time.Now().Unix(),
+				SnapShotTimeStamp: now,
 				DelayMs:           delayMs,
 			}
 		}
@@ -91,4 +62,24 @@ func CoverSnapShotM(tp string, tid, wid int64, delayMs int64) {
 		return
 	}
 
+	//WorkTimeStampMapping[wid] = now
 }
+
+//var wl *sync.RWMutex = new(sync.RWMutex)
+//// worker id to latest working timestamp to validate if the worker alive
+//var WorkTimeStampMapping = map[int64]int64{}
+//
+//func getWorkingWorker() int {
+//	wl.RLock()
+//	defer wl.RUnlock()
+//	var total int
+//
+//	total, now := 0, time.Now()
+//	for _, ts := range WorkTimeStampMapping {
+//		if  now.Sub(time.Unix(ts, 0)) <= time.Minute * 5 {
+//			total ++
+//		}
+//	}
+//
+//	return total
+//}

@@ -132,8 +132,7 @@ func (c *conn) Print() {
 	log.Printf("update time: %s", time.Unix(c.updateTime, 0).String())
 }
 
-func (c *conn) recordMessage(tks ...types.TaskInterface) {
-	scheduleTime := time.Now().Unix()
+func (c *conn) recordMessage(scheduleTime int64, tks ...types.TaskInterface) {
 	for _, tk := range tks {
 		if len(c.sendCh) >= maxSendChanLength-1 {
 			log.Println("master grpc conn send channel full")
