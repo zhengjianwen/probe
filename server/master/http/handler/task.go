@@ -15,6 +15,9 @@ import (
 
 	"errors"
 	"github.com/rongyungo/probe/server/master/auth"
+	cap "github.com/rongyungo/probe/server/img-cap"
+	pb "github.com/rongyungo/probe/server/proto"
+
 )
 
 func GetTaskWorkerSnapShotHandler(w http.ResponseWriter, r *http.Request) {
@@ -55,6 +58,8 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	ti, ok := task.(interface {
 		GetNodeId() int64
+		GetUrl() string
+		GetType() pb.TaskType
 	})
 	if !ok {
 		message.Error(w, errors.New("Server Inter Error"))
@@ -75,6 +80,8 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 		message.Error(w, err)
 	} else {
 		//	sc.AddTask(&task)
+
+		go cap.Cap(ti.GetUrl(), fmt.Sprintf("task_%s_%d.png", ti.GetType().String(), id))
 		message.SuccessS(w, fmt.Sprintf("%d", id))
 	}
 }

@@ -14,9 +14,14 @@ import (
 	"github.com/rongyungo/probe/server/scheduler"
 	"github.com/rongyungo/probe/server/stat"
 	"github.com/rongyungo/probe/util/sql"
+	cap "github.com/rongyungo/probe/server/img-cap"
 )
 
 func RunAll(mCfg *types.StartMasterConfig, dbc *sql.DatabaseConfig, aCfg *auth.AuthConfig) error {
+	if err := cap.Init(); err != nil {
+		return err
+	}
+
 	if err := model.InitMySQL(dbc); err != nil {
 		return err
 	}
