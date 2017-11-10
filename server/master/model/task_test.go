@@ -15,13 +15,13 @@ func TestCreateTask_Http(t *testing.T) {
 
 	task := types.Task_Http{
 		HttpSpec: pb.HttpSpec{
-			Url:       "http://www.baidu.com",
-			Method:    pb.HttpSpec_GET,
+			Url:    "http://www.baidu.com",
+			Method: pb.HttpSpec_GET,
 			//Header:    map[string]string{"k1": "v1", "k2": "v2"},
 			//BasicAuth: &pb.HttpSpecBasicAuth{"michael", "123456"},
 		},
 		BasicInfo: pb.BasicInfo{
-			PeriodSec: 30,
+			PeriodSec: 50,
 		},
 	}
 

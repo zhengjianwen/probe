@@ -8,9 +8,9 @@ func Init(c *AuthConfig) {
 }
 
 type AuthConfig struct {
-	CookieSecret	string
-	UicAddr 		string
-	CloudAddr 		string
+	CookieSecret string
+	UicAddr      string
+	CloudAddr    string
 }
 
 func (c *AuthConfig) Validate() error {

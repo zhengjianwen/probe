@@ -2,6 +2,8 @@ package util
 
 import "errors"
 
+var ErrHttpTaskMethodInvalid error = errors.New("http task method invalid")
+var ErrHttpTaskUrlInvalid error = errors.New("http task url invalid")
 var ErrTaskPeriodTooLess error = errors.New("task period too less")
 var ErrUnSupportTaskType error = errors.New("task type un support")
 var ErrTaskNotFound error = errors.New("task not found")

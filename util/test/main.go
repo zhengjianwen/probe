@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 )
+
 func main() {
-	fmt.Println(4/5.0)
+	fmt.Println(4 / 5.0)
 }

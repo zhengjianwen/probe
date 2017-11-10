@@ -14,7 +14,6 @@ func (m *ScheduleManager) GetRunningTasks() ([]types.TaskInterface, error) {
 	return convertTasks(l), nil
 }
 
-
 func (m *ScheduleManager) TableName() string {
 	switch m.TaskType {
 	case pb.TaskType_HTTP:
@@ -33,4 +32,21 @@ func (m *ScheduleManager) TableName() string {
 		return new(types.Task_Ftp).TableName()
 	}
 	return "xxx"
+}
+
+func (m *ScheduleManager) CreateTaskSchedule(scheduleTime int64, workerN int, ts []types.TaskInterface) error {
+	var ss []types.TaskSchedule
+	for _, task := range ts {
+		ss = append(ss, types.TaskSchedule{
+			TaskType:     int64(task.GetType()),
+			TaskId:       task.GetId(),
+			ScheduleTime: scheduleTime,
+			WorkerN:      workerN,
+			PeriodSec:    task.GetPeriodSec(),
+			OrgId: 		  task.GetOrgId(),
+		})
+	}
+
+	_, err := m.Db.Insert(ss)
+	return err
 }

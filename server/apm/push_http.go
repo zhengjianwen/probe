@@ -15,20 +15,20 @@ func pushWorkerHttp(wid int64, res *pb.TaskResult) error {
 	mv1 := bufPool.Get().(model.MetricValue)
 	defer bufPool.Put(mv1)
 
-	mv1.Metric  = getMetric(res.Type, "sc")
-	mv1.Endpoint  = fmt.Sprintf("url-%d-%d", wid, res.TaskId)
+	mv1.Metric = getMetric(res.Type, "sc")
+	mv1.Endpoint = fmt.Sprintf("url-%d-%d", wid, res.TaskId)
 	mv1.Value = res.GetHttp().GetStatusCode()
-	mv1.Timestamp  =  time.Now().Unix() - 60
+	mv1.Timestamp = time.Now().Unix() - 60
 	mv1.Type = "GAUGE"
 	mv1.Step = int(res.GetPeriodSec())
 
-	return pushToApm(&mv1, getWorkerDelayMetric(wid, res))
+	return pushToApmWithOrgId(res.GetOrgId(), &mv1, getWorkerDelayMetric(wid, res))
 }
 
-func PushHttpStat(tid int64, av, delay, step int) error {
+func PushHttpStat(tid, oid int64, av, delay, step int) error {
 	mav := getHttpTaskAvMetric(tid, av, step)
 	mdelay := getHttpTaskDelayMetric(tid, delay, step)
-	return pushToApm(mav, mdelay)
+	return pushToApmWithOrgId(oid, mav, mdelay)
 }
 
 func getHttpTaskAvMetric(tid int64, av, step int) *model.MetricValue {

@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"net/http"
 	"github.com/gorilla/securecookie"
+	"net/http"
 )
 
 const USER_COOKIE_NAME = "rywww"

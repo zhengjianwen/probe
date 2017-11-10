@@ -1,12 +1,12 @@
 package stat
 
 import (
-	"github.com/rongyungo/probe/util/sql"
 	"github.com/go-xorm/xorm"
-	"github.com/rongyungo/probe/server/master/types"
-	"time"
 	"github.com/rongyungo/probe/server/apm"
+	"github.com/rongyungo/probe/server/master/types"
+	"github.com/rongyungo/probe/util/sql"
 	"log"
+	"time"
 )
 
 var Orm *xorm.Engine
@@ -17,17 +17,15 @@ func InitMySQL(cfg *sql.DatabaseConfig) (err error) {
 }
 
 func Start() {
-	if err := Reduce(); err != nil {
-		panic(err)
-	}
 	tk1 := time.NewTicker(time.Second * time.Duration(20))
-	tk2 := time.NewTicker(time.Minute * time.Duration(20))
 	for {
 		select {
-			case <- tk1.C:
-				CalculateTaskAvaliablilty()
-			case <- tk2.C:
-				Reduce()
+		case <-tk1.C:
+			CalculateTaskAvaliablilty()
+		case task := <-reduceCh:
+			if err := ReduceScheduleTask(task); err != nil {
+				log.Printf("[stat] reduce schedule task err %v\n", err)
+			}
 		}
 	}
 }
@@ -41,28 +39,31 @@ func sync() error {
 
 func CalculateTaskAvaliablilty() {
 	var l []types.TaskSchedule
-	//if err := Orm.Where("if_stat = false AND (UNIX_TIMESTAMP() - schedule_time) <= 20").
-	if err := Orm.Where("if_stat = false AND (UNIX_TIMESTAMP() - schedule_time) <= 60 * 10").
-	OrderBy("schedule_time").Asc("schedule_time").Find(&l); err != nil {
-		log.Printf("[stat] taskCount task schedule result to calcute err %av\n", err)
-	}
-
-	if len(l) <= 1 {
+	if err := Orm.Distinct("task_type", "task_id").Find(&l); err != nil {
+		log.Printf("<<<<<<<<<<<<<<<distinct task err %v>>>>>>>>>>>>>> ", err)
 		return
 	}
 
-	total := float64(l[0]. SuccessN + l[0].ErrorN)
-	av := int(float64(l[0]. SuccessN)/ total  * 100)
-	delay := int(float64(l[0].DelaySum) / total)
-	err := apm.PushHttpStat(l[0].TaskId, av, delay, int(l[0].PeriodSec))
-	if err != nil {
-		log.Printf("[stat] push http stat err %av\n", err)
-		return
-	}
+	for _, ts := range l {
+		var taskList types.TaskScheduleList
+		err := Orm.Where("task_type = ? AND task_id = ? AND (UNIX_TIMESTAMP()-schedule_time) <= 3 * period_sec", ts.TaskType, ts.TaskId).
+			Find(&taskList)
+		if err != nil {
+			log.Printf("<<<<<<<<<<<<<<<handler one task err %v>>>>>>>>>>>>>> ", err)
+			continue
+		}
 
-	if _, err = Orm.Where("task_id = ? AND schedule_time = ?", l[0].TaskId, l[0].ScheduleTime).
-	Cols("if_stat").Update(types.TaskSchedule{IfStat: true,}); err != nil {
-		log.Printf("[stat] update task schedule result stat err %av\n", err)
+		if task := taskList.ReturnFinishedTask(); task != nil {
+			total := float64(task.SuccessN + task.ErrorN)
+			av := int(float64(task.SuccessN) / total * 100)
+			delay := int(float64(task.DelaySum) / total)
+			err := apm.PushHttpStat(task.TaskId, task.OrgId, av, delay, int(task.PeriodSec))
+			if err != nil {
+				log.Printf("[stat] push http stat err %v\n", err)
+				continue
+			}
+
+			reduceCh <- task
+		}
 	}
 }
-

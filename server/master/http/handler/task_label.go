@@ -1,14 +1,14 @@
 package handler
 
 import (
-	"io"
-	"log"
-	"net/http"
-	"io/ioutil"
 	"encoding/json"
 	"github.com/1851616111/util/message"
 	"github.com/gorilla/mux"
 	"github.com/rongyungo/probe/server/master/types"
+	"io"
+	"io/ioutil"
+	"log"
+	"net/http"
 )
 
 func EditLabelHandler(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +33,7 @@ func EditLabelHandler(w http.ResponseWriter, r *http.Request) {
 	//	log.Printf("update task(id=%s) label(%v) err %v\n", tid, label, err)
 	//	message.Error(w, err)
 	//} else {
-		message.Success(w)
+	message.Success(w)
 	//}
 	return
 }

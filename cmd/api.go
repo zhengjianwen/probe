@@ -13,12 +13,12 @@ import (
 
 func registerWorker(opt *startWorkerOption) error {
 	now := time.Now().Unix()
-	wk := types.Worker {
-		Id: 				opt.Id,
-		Password: 			opt.Password,
-		Status: 			types.Worker_Status_New,
-		StartTimestamp: 	now,
-		UpdateTimestamp: 	now,
+	wk := types.Worker{
+		Id:              opt.Id,
+		Password:        opt.Password,
+		Status:          types.Worker_Status_New,
+		StartTimestamp:  now,
+		UpdateTimestamp: now,
 	}
 
 	s := http.HttpSpec{
