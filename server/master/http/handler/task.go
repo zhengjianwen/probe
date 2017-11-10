@@ -1,19 +1,21 @@
 package handler
 
 import (
-	"encoding/json"
+	"io"
 	"fmt"
-	"github.com/1851616111/util/message"
+	"log"
+	"errors"
+	"strconv"
+	"net/http"
+	"io/ioutil"
+	"encoding/json"
+
 	"github.com/gorilla/mux"
+
+	"github.com/1851616111/util/message"
+	"github.com/1851616111/util/rand"
 	"github.com/rongyungo/probe/server/master/model"
 	errutil "github.com/rongyungo/probe/util/errors"
-	"io"
-	"io/ioutil"
-	"log"
-	"net/http"
-	"strconv"
-
-	"errors"
 	"github.com/rongyungo/probe/server/master/auth"
 	cap "github.com/rongyungo/probe/server/img-cap"
 	pb "github.com/rongyungo/probe/server/proto"
@@ -60,6 +62,7 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 		GetNodeId() int64
 		GetUrl() string
 		GetType() pb.TaskType
+		SetWebImage(string)
 	})
 	if !ok {
 		message.Error(w, errors.New("Server Inter Error"))
@@ -76,13 +79,16 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if id, err := model.CreateTask(task); err != nil {
+	imageName := fmt.Sprintf("task_%s.png", rand.String(20))
+	ti.SetWebImage(cap.GetReqImgName(imageName))
+
+	go cap.Cap(ti.GetUrl(), cap.GetLocalImgName(imageName))
+
+	if _, err := model.CreateTask(task); err != nil {
 		message.Error(w, err)
 	} else {
 		//	sc.AddTask(&task)
-
-		go cap.Cap(ti.GetUrl(), fmt.Sprintf("task_%s_%d.png", ti.GetType().String(), id))
-		message.SuccessS(w, fmt.Sprintf("%d", id))
+		message.Success(w)
 	}
 }
 

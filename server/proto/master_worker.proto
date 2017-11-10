@@ -140,6 +140,7 @@ message HttpSpec {
     bool                IsBodyStr = 7;
     string              ServerIp = 8;
     matcher             Matcher = 9;
+    string              WebImage = 10;
 }
 
 message DnsSpec {

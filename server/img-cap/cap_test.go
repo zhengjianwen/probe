@@ -3,10 +3,17 @@ package img_cap
 import (
 	"testing"
 	"fmt"
+	"path/filepath"
 )
 
+func TestInitDir(t *testing.T) {
+	if err := InitDir(); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCap(t *testing.T) {
-	if err := Init(); err != nil {
+	if err := Init(ImageLocalStoreDir); err != nil {
 		t.Fatal(err)
 	}
 
@@ -14,7 +21,6 @@ func TestCap(t *testing.T) {
 		t.Fatal(err)
 	}
 }
-
 
  func TestCaps(t *testing.T) {
 	 for i := 0; i <= 30; i ++ {

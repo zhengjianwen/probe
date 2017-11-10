@@ -3,6 +3,9 @@ package img_cap
 import (
 	"os"
 	"os/exec"
+	"log"
+	"fmt"
+	"path/filepath"
 )
 
 var CapturePy = `#!/usr/bin/python
@@ -23,10 +26,21 @@ driver.save_screenshot(args[1])
 
 print("ok")
 sys.exit(0)
-
 `
 
-func Init() error {
+var ImageLocalStoreDir string = "task_capture"
+var ImageRequestBasePath string = "task_capture"
+
+func Init(dir string) error {
+	if len(dir) > 0 {
+		ImageLocalStoreDir = dir
+		log.Printf("network image caputre init store dir %s\n", dir)
+	}
+
+	if err := InitDir(); err != nil {
+		return err
+	}
+
 	var fd *os.File
 	if _, err := os.Stat("capture.py"); os.IsNotExist(err) {
 		if fd, err = os.Create("capture.py"); err != nil {
@@ -49,10 +63,28 @@ func Init() error {
 	return os.Chmod("capture.py", 0777)
 }
 
-func Cap(url, target string) error {
-	return exec.Command("./capture.py", url, target).Run()
+func InitDir() error {
+	_, err := os.Stat(ImageLocalStoreDir)
+	if os.IsNotExist(err) {
+		return os.Mkdir(ImageLocalStoreDir, 0777)
+	}
+
+	return nil
+}
+
+func Cap(url, image string) error {
+	return exec.Command("./capture.py", url, image).Run()
 }
 
 func getCaptureCodes() []byte {
 	return []byte(CapturePy)
+}
+
+
+func GetReqImgName(img string) string {
+	return fmt.Sprintf("%s/%s", filepath.Clean(ImageRequestBasePath), img)
+}
+
+func GetLocalImgName(img string) string {
+	return fmt.Sprintf("%s%s%s", filepath.Clean(ImageLocalStoreDir), string(filepath.Separator), img)
 }

@@ -13,6 +13,7 @@ type TaskInterface interface {
 	Convert() *pb.Task
 
 	SetScheduleTime(st int64)
+	SetWebImage(string)
 	AddRuleId(int64)
 	RemoveRuleId(int64)
 }

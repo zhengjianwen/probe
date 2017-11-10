@@ -13,9 +13,11 @@ import (
 )
 
 var (
-	startMasterOptions startMasterOption
-	DbCfg              sqlutil.DatabaseConfig
-	authCfg            auth.AuthConfig
+	startMasterOptions    startMasterOption
+	DbCfg                 sqlutil.DatabaseConfig
+	authCfg               auth.AuthConfig
+	taskImageLocalHostDir string
+	taskImageRequestPath  string
 )
 
 func init() {
@@ -36,6 +38,9 @@ func init() {
 	masterStartCmd.PersistentFlags().StringVarP(&authCfg.CookieSecret, "cookie-secret", "c", "36005025221c6e1ff4bf9b255e49d356", "web cookie decode secret")
 	masterStartCmd.PersistentFlags().StringVarP(&authCfg.CloudAddr, "svc-cloud", "", "127.0.0.1:3410", "rpc request address of cloud service")
 	masterStartCmd.PersistentFlags().StringVarP(&authCfg.UicAddr, "scv-uic", "", "127.0.0.1:7772", "rpc request address of uic service")
+
+	masterStartCmd.PersistentFlags().StringVarP(&taskImageLocalHostDir, "local-dir", "", "task_capture", "task capture store dir in host")
+	masterStartCmd.PersistentFlags().StringVarP(&taskImageRequestPath, "req-path", "", "task_capture", "task capture store dir in host")
 
 }
 
@@ -65,9 +70,10 @@ var masterStartCmd = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		mCfg := types.StartMasterConfig{
-			GRpcListeningAddress: startMasterOptions.gRpcListeningAddress,
-			HttpListeningAddress: startMasterOptions.httpListeningAddress,
-			DbCfg:                &DbCfg,
+			GRpcListeningAddress:   startMasterOptions.gRpcListeningAddress,
+			HttpListeningAddress:   startMasterOptions.httpListeningAddress,
+			DbCfg:                  &DbCfg,
+			TaskImageLocalStoreDir: taskImageLocalHostDir,
 		}
 
 		log.Printf("start all with config %#v\n", mCfg)

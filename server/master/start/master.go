@@ -18,7 +18,7 @@ import (
 )
 
 func RunAll(mCfg *types.StartMasterConfig, dbc *sql.DatabaseConfig, aCfg *auth.AuthConfig) error {
-	if err := cap.Init(); err != nil {
+	if err := cap.Init(mCfg.TaskImageLocalStoreDir); err != nil {
 		return err
 	}
 
