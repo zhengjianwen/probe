@@ -9,7 +9,7 @@ It is generated from these files:
 
 It has these top-level messages:
 	Topic
-	TaskObj
+	Task
 	BasicInfo
 	TaskResult
 	HttpSpec
@@ -1178,7 +1178,7 @@ func (m *FtpSpecAuth) GetPasswd() string {
 
 func init() {
 	proto.RegisterType((*Topic)(nil), "Topic")
-	proto.RegisterType((*Task)(nil), "TaskObj")
+	proto.RegisterType((*Task)(nil), "Task")
 	proto.RegisterType((*BasicInfo)(nil), "BasicInfo")
 	proto.RegisterType((*TaskResult)(nil), "taskResult")
 	proto.RegisterType((*TaskResultHttp)(nil), "taskResult.http")
