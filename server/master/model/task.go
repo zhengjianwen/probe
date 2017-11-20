@@ -4,16 +4,31 @@ import (
 	"fmt"
 	"github.com/rongyungo/probe/server/master/types"
 	errutil "github.com/rongyungo/probe/util/errors"
+	"errors"
+	"strconv"
+	"log"
 )
 
-func CreateTask(tk interface{}) (int64, error) {
-	v, _ := tk.(interface {
-		Complete()
-	})
-
-	v.Complete()
-
+func CreateTask(tk interface{Complete()}) (int64, error) {
+	tk.Complete()
 	return Orm.Insert(tk)
+}
+
+func GetTaskByImageId(ct int64, img string) (int, error) {
+	res, err :=  Orm.Query("select id from task_http where create_time = ? and web_image = ?", ct, img)
+	if err != nil {
+		return -1, err
+	}
+	switch len(res) {
+	case 0 :
+		log.Printf("creating task, get task id not found, (ct: %d, image: %s)\n", ct, img)
+		return -1, errors.New("task id not found")
+	case 1:
+		idStr := string(res[0]["id"])
+		return  strconv.Atoi(idStr)
+	default:
+		return -1, errors.New("too many task id")
+	}
 }
 
 func GetTask(orgId, tid int64, tp string) (interface{}, error) {

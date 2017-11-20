@@ -290,3 +290,44 @@ curl -XPOST http://www.opdeck.com/probe/task/org/1/http/task/2/bind/rule/7   --c
 curl -XPOST http://www.opdeck.com/probe/task/org/1/http/task/2/unbind/rule/7   --cookie rywww=MTUwOTA5MDA5MHxNUC1CQXdFQkNrTnZiMnRwWlVSaGRHRUJfNElBQVFJQkJsVnpaWEpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFBQUJIX2dnRUNBUW94UUhSbGMzUXVZMjl0QUE9PXx4cSYcXa6iuZ1ozI5p_N4Zf86WF_Il_KP54WNE7VWpbA==
 
 curl -XPUT http://www.opdeck.com/probe/worker/2 -d '{"Id":0,"Password":"","Status":"","StartTimestamp":0,"UpdateTimestamp":0,"Country":"中国","Province":"","City":"深圳","Operator":"联通","Label":{"sys":null,"user":null,"other":{"Location":[114.07,22.62]}}}' --cookie rywww=MTUxMDAyMzk5NXxNUC1CQXdFQkNrTnZiMnRwWlVSaGRHRUJfNElBQVFJQkJsVnpaWEpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFBQUJIX2dnRUNBUW94UUhSbGMzUXVZMjl0QUE9PXx-VgnClo6DFJwNiczfRqfXRu3P4Da8znrvOfFWwugJ6g==
+
+
+#	Matcher   *HttpSpecMatcher   `protobuf:"bytes,9,opt,name=Matcher,json=matcher" json:"Matcher" xorm:"json"`
+#	WebImage  string             `protobuf:"bytes,10,opt,name=WebImage,json=webImage" json:"WebImage"`
+
+
+
+
+curl -XPOST http://www.opdeck.com/probe/task/org/1/http -d '{
+    "TaskObj": {
+        "NodeId": 88,  //可选
+        "Type": 1,    //必填1
+        "Name": "test007",
+        "PeriodSec": 300, //必填监控的时间间隔，单位s
+        "Url": "http://www.baidu.com",
+        "Method": 1, //http 请求方法， 1：GET 2：POST 3：HEAD
+        "Stop" : false, //是否暂停， 默认不填是开启
+        "Header": http header， 这是一个object(key-vaule)
+        "Cookies": "sfdasdfasdf",
+        "BasicAuth": {
+            "User": "username",
+            "Passwd": "password"
+        }
+        "Body" "Post body",
+        "Matcher": {}
+    },
+    "Rules": [
+        {
+            "MaxStep": 1,
+            "Metric": "url.http.delay",
+            "Op": ">",
+            "RightValue": 100000,
+            RunBegin:"",
+	        RunEnd: ""
+        }
+    ],
+    "TeamIds": [
+        10
+    ]
+}' --cookie rywww=MTUxMDkzMTY4OXxNUC1CQXdFQkNrTnZiMnRwWlVSaGRHRUJfNElBQVFJQkJsVnpaWEpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFBQUJIX2dnRUNBUW94UUhSbGMzUXVZMjl0QUE9PXyqY2atn57lPd2U3aXd_CdH_q04DET0JYHnkQw-zeJGMA==
+

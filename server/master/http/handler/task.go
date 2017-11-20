@@ -18,7 +18,8 @@ import (
 	errutil "github.com/rongyungo/probe/util/errors"
 	"github.com/rongyungo/probe/server/master/auth"
 	cap "github.com/rongyungo/probe/server/img-cap"
-	pb "github.com/rongyungo/probe/server/proto"
+	"github.com/rongyungo/probe/server/master/types"
+	"github.com/rongyungo/probe/server/apm"
 
 )
 
@@ -52,24 +53,38 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	orgId := r.Context().Value(auth.CONTEXT_KEY_ORG_ID).(int64)
 	userID := r.Context().Value(auth.CONTEXT_KEY_USER).(int64)
 
-	task, err := readBodyToTask(r.Body, ttp, orgId)
+	data, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		message.Error(w, err)
+		message.Error(w, fmt.Errorf("read create task's request data err %v", err))
 		return
 	}
 
-	ti, ok := task.(interface {
-		GetNodeId() int64
-		GetUrl() string
-		GetType() pb.TaskType
-		SetWebImage(string)
-	})
+	//创建task内容容器
+	obj, ok := model.NewTaskPtr(ttp).(types.CreateTaskI)
 	if !ok {
 		message.Error(w, errors.New("Server Inter Error"))
 		return
 	}
 
-	if nodeId := ti.GetNodeId(); nodeId > 0 {
+	//创建task业务容器
+	form := types.CreateTaskForm{
+		TaskObj: obj,
+	}
+
+	if err := json.Unmarshal(data, &form); err != nil {
+		log.Printf("parse create task data err %v\n", err)
+		message.Error(w, fmt.Errorf("parse create task data err %v\n", err))
+		return
+	}
+
+	if err := form.Validate(); err != nil {
+		message.Error(w, err)
+		return
+	}
+
+	form.TaskObj.SetOrgId(orgId)
+
+	if nodeId := form.TaskObj.GetNodeId(); nodeId > 0 {
 		if ok, err := auth.CanWriteNode(userID, nodeId); err != nil {
 			message.Error(w, err)
 			return
@@ -80,16 +95,38 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	imageName := fmt.Sprintf("task_%s.png", rand.String(20))
-	ti.SetWebImage(cap.GetReqImgName(imageName))
+	reqImageName := cap.GetReqImgName(imageName)
+	form.TaskObj.SetWebImage(reqImageName)
 
-	go cap.Cap(ti.GetUrl(), cap.GetLocalImgName(imageName))
+	go cap.Cap(form.TaskObj.GetUrl(), cap.GetLocalImgName(imageName))
 
-	if _, err := model.CreateTask(task); err != nil {
+	if _, err := model.CreateTask(form.TaskObj); err != nil {
 		message.Error(w, err)
-	} else {
-		//	sc.AddTask(&task)
-		message.Success(w)
+		return
 	}
+
+	taskId, err := model.GetTaskByImageId(form.TaskObj.GetCreateTime(), reqImageName)
+	if err != nil {
+		log.Printf("get task by ct and image err %v\n", err)
+		message.Error(w, err)
+		return
+	}
+
+	form.TaskObj.SetId(int64(taskId))
+
+	ruleIds, err := apm.ApmRuleRegister(&form)
+	if err != nil {
+		log.Printf("create task, regist apm rules error %v\n", err)
+		message.Error(w, err)
+		return
+	}
+
+	for _, ruleId := range ruleIds {
+		form.TaskObj.AddRuleId(ruleId)
+	}
+
+	//	sc.AddTask(&task)
+	message.Success(w)
 }
 
 func ListTasksHandler(w http.ResponseWriter, r *http.Request) {
@@ -282,6 +319,8 @@ func readBodyToTask(rc io.Reader, tp string, orgId int64) (interface{}, error) {
 	log.Printf("read task body data %s\n", string(data))
 
 	target := model.NewTaskPtr(tp)
+
+
 	if err := json.Unmarshal(data, target); err != nil {
 		log.Printf("parse task body data err %v\n", err)
 		return nil, err

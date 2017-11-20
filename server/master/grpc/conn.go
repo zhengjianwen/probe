@@ -161,7 +161,7 @@ func (c *conn) updateTm() {
 	c.healthCheckTime = c.updateTime
 }
 
-//var unhealthCheck = pb.TaskInfo{Type: pb.TaskInfo_UNHEALTH_CHECK}
+//var unhealthCheck = pb.TaskObj{Type: pb.TaskInfo_UNHEALTH_CHECK}
 
 func (c *conn) sendMessage(stream pb.MasterWorker_SubscribeServer) {
 	defer c.stopSendMessageFn()
