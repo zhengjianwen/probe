@@ -125,6 +125,7 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 		form.TaskObj.AddRuleId(ruleId)
 	}
 
+	model.UpdateTask(orgId, int64(taskId), form.TaskObj)
 	//	sc.AddTask(&task)
 	message.Success(w)
 }
