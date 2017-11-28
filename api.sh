@@ -338,7 +338,7 @@ curl -XPOST http://www.opdeck.com/probe/task/org/1/http -d '{
         "PeriodSec": 300,
         "Url": "http://www.baidu.com",
         "Method": 1,
-        "Rules" [100],
+        "Rules":[100]
     },
     "Rules": [
         {

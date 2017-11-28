@@ -13,7 +13,6 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/1851616111/util/message"
-	"github.com/1851616111/util/rand"
 	"github.com/rongyungo/probe/server/master/model"
 	errutil "github.com/rongyungo/probe/util/errors"
 	"github.com/rongyungo/probe/server/master/auth"
@@ -77,25 +76,16 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	imageName := fmt.Sprintf("task_%s.png", rand.String(20))
-	reqImageName := cap.GetReqImgName(imageName)
-	form.TaskObj.SetWebImage(reqImageName)
-
-	go cap.Cap(form.TaskObj.GetUrl(), cap.GetLocalImgName(imageName))
-
 	if _, err := model.CreateTask(form.TaskObj); err != nil {
 		message.Error(w, err)
 		return
 	}
 
-	taskId, err := model.GetTaskByImageId(form.TaskObj.GetCreateTime(), reqImageName)
-	if err != nil {
-		log.Printf("get task by ct and image err %v\n", err)
-		message.Error(w, err)
-		return
-	}
+	imageName := fmt.Sprintf("task_url_%d.png", form.TaskObj.GetId())
+	reqImageName := cap.GetReqImgName(imageName)
+	form.TaskObj.SetWebImage(reqImageName)
 
-	form.TaskObj.SetId(int64(taskId))
+	go cap.Cap(form.TaskObj.GetUrl(), cap.GetLocalImgName(imageName))
 
 	ruleIds, err := apm.ApmRuleRegister(form)
 	if err != nil {
@@ -108,11 +98,10 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 		form.TaskObj.AddRuleId(ruleId)
 	}
 
-	if err := model.UpdateTask(orgId, int64(taskId), form.TaskObj); err != nil {
+	if err := model.UpdateTask(orgId, form.TaskObj.GetId(), form.TaskObj); err != nil {
 		message.Error(w, err)
 		return
 	}
-	//	sc.AddTask(&task)
 	message.Success(w)
 }
 
