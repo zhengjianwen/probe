@@ -59,6 +59,11 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 		message.Error(w, err)
 		return
 	}
+	if err := form.Validate(); err != nil {
+		log.Printf("validate create task request err %v\n", err)
+		message.Error(w, err)
+		return
+	}
 
 	form.TaskObj.SetOrgId(orgId)
 

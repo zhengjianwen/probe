@@ -136,7 +136,7 @@ message HttpSpec {
     map<string, string> header = 3;
     string              Cookies = 4;
     basicAuth           BasicAuth = 5;
-    bytes               Body = 6;
+    string              Body = 6;
     bool                IsBodyStr = 7;
     string              ServerIp = 8;
     matcher             Matcher = 9;

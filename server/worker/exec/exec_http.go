@@ -57,7 +57,7 @@ func prepareReq(t *pb.Task) (*http.Request, error) {
 
 	var body io.Reader = nil
 	if spec.GetMethod() == pb.HttpSpec_POST && len(spec.GetBody()) > 0 {
-		body = bytes.NewBuffer(spec.GetBody())
+		body = bytes.NewBufferString(spec.GetBody())
 	}
 
 	req, err := http.NewRequest(spec.Method.String(), spec.Url, body)
