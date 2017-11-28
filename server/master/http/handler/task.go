@@ -53,31 +53,9 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	orgId := r.Context().Value(auth.CONTEXT_KEY_ORG_ID).(int64)
 	userID := r.Context().Value(auth.CONTEXT_KEY_USER).(int64)
 
-	data, err := ioutil.ReadAll(r.Body)
+	form, err := ParseForm(r.Body, ttp)
 	if err != nil {
-		message.Error(w, fmt.Errorf("read create task's request data err %v", err))
-		return
-	}
-
-	//创建task内容容器
-	obj, ok := model.NewTaskPtr(ttp).(types.CreateTaskI)
-	if !ok {
-		message.Error(w, errors.New("Server Inter Error"))
-		return
-	}
-
-	//创建task业务容器
-	form := types.CreateTaskForm{
-		TaskObj: obj,
-	}
-
-	if err := json.Unmarshal(data, &form); err != nil {
-		log.Printf("parse create task data err %v\n", err)
-		message.Error(w, fmt.Errorf("parse create task data err %v\n", err))
-		return
-	}
-
-	if err := form.Validate(); err != nil {
+		log.Printf("creating task, parse form err %v\n", err)
 		message.Error(w, err)
 		return
 	}
@@ -114,7 +92,7 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	form.TaskObj.SetId(int64(taskId))
 
-	ruleIds, err := apm.ApmRuleRegister(&form)
+	ruleIds, err := apm.ApmRuleRegister(form)
 	if err != nil {
 		log.Printf("create task, regist apm rules error %v\n", err)
 		message.Error(w, err)
@@ -130,48 +108,6 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//	sc.AddTask(&task)
-	message.Success(w)
-}
-
-func ListTasksHandler(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
-	var nid int
-	ttp, nidStr := mux.Vars(r)["ttp"], r.FormValue("nid")
-	if len(nidStr) > 0 {
-		var err error
-		nid, err = strconv.Atoi(nidStr)
-		if err != nil {
-			message.Error(w, err)
-			return
-		}
-	}
-
-	orgId := r.Context().Value(auth.CONTEXT_KEY_ORG_ID).(int64)
-
-	if tasks, err := model.GetOrgTask(orgId, int64(nid), ttp); err != nil {
-		message.Error(w, err)
-	} else {
-		message.SuccessI(w, tasks)
-	}
-	return
-}
-
-func DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
-	tidStr, ttp := mux.Vars(r)["tid"], mux.Vars(r)["ttp"]
-	tid, err := strconv.ParseInt(tidStr, 10, 64)
-	if err != nil {
-		message.Error(w, err)
-		return
-	}
-	orgId := r.Context().Value(auth.CONTEXT_KEY_ORG_ID).(int64)
-
-	if err := model.DeleteTask(orgId, tid, ttp); err != nil {
-		log.Printf("delete task(%s) err %v\n", tidStr, err)
-		message.Error(w, err)
-		return
-	}
-
-	//sc.DelTask(tidStr)
 	message.Success(w)
 }
 
@@ -217,6 +153,48 @@ func UpdateTaskHandler(w http.ResponseWriter, r *http.Request) {
 		//sc.UpdateTask(&task)
 		message.Success(w)
 	}
+}
+
+func ListTasksHandler(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	var nid int
+	ttp, nidStr := mux.Vars(r)["ttp"], r.FormValue("nid")
+	if len(nidStr) > 0 {
+		var err error
+		nid, err = strconv.Atoi(nidStr)
+		if err != nil {
+			message.Error(w, err)
+			return
+		}
+	}
+
+	orgId := r.Context().Value(auth.CONTEXT_KEY_ORG_ID).(int64)
+
+	if tasks, err := model.GetOrgTask(orgId, int64(nid), ttp); err != nil {
+		message.Error(w, err)
+	} else {
+		message.SuccessI(w, tasks)
+	}
+	return
+}
+
+func DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
+	tidStr, ttp := mux.Vars(r)["tid"], mux.Vars(r)["ttp"]
+	tid, err := strconv.ParseInt(tidStr, 10, 64)
+	if err != nil {
+		message.Error(w, err)
+		return
+	}
+	orgId := r.Context().Value(auth.CONTEXT_KEY_ORG_ID).(int64)
+
+	if err := model.DeleteTask(orgId, tid, ttp); err != nil {
+		log.Printf("delete task(%s) err %v\n", tidStr, err)
+		message.Error(w, err)
+		return
+	}
+
+	//sc.DelTask(tidStr)
+	message.Success(w)
 }
 
 func GetTaskHandler(w http.ResponseWriter, r *http.Request) {
@@ -342,4 +320,24 @@ func readBodyToTask(rc io.Reader, tp string, orgId int64) (interface{}, error) {
 	v.SetOrgId(orgId)
 
 	return target, nil
+}
+
+func ParseForm(req io.Reader, tp string) (*types.CreateTaskForm,  error) {
+	data, err := ioutil.ReadAll(req)
+	if err != nil {
+		return nil, fmt.Errorf("read create task's request data err %v", err)
+	}
+
+	//创建task内容容器
+	obj, ok := model.NewTaskPtr(tp).(types.CreateTaskI)
+	if !ok {
+		return nil, errors.New("unknown param task type")
+	}
+
+	//创建task业务容器
+	form := types.CreateTaskForm{
+		TaskObj: obj,
+	}
+
+	return &form, json.Unmarshal(data, &form)
 }

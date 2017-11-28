@@ -331,3 +331,26 @@ curl -XPOST http://www.opdeck.com/probe/task/org/1/http -d '{
     ]
 }' --cookie rywww=MTUxMDkzMTY4OXxNUC1CQXdFQkNrTnZiMnRwWlVSaGRHRUJfNElBQVFJQkJsVnpaWEpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFBQUJIX2dnRUNBUW94UUhSbGMzUXVZMjl0QUE9PXyqY2atn57lPd2U3aXd_CdH_q04DET0JYHnkQw-zeJGMA==
 
+curl -XPOST http://www.opdeck.com/probe/task/org/1/http -d '{
+    "TaskObj": {
+        "Type": 1,
+        "Name": "test007",
+        "PeriodSec": 300,
+        "Url": "http://www.baidu.com",
+        "Method": 1,
+        "Rules" [100],
+    },
+    "Rules": [
+        {
+            "MaxStep": 1,
+            "Metric": "url.http.delay",
+            "Op": ">",
+            "RightValue": 100000,
+            "RunBegin": "",
+            "RunEnd": ""
+        }
+    ],
+    "TeamIds": [
+        10
+    ]
+}' --cookie rywww=MTUxMDkzMTY4OXxNUC1CQXdFQkNrTnZiMnRwWlVSaGRHRUJfNElBQVFJQkJsVnpaWEpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFBQUJIX2dnRUNBUW94UUhSbGMzUXVZMjl0QUE9PXyqY2atn57lPd2U3aXd_CdH_q04DET0JYHnkQw-zeJGMA==
