@@ -39,7 +39,7 @@ func GetOrgTask(orgId, nodeId int64, tp string) (interface{}, error) {
 }
 
 func UpdateTask(orgId, tid int64, task interface{}) error {
-	_, err := Orm.Where("id = ? AND org_id = ?", tid, orgId).Omit().Update(task)
+	_, err := Orm.Where("id = ? AND org_id = ?", tid, orgId).Omit().Nullable("").Update(task)
 	return err
 }
 

@@ -87,7 +87,7 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	go cap.Cap(form.TaskObj.GetUrl(), cap.GetLocalImgName(imageName))
 
-	ruleIds, err := apm.ApmRuleRegister(form)
+	ruleIds, err := apm.CreateRule(form)
 	if err != nil {
 		log.Printf("create task, regist apm rules error %v\n", err)
 		message.Error(w, err)
@@ -180,6 +180,28 @@ func DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	orgId := r.Context().Value(auth.CONTEXT_KEY_ORG_ID).(int64)
+
+
+	taskI, err := model.GetTask(orgId, tid, ttp)
+	if err != nil {
+		message.Error(w, err)
+		return
+	}
+
+	task, ok := taskI.(interface{
+		GetRuleIds() []int64
+		})
+	if !ok {
+		message.Error(w, err)
+		return
+	}
+
+	if len(task.GetRuleIds()) > 0 {
+		if err := apm.DeleteRules(orgId, task.GetRuleIds()...); err != nil {
+			message.Error(w, err)
+			return
+		}
+	}
 
 	if err := model.DeleteTask(orgId, tid, ttp); err != nil {
 		log.Printf("delete task(%s) err %v\n", tidStr, err)

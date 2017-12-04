@@ -21,8 +21,8 @@ var (
 )
 
 func init() {
-	masterStartCmd.PersistentFlags().StringVarP(&startMasterOptions.gRpcListeningAddress, "grpc_listening", "", "127.0.0.1:9000", "master service grpc listening address")
-	masterStartCmd.PersistentFlags().StringVarP(&startMasterOptions.httpListeningAddress, "http_listening", "", "127.0.0.1:9100", "master service http listening address")
+	masterStartCmd.PersistentFlags().StringVarP(&startMasterOptions.gRpcListeningAddress, "grpc_listening", "", "0.0.0.0:9000", "master service grpc listening address")
+	masterStartCmd.PersistentFlags().StringVarP(&startMasterOptions.httpListeningAddress, "http_listening", "", "0.0.0.0:9100", "master service http listening address")
 	masterStartCmd.PersistentFlags().StringVarP(&DbCfg.Host, "host", "", "127.0.0.1", "master service database host")
 	masterStartCmd.PersistentFlags().IntVarP(&DbCfg.Port, "port", "", 3306, "master service database port")
 	masterStartCmd.PersistentFlags().StringVarP(&DbCfg.User, "user", "", "root", "master service database user name")
