@@ -1,10 +1,10 @@
 package img_cap
 
 import (
+	"fmt"
+	"log"
 	"os"
 	"os/exec"
-	"log"
-	"fmt"
 	"path/filepath"
 )
 
@@ -23,7 +23,8 @@ driver = webdriver.PhantomJS(executable_path='/usr/bin/phantomjs')
 
 driver.get(args[0])
 driver.save_screenshot(args[1])
-
+driver.close()
+driver.quit()
 print("ok")
 sys.exit(0)
 `
@@ -46,10 +47,8 @@ func Init(dir string) error {
 		if fd, err = os.Create("capture.py"); err != nil {
 			return err
 		}
-	} else {
-		if fd, err = os.Open("capture.py"); err != nil {
-			return err
-		}
+	} else if err = os.Remove("capture.py"); err != nil {
+		return err
 	}
 
 	if _, err := fd.Write(getCaptureCodes()); err != nil {
@@ -79,7 +78,6 @@ func Cap(url, image string) error {
 func getCaptureCodes() []byte {
 	return []byte(CapturePy)
 }
-
 
 func GetReqImgName(img string) string {
 	return fmt.Sprintf("%s/%s", filepath.Clean(ImageRequestBasePath), img)

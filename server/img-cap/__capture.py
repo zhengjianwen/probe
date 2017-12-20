@@ -15,6 +15,7 @@ driver = webdriver.PhantomJS(executable_path='/usr/bin/phantomjs')
 
 driver.get(args[0])
 driver.save_screenshot(args[1])
-
+driver.close()
+driver.quit()
 print("ok")
 sys.exit(0)
