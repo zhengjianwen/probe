@@ -1,25 +1,24 @@
 package handler
 
 import (
-	"io"
-	"fmt"
-	"log"
-	"errors"
-	"strconv"
-	"net/http"
-	"io/ioutil"
 	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 
 	"github.com/1851616111/util/message"
-	"github.com/rongyungo/probe/server/master/model"
-	errutil "github.com/rongyungo/probe/util/errors"
-	"github.com/rongyungo/probe/server/master/auth"
-	cap "github.com/rongyungo/probe/server/img-cap"
-	"github.com/rongyungo/probe/server/master/types"
 	"github.com/rongyungo/probe/server/apm"
-
+	cap "github.com/rongyungo/probe/server/img-cap"
+	"github.com/rongyungo/probe/server/master/auth"
+	"github.com/rongyungo/probe/server/master/model"
+	"github.com/rongyungo/probe/server/master/types"
+	errutil "github.com/rongyungo/probe/util/errors"
 )
 
 func GetTaskWorkerSnapShotHandler(w http.ResponseWriter, r *http.Request) {
@@ -181,16 +180,15 @@ func DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	orgId := r.Context().Value(auth.CONTEXT_KEY_ORG_ID).(int64)
 
-
 	taskI, err := model.GetTask(orgId, tid, ttp)
 	if err != nil {
 		message.Error(w, err)
 		return
 	}
 
-	task, ok := taskI.(interface{
+	task, ok := taskI.(interface {
 		GetRuleIds() []int64
-		})
+	})
 	if !ok {
 		message.Error(w, err)
 		return
@@ -318,7 +316,6 @@ func readBodyToTask(rc io.Reader, tp string, orgId int64) (interface{}, error) {
 
 	target := model.NewTaskPtr(tp)
 
-
 	if err := json.Unmarshal(data, target); err != nil {
 		log.Printf("parse task body data err %v\n", err)
 		return nil, err
@@ -338,7 +335,7 @@ func readBodyToTask(rc io.Reader, tp string, orgId int64) (interface{}, error) {
 	return target, nil
 }
 
-func ParseForm(req io.Reader, tp string) (*types.CreateTaskForm,  error) {
+func ParseForm(req io.Reader, tp string) (*types.CreateTaskForm, error) {
 	data, err := ioutil.ReadAll(req)
 	if err != nil {
 		return nil, fmt.Errorf("read create task's request data err %v", err)

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	cap "github.com/rongyungo/probe/server/img-cap"
 	"github.com/rongyungo/probe/server/master/auth"
 	"github.com/rongyungo/probe/server/master/grpc"
 	"github.com/rongyungo/probe/server/master/http/router"
@@ -14,7 +15,6 @@ import (
 	"github.com/rongyungo/probe/server/scheduler"
 	"github.com/rongyungo/probe/server/stat"
 	"github.com/rongyungo/probe/util/sql"
-	cap "github.com/rongyungo/probe/server/img-cap"
 )
 
 func RunAll(mCfg *types.StartMasterConfig, dbc *sql.DatabaseConfig, aCfg *auth.AuthConfig) error {

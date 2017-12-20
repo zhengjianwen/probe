@@ -11,7 +11,7 @@ type TaskSchedule struct {
 	SuccessN     int64 `xorm:"success_n default 0"`
 	ErrorN       int64 `xorm:"error_n default 0"`
 	PeriodSec    int64
-	OrgId 		 int64 `xorm:"org_id"`
+	OrgId        int64 `xorm:"org_id"`
 }
 
 func (p *TaskSchedule) TableName() string {
@@ -62,7 +62,7 @@ func (p TaskScheduleList) Swap(i, j int) {
 type TaskStat struct {
 	TaskType int64 `xorm:"task_type default 0"`
 	TaskId   int64 `xorm:"task_id default 0"`
-	OrgId 	 int64 `xorm:"org_id" default 0`
+	OrgId    int64 `xorm:"org_id" default 0`
 	DelaySum int64 `xorm:"delay_sum default 0"`
 	SuccessN int64 `xorm:"success_n default 0"`
 	ErrorN   int64 `xorm:"error_n default 0"`

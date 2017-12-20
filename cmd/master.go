@@ -70,9 +70,9 @@ var masterStartCmd = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		mCfg := types.StartMasterConfig{
-			GRpcListeningAddress:   startMasterOptions.gRpcListeningAddress,
-			HttpListeningAddress:   startMasterOptions.httpListeningAddress,
-			DbCfg:                  &DbCfg,
+			GRpcListeningAddress: startMasterOptions.gRpcListeningAddress,
+			HttpListeningAddress: startMasterOptions.httpListeningAddress,
+			DbCfg:                &DbCfg,
 			TaskImageLocalStoreDir: taskImageLocalHostDir,
 		}
 

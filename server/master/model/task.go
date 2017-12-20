@@ -6,7 +6,9 @@ import (
 	errutil "github.com/rongyungo/probe/util/errors"
 )
 
-func CreateTask(tk interface{Complete()}) (int64, error) {
+func CreateTask(tk interface {
+	Complete()
+}) (int64, error) {
 	tk.Complete()
 	return Orm.Insert(tk)
 }

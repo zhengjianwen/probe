@@ -837,7 +837,7 @@ func (m *HttpSpec) GetMatcher() *HttpSpecMatcher {
 
 func (m *HttpSpec) SetWebImage(img string) {
 	if m != nil {
-		 m.WebImage = img
+		m.WebImage = img
 	}
 }
 

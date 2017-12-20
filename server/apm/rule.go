@@ -1,11 +1,11 @@
 package apm
 
 import (
-	"fmt"
-	"errors"
 	"encoding/json"
-	"github.com/toolkits/net/httplib"
+	"errors"
+	"fmt"
 	"github.com/rongyungo/probe/server/master/types"
+	"github.com/toolkits/net/httplib"
 	"log"
 )
 
@@ -15,7 +15,6 @@ type MapiUrlReply struct {
 	} `json:"data"`
 	Msg string `json:"msg"`
 }
-
 
 func DeleteRules(orgId int64, ruleIds ...int64) error {
 	for _, ruleId := range ruleIds {
@@ -35,7 +34,7 @@ func DeleteRule(orgId, ruleId int64) error {
 }
 
 func CreateRule(form *types.CreateTaskForm) ([]int64, error) {
-//func CreateRule(orgId, taskId int64, url string, notify string, rules ...types.Rule) ([]int64, error) {
+	//func CreateRule(orgId, taskId int64, url string, notify string, rules ...types.Rule) ([]int64, error) {
 	apmSvcAddr := fmt.Sprintf(
 		"%s/mapi/rule/%d/create?team_ids=%s&token=%s",
 		Conf.Url,
@@ -47,11 +46,11 @@ func CreateRule(form *types.CreateTaskForm) ([]int64, error) {
 	var retRuleIds []int64
 	for _, newRule := range form.Rules {
 		args := map[string]interface{}{
-			"endpoints":   fmt.Sprintf("url-%d", form.TaskObj.GetId()),
+			"endpoints": fmt.Sprintf("url-%d", form.TaskObj.GetId()),
 			//"metric":      "url.error",
 			"metric":      newRule.Metric,
 			"tags":        "",
-			"func":       "all(#1)",
+			"func":        "all(#1)",
 			"op":          newRule.Op,
 			"right_value": newRule.RightValue,
 			"max_step":    newRule.MaxStep,
