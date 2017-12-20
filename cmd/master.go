@@ -32,7 +32,7 @@ func init() {
 	masterStartCmd.PersistentFlags().IntVarP(&DbCfg.ConnMax, "max", "", 200, "master service database conn config")
 	masterStartCmd.PersistentFlags().IntVarP(&DbCfg.ConnIdle, "idle", "", 100, "master service database conn config")
 
-	masterStartCmd.PersistentFlags().StringVarP(&apm.Conf.Url, "apm-url", "", "http://www.opdeck.com", "master apm service url")
+	masterStartCmd.PersistentFlags().StringVarP(&apm.Conf.Url, "apm-url", "", "http://test.unicloud.cn", "master apm service url")
 	masterStartCmd.PersistentFlags().StringVarP(&apm.Conf.Token, "apm-token", "", "ui49hfowlx0wkxoe,cjeaiqoei93ms8mx821kx", "master apm service token")
 
 	masterStartCmd.PersistentFlags().StringVarP(&authCfg.CookieSecret, "cookie-secret", "c", "36005025221c6e1ff4bf9b255e49d356", "web cookie decode secret")

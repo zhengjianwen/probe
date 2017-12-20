@@ -1,8 +1,6 @@
 package apm
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/rongyungo/apm/common/model"
@@ -12,6 +10,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	httputil "github.com/1851616111/util/http"
 )
 
 var bufPool = sync.Pool{
@@ -25,7 +25,7 @@ var Conf struct {
 }
 
 func init() {
-	Conf.Url = "http://www.opdeck.com"
+	Conf.Url = "http://test.unicloud.cn"
 	Conf.OrgId = "1"
 	Conf.Token = "ui49hfowlx0wkxoe,cjeaiqoei93ms8mx821kx"
 }
@@ -61,15 +61,14 @@ func PushWorker(wid int64, res *pb.TaskResult) error {
 }
 
 func pushToApm(vs ...*model.MetricValue) error {
-	bs, err := json.Marshal(vs)
-	if err != nil {
-		return err
+	req := httputil.HttpSpec{
+		Method:      "POST",
+		URL:         fmt.Sprintf("%s/v1/push?orgid=%s&token=%s", Conf.Url, Conf.OrgId, Conf.Token),
+		BodyObject:  vs,
+		ContentType: httputil.ContentType_JSON,
 	}
 
-	buf := bytes.NewBuffer(bs)
-
-	var resp *http.Response
-	resp, err = http.Post(fmt.Sprintf("%s/v1/push?orgid=%s&token=%s", Conf.Url, Conf.OrgId, Conf.Token), "application/json", buf)
+	resp, err := httputil.Send(&req)
 	if err != nil {
 		return err
 	}
@@ -86,16 +85,14 @@ func pushToApm(vs ...*model.MetricValue) error {
 }
 
 func pushToApmWithOrgId(oid int64, vs ...*model.MetricValue) error {
-	bs, err := json.Marshal(vs)
-	if err != nil {
-		return err
+	req := httputil.HttpSpec{
+		Method:      "POST",
+		URL:         fmt.Sprintf("%s/v1/push?orgid=%d&token=%s", Conf.Url, oid, Conf.Token),
+		BodyObject:  vs,
+		ContentType: httputil.ContentType_JSON,
 	}
 
-	buf := bytes.NewBuffer(bs)
-
-	url := fmt.Sprintf("%s/v1/push?orgid=%d&token=%s", Conf.Url, oid, Conf.Token)
-	var resp *http.Response
-	resp, err = http.Post(url, "application/json", buf)
+	resp, err := httputil.Send(&req)
 	if err != nil {
 		return err
 	}
