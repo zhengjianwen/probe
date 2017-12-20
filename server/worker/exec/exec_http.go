@@ -10,14 +10,20 @@ import (
 	"net/http"
 	"strings"
 	"time"
+	"crypto/tls"
 )
 
 var trans = &http.Transport{
 	Dial: (&net.Dialer{
-		Timeout:   5 * time.Second,
+		Timeout:   10 * time.Second,
 		KeepAlive: 300 * time.Second,
 	}).Dial,
+	MaxIdleConns:        50,
 	MaxIdleConnsPerHost: 10,
+	IdleConnTimeout:     time.Minute * 10,
+	TLSClientConfig: &tls.Config{
+		InsecureSkipVerify: true,
+	},
 }
 
 func ProbeHttp(t *pb.Task) *pb.TaskResult {
@@ -48,6 +54,8 @@ func DoHttp(t *pb.Task) (error, pb.TaskResultCode, int) {
 	if err != nil {
 		return err, pb.TaskResult_ERR_HTTP_DO_REQUEST, 0
 	}
+	defer rsp.Body.Close()
+
 	err, rc := matchRsp(t.HttpSpec.Matcher, rsp)
 	return err, rc, rsp.StatusCode
 }
@@ -112,7 +120,6 @@ func matchRsp(matcher *pb.HttpSpecMatcher, rsp *http.Response) (error, pb.TaskRe
 			}
 
 		case pb.HttpSpecMatcher_BODY:
-			defer rsp.Body.Close()
 			data, err := ioutil.ReadAll(rsp.Body)
 			if err != nil {
 				return err, pb.TaskResult_ERR_HTTP_READ_BODY

@@ -74,6 +74,8 @@ func CreateRule(form *types.CreateTaskForm) ([]int64, error) {
 		if err != nil {
 			return nil, err
 		}
+		defer resp.Body.Close()
+
 
 		var ret MapiUrlReply
 		err = json.NewDecoder(resp.Body).Decode(&ret)

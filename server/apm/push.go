@@ -72,6 +72,7 @@ func pushToApm(vs ...*model.MetricValue) error {
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		if resp.Body != nil {
@@ -96,6 +97,7 @@ func pushToApmWithOrgId(oid int64, vs ...*model.MetricValue) error {
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		if resp.Body != nil {
