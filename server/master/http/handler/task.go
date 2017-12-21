@@ -148,6 +148,32 @@ func UpdateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func OptTaskStatusHandler(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	vars := mux.Vars(r)
+	tidStr, _, statusStr := vars["tid"], vars["ttp"], vars["status"]
+
+	orgId := r.Context().Value(auth.CONTEXT_KEY_ORG_ID).(int64)
+
+	tid, err := strconv.ParseInt(tidStr, 10, 64)
+	if err != nil {
+		message.Error(w, err)
+		return
+	}
+
+	var status bool
+	if statusStr == "start" {
+		status = true
+	}
+	var tp string = "http"
+	if err := model.UpdateTaskStatus(orgId, tid, tp, status); err != nil {
+		message.Error(w, err)
+		return
+	}
+
+	message.Success(w)
+}
+
 func ListTasksHandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var nid int

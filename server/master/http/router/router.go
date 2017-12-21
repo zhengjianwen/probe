@@ -27,6 +27,7 @@ func InitTaskRouter(r *mux.Router) {
 	sub.HandleFunc("/org/{oid}/{ttp}/task/{tid}", auth.AuthUser(handler.GetTaskHandler)).Methods("GET")
 	sub.HandleFunc("/org/{oid}/{ttp}/task/{tid}", auth.AuthUser(handler.DeleteTaskHandler)).Methods("DELETE")
 	sub.HandleFunc("/org/{oid}/{ttp}/task/{tid}", auth.AuthUser(handler.UpdateTaskHandler)).Methods("PUT")
+	sub.HandleFunc("/org/{oid}/{ttp}/task/{tid}/{status:start|stop}", auth.AuthUser(handler.OptTaskStatusHandler)).Methods("PUT")
 
 	sub.HandleFunc("/org/{oid}/{ttp}/task/{tid}/{opt}/rule/{rid}", auth.AuthUser(handler.TaskOptRuleHandler)).Methods("POST")
 	//sub.HandleFunc("/{oid}/{ttp}/{tid}/unbind/{rid}", auth.AuthUser(handler.TaskOptRuleHandler)).Methods("POST")

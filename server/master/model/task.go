@@ -45,6 +45,12 @@ func UpdateTask(orgId, tid int64, task interface{}) error {
 	return err
 }
 
+func UpdateTaskStatus(orgId, tid int64, tp string,  status bool) error {
+	table := fmt.Sprintf("task_%s", tp)
+	_, err := Orm.Exec(fmt.Sprintf("UPDATE %s SET stop = ? WHERE id = ? AND org_id = ?", table), status, tid, orgId)
+	return err
+}
+
 func UpdateTaskRuleId1(orgId, tid int64, task interface{}) error {
 	_, err := Orm.Where("id = ? AND org_id = ?", tid, orgId).Update(task)
 	return err
