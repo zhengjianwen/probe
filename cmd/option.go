@@ -39,11 +39,11 @@ func (o startWorkerOption) validate() error {
 		return fmt.Errorf("param pullSec(%d) less than 10", o.pullSec)
 	}
 
-	for _, addr := range o.masterHttpAddresses {
-		if err := validateMaster(o.Id, addr); err != nil {
-			return err
-		}
-	}
+	//for _, addr := range o.masterHttpAddresses {
+	//	if err := validateMaster(o.Id, addr); err != nil {
+	//		return err
+	//	}
+	//}
 	return nil
 }
 

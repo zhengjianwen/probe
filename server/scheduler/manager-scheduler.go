@@ -71,7 +71,7 @@ func (m *ScheduleManager) Start() error {
 }
 
 func (m *ScheduleManager) Run() {
-	tk := time.NewTicker(time.Second * time.Duration(5))
+	tk := time.NewTicker(time.Second * time.Duration(20))
 
 	for {
 		select {
@@ -88,8 +88,8 @@ func (m *ScheduleManager) Run() {
 				log.Printf("scheduler[%s]: query prepare schedule tasks: %d\n", m.TaskType.String(), len(tasks))
 			}
 
-			m.Schedule(nil, tasks)
 			if len(tasks) > 0 {
+				m.Schedule(nil, tasks)
 				log.Printf("<<scheduler manager(%s) scheduler %d task over>>", m.TaskType.String(), len(tasks))
 			}
 		}

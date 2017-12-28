@@ -354,3 +354,5 @@ curl -XPOST http://www.opdeck.com/probe/task/org/1/http -d '{
         10
     ]
 }' --cookie rywww=MTUxMDkzMTY4OXxNUC1CQXdFQkNrTnZiMnRwWlVSaGRHRUJfNElBQVFJQkJsVnpaWEpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFBQUJIX2dnRUNBUW94UUhSbGMzUXVZMjl0QUE9PXyqY2atn57lPd2U3aXd_CdH_q04DET0JYHnkQw-zeJGMA==
+
+curl -XPOST http://www.opdeck.com/probe/worker/2 -d '{"Id"}'

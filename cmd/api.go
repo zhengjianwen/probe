@@ -8,6 +8,7 @@ import (
 	"github.com/1851616111/util/http"
 	"github.com/rongyungo/probe/server/master/types"
 	"io/ioutil"
+	"log"
 	"time"
 )
 
@@ -28,13 +29,17 @@ func registerWorker(opt *startWorkerOption) error {
 		BodyObject:  wk,
 	}
 
+	log.Printf("------ %#v\n", s)
+
 	rsp, err := http.Send(&s)
 	if err != nil {
+		log.Printf("----------- %v\n", err)
 		return err
 	}
 
 	data, err := ioutil.ReadAll(rsp.Body)
 	if err != nil {
+		log.Printf("----------- %v\n", err)
 		return err
 	}
 
@@ -48,5 +53,5 @@ func registerWorker(opt *startWorkerOption) error {
 		return errors.New(m.Message)
 	}
 
-	return err
+	return nil
 }

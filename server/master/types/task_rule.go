@@ -1,7 +1,6 @@
 package types
 
 import (
-	"errors"
 	"fmt"
 	pb "github.com/rongyungo/probe/server/proto"
 )
@@ -28,10 +27,6 @@ type CreateTaskForm struct {
 }
 
 func (c CreateTaskForm) Validate() error {
-	if len(c.TeamIds) == 0 {
-		return errors.New("param TeamIds not found")
-	}
-
 	return c.TaskObj.Validate()
 }
 

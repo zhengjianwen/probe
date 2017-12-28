@@ -33,14 +33,14 @@ type master struct {
 }
 
 func NewMaster() *master {
-	m := master{
+	Master = &master{
 		RWMutex:       new(sync.RWMutex),
 		workersMap:    make(map[int64]*types.Worker),
 		workerConnMap: make(map[int64]*conn),
 	}
 
-	go m.syncWorker()
-	return &m
+	go Master.syncWorker()
+	return Master
 }
 
 //quickly get all workers with no condition

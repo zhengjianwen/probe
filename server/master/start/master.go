@@ -69,51 +69,52 @@ func RunMaster(cfg *types.StartMasterConfig) error {
 }
 
 func RunScheduler(dbc *sql.DatabaseConfig) error {
-	var m1, m2, m3, m4, m5, m6, m7 *scheduler.ScheduleManager
+	//var m1, m2, m3, m4, m5, m6, m7 *scheduler.ScheduleManager
+	var m1 *scheduler.ScheduleManager
 	var err error
 	if m1, err = scheduler.NewSchedulerManager("http", 60, dbc); err != nil {
 		return err
 	}
-	if m2, err = scheduler.NewSchedulerManager("dns", 60, dbc); err != nil {
-		return err
-	}
-	if m3, err = scheduler.NewSchedulerManager("ftp", 60, dbc); err != nil {
-		return err
-	}
-	if m4, err = scheduler.NewSchedulerManager("ping", 60, dbc); err != nil {
-		return err
-	}
-	if m5, err = scheduler.NewSchedulerManager("tcp", 60, dbc); err != nil {
-		return err
-	}
-	if m6, err = scheduler.NewSchedulerManager("udp", 60, dbc); err != nil {
-		return err
-	}
-	if m7, err = scheduler.NewSchedulerManager("trace_route", 60, dbc); err != nil {
-		return err
-	}
+	//if m2, err = scheduler.NewSchedulerManager("dns", 60, dbc); err != nil {
+	//	return err
+	//}
+	//if m3, err = scheduler.NewSchedulerManager("ftp", 60, dbc); err != nil {
+	//	return err
+	//}
+	//if m4, err = scheduler.NewSchedulerManager("ping", 60, dbc); err != nil {
+	//	return err
+	//}
+	//if m5, err = scheduler.NewSchedulerManager("tcp", 60, dbc); err != nil {
+	//	return err
+	//}
+	//if m6, err = scheduler.NewSchedulerManager("udp", 60, dbc); err != nil {
+	//	return err
+	//}
+	//if m7, err = scheduler.NewSchedulerManager("trace_route", 60, dbc); err != nil {
+	//	return err
+	//}
 
 	if err = m1.Start(); err != nil {
 		return err
 	}
-	if err = m2.Start(); err != nil {
-		return err
-	}
-	if err = m3.Start(); err != nil {
-		return err
-	}
-	if err = m4.Start(); err != nil {
-		return err
-	}
-	if err = m5.Start(); err != nil {
-		return err
-	}
-	if err = m6.Start(); err != nil {
-		return err
-	}
-	if err = m7.Start(); err != nil {
-		return err
-	}
+	//if err = m2.Start(); err != nil {
+	//	return err
+	//}
+	//if err = m3.Start(); err != nil {
+	//	return err
+	//}
+	//if err = m4.Start(); err != nil {
+	//	return err
+	//}
+	//if err = m5.Start(); err != nil {
+	//	return err
+	//}
+	//if err = m6.Start(); err != nil {
+	//	return err
+	//}
+	//if err = m7.Start(); err != nil {
+	//	return err
+	//}
 
 	return nil
 }

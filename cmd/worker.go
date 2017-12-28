@@ -40,7 +40,7 @@ var workerStartCmd = &cobra.Command{
 	Long:  `Distributed probe framework 's start worker command, this is prober's`,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if err := startWorkerOptions.validate(); err != nil {
-			log.Printf("start worker failed, cause %v \n", err)
+			log.Printf("pre start worker failed, cause %v \n", err)
 			os.Exit(1)
 		}
 
@@ -49,18 +49,20 @@ var workerStartCmd = &cobra.Command{
 
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := registerWorker(&startWorkerOptions); err != nil {
-			log.Printf("register worker failed, cause %v \n", err)
-			os.Exit(1)
-		}
-
-		log.Printf("register worker %d success\n", startWorkerOptions.Id)
-
-		worker.Start(&worker.StartConfig{
+		//if err := registerWorker(&startWorkerOptions); err != nil {
+		//	log.Printf("registering worker failed, cause %v \n", err)
+		//	os.Exit(1)
+		//}
+		//
+		//log.Printf("register worker %d success\n", startWorkerOptions.Id)
+		c := worker.StartConfig{
 			WorkerId:       startWorkerOptions.Id,
 			HealthCheckSec: startWorkerOptions.pullSec,
 			MasterHttps:    startWorkerOptions.masterHttpAddresses,
 			MasterGRpcs:    startWorkerOptions.masterGRpcAddresses,
-		})
+		}
+		log.Printf("register worker %v ing\n", c)
+
+		worker.Start(&c)
 	},
 }
